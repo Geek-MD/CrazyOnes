@@ -1,2 +1,2 @@
 # Auror
-Apple Updates Reasonable Online Resource
+Apple Updates Responsive Online Resource
