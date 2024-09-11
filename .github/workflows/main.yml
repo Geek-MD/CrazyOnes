@@ -11,7 +11,7 @@ jobs:
       uses: actions/checkout@v4
     - name: Scrape Apple Security Releases page 
       run: |-
-        curl -s "https://support.apple.com/en-us/100100" > https://github.com/Geek-MD/Auror/tree/html/apple_updates.html
+        curl -s "https://support.apple.com/en-us/100100" > apple_updates.html
     - name: Commit and push if the data has changed
       run: |-
         git config user.name "Automated"
