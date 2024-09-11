@@ -2,8 +2,6 @@ name: Flat
 
 on:
   push:
-    branches:
-      - html
   workflow_dispatch:
   schedule:
     - cron: '0 */6 * * *' # At minute 0 past every 6th hour
