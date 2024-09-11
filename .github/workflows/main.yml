@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Action
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     - name: Scrape Apple Security Releases page 
       run: |-
         curl -s "https://support.apple.com/en-us/100100" > https://github.com/Geek-MD/Auror/tree/html/apple_updates.html
