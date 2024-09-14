@@ -23,4 +23,4 @@ jobs:
         uses: githubocto/flat@v3
         with:
           http_url: https://support.apple.com/en-us/100100
-          downloaded_filename: apple_updates.html
+          downloaded_filename: html/en-us.html
