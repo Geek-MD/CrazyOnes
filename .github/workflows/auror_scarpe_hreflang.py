@@ -1,9 +1,14 @@
+import os
 import requests
 from bs4 import BeautifulSoup
 import yaml
 
 # URL a scrapear
 url = "https://support.apple.com/en-us/100100"
+
+# Crear el directorio si no existe
+output_dir = "html"
+os.makedirs(output_dir, exist_ok=True)
 
 try:
     # Hacer la solicitud
@@ -21,7 +26,7 @@ try:
         hreflangs[hreflang] = href
 
     # Guardar en un archivo YAML
-    with open("auror_hreflang_links.yaml", "w") as yaml_file:
+    with open(f"{output_dir}/auror_hreflang_links.yaml", "w") as yaml_file:
         yaml.dump(hreflangs, yaml_file, default_flow_style=False)
 
     print("Successful scraping. YAML file created.")
