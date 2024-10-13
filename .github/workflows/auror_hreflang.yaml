@@ -27,9 +27,11 @@ jobs:
         python auror_scrape_hreflang.py
 
     - name: Commit and push changes
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Usar el token de GitHub para autenticación
       run: |
         git config --global user.name "GitHub Actions Bot"
         git config --global user.email "actions@github.com"
-        git add auror_hreflang_links.yaml
+        git add hreflang_links.yaml
         git commit -m "Updated hreflang links"
         git push
