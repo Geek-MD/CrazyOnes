@@ -1,0 +1,39 @@
+name: Trigger Telegram Bot Command on HTML Update
+
+on:
+  push:
+    paths:
+      - 'html/*.html'  # Se activa cuando cambian los archivos HTML
+
+jobs:
+  trigger_telegram_command:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Get list of updated HTML files
+      id: get_modified_files
+      run: |
+        # Obtener lista de archivos modificados
+        FILES=$(git diff --name-only HEAD~1 HEAD | grep 'html/.*\.html')
+        echo "files=$FILES" >> $GITHUB_ENV
+
+    - name: Send Telegram bot command for each updated file
+      env:
+        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        FILES: ${{ env.files }}
+      run: |
+        # URL de la API de Telegram
+        TELEGRAM_API_URL="https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage"
+
+        # Recorrer cada archivo modificado
+        for FILE in $FILES; do
+          # Enviar el comando /update con el nombre del archivo
+          COMMAND="/updated ${FILE}"
+          curl -s -X POST $TELEGRAM_API_URL \
+            -d chat_id=${TELEGRAM_CHAT_ID} \
+            -d text="${COMMAND}"
+        done
