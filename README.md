@@ -1,2 +1,2 @@
 # Auror
-Apple Updates Radical Online Resource 
+Apple Updates Radical Outstanding Resource 
