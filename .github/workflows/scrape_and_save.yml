@@ -28,18 +28,18 @@ jobs:
 
     - name: Check for changes
       run: |
-        git add html/
-        if git diff --cached --exit-code; then
-          echo "No changes to commit"
-          exit 0
-        else
-          echo "Changes detected, proceeding with commit"
-        fi
+        # Detecta si hay cambios después del scraping
+        git diff --exit-code || echo "There are changes"
 
-    - name: Commit and push changes if any
-      if: success()
+    - name: Commit and push changes if there are any
+      if: success() # Este paso solo se ejecuta si hay cambios
       run: |
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
-        git commit -m "Updated HTML files with latest scrape results"
-        git push
+        git add html/hreflang_links.yaml
+        
+        # Commit solo si hay cambios
+        git commit -m "Updated HTML files with latest scrape results" || echo "No changes to commit"
+        
+        # Push solo si el commit fue exitoso
+        git push || echo "Nothing to push"
