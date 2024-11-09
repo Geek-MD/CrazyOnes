@@ -1,5 +1,5 @@
 # Auror
-Apple Updates Radical Outstanding Resource 
+_Apple Updates Radical Outstanding Resource_
 
 Auror is a software designed to automate notifications of Apple updates, using 2 services.
 
