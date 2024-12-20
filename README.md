@@ -1,8 +1,7 @@
-# Auror
-_Apple Updates Radical Outstanding Resource_
+# Apple Updates Roll Out Releases (_Auror_)
 
-Auror is a software designed to automate notifications of Apple updates, using 2 services.
+_Auror_ is a service designed to automate notifications about software updates for Apple devices.
 
-The first one uses GitHub Actions to scrape the content of the Apple updates website in the different languages ​​in which it is available.
+It relies on two key components to perform its task. The first is a GitHub Actions workflow that scrapes the content of the Apple Updates website in the various languages in which it's available.
 
-The second one is a Python script which monitors the changes of the html files in this repository, and using a Telegram Bot notifies the user about new updates, ignoring the updates that have been notified previously.
+The second is a Python script that monitors changes in the HTML files within this repository. Using a Telegram bot, it notifies users about new updates while ignoring those that have already been reported
