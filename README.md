@@ -1,6 +1,6 @@
-# Apple Updates Roll Out Releases (_Auror_)
+# Apple Updates Remind Us Magically (_Aurum_)
 
-_Auror_ is a service designed to automate notifications about software updates for Apple devices.
+_Aurum_ is a service designed to automate notifications about software updates for Apple devices.
 
 It relies on two key components to perform its task. The first is a GitHub Actions workflow that scrapes the content of the Apple Updates website in the various languages in which it's available.
 
