@@ -35,7 +35,8 @@ jobs:
         else
           echo "Changes detected"
           echo "has_changes=true" >> $GITHUB_ENV
-
+        fi  # <-- Esto asegura que el bloque `if` se cierre correctamente
+        
     - name: Commit and push changes if there are any
       if: env.has_changes == 'true'
       run: |
