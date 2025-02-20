@@ -1,4 +1,4 @@
-# Crazy ones
+# Crazy Ones
 
 _Crazy ones_ is a service designed to automate notifications about software updates for Apple devices.
 
