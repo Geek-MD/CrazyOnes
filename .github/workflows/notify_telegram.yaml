@@ -11,24 +11,33 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Asegura que haya al menos un commit anterior para comparar
+
       - name: Obtener cambios recientes
         id: changes
         run: |
-          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- html/)
+          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD -- 'html/')
+          
           if [[ -z "$CHANGED_FILES" ]]; then
             echo "No hay cambios en el directorio html/"
             exit 0
           fi
-          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
+          
+          echo "CHANGED_FILES<<EOF" >> $GITHUB_ENV
+          echo "$CHANGED_FILES" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Notificar por Telegram
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          MESSAGE="*Actualización en CrazyOnes* Se han actualizado los siguientes archivos en el directorio *html/*:%0A\`\`\`$CHANGED_FILES\`\`\`%0A🔗 [Ver cambios](https://github.com/${{ github.repository }}/commits/main)"
+          MESSAGE="*Actualización en CrazyOnes*%0ASe han actualizado los siguientes archivos en el directorio *html/*:%0A\`\`\`$CHANGED_FILES\`\`\`%0A🔗 [Ver cambios](https://github.com/${{ github.repository }}/commits/main)"
           
           curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
           -d "chat_id=$TELEGRAM_CHAT_ID" \
-          -d "parse_mode=Markdown" \
+          -d "parse_mode=MarkdownV2" \
           -d "text=$MESSAGE"
