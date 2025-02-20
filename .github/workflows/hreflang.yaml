@@ -1,9 +1,9 @@
 name: Scrape hreflang from URL and Commit if Changes Detected
 
 on:
-  workflow_dispatch:  # Permite ejecutar el workflow manualmente
+  workflow_dispatch:  # Permite ejecutar manualmente
   schedule:
-    - cron: "0 12 * * *"  # Corre el workflow diariamente al mediodía
+    - cron: "0 12 * * *"  # Corre diariamente a las 12:00 UTC
 
 jobs:
   scrape_and_save:
@@ -19,27 +19,26 @@ jobs:
         python-version: '3.10'
 
     - name: Install Python dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install requests beautifulsoup4 pyyaml
+      run: pip install -q requests beautifulsoup4 pyyaml
 
     - name: Scrape hreflang and save to YAML
       run: python scrape_hreflang.py
 
     - name: Check for changes
+      id: check_changes
       run: |
-        # Detecta si hay cambios después del scraping
-        git diff --exit-code || echo "Hay cambios en los archivos"
+        if git diff --quiet; then
+          echo "No changes detected"
+          echo "has_changes=false" >> $GITHUB_ENV
+        else
+          echo "Changes detected"
+          echo "has_changes=true" >> $GITHUB_ENV
 
     - name: Commit and push changes if there are any
-      if: success() # Este paso solo se ejecuta si hay cambios
+      if: env.has_changes == 'true'
       run: |
-        git config user.name "GitHub Actions"
-        git config user.email "actions@github.com"
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
         git add html/hreflang_links.yaml
-        
-        # Commit solo si hay cambios
-        git commit -m "Update hreflang_links.yaml with latest scrape results" || echo "No changes to commit"
-        
-        # Push solo si el commit fue exitoso
-        git push || echo "Nothing to push"
+        git commit -m "Update hreflang_links.yaml with latest scrape results"
+        git push
