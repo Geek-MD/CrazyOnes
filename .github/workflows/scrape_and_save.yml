@@ -3,7 +3,7 @@ name: Scrape and Save HTML from hreflang URLs
 on:
   workflow_dispatch:  # Permite ejecutar el workflow manualmente
   schedule:
-    - cron: "0 */6 * * *"  # Corre el workflow cada 6 horas
+    - cron: "0 */6 * * *"  # Corre cada 6 horas
 
 jobs:
   scrape_and_save_html:
@@ -20,26 +20,27 @@ jobs:
 
     - name: Install dependencies
       run: |
-        python -m pip install requests pyyaml
+        pip install -q requests pyyaml
 
     - name: Scrape URLs from hreflang_links.yaml and save HTML files
       run: |
         python scrape_and_save_html.py
 
     - name: Check for changes
+      id: check_changes
       run: |
-        # Detecta si hay cambios después del scraping
-        git diff --exit-code || echo "There are changes"
+        if git diff --quiet; then
+          echo "No changes detected"
+          echo "has_changes=false" >> $GITHUB_ENV
+        else
+          echo "Changes detected"
+          echo "has_changes=true" >> $GITHUB_ENV
 
     - name: Commit and push changes if there are any
-      if: success() # Este paso solo se ejecuta si hay cambios
+      if: env.has_changes == 'true'
       run: |
-        git config user.name "GitHub Actions"
-        git config user.email "actions@github.com"
-        git add html/hreflang_links.yaml
-        
-        # Commit solo si hay cambios
-        git commit -m "Updated HTML files with latest scrape results" || echo "No changes to commit"
-        
-        # Push solo si el commit fue exitoso
-        git push || echo "Nothing to push"
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        git add html/
+        git commit -m "Updated HTML files with latest scrape results"
+        git push
