@@ -1,0 +1,27 @@
+name: Update JSON SHA
+
+on:
+  push:
+    paths:
+      - 'json/*.json'
+  workflow_dispatch: # Allows manual execution
+
+jobs:
+  update_sha:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate SHA JSON file
+        run: |
+          mkdir -p json
+          jq -n 'reduce inputs as $file ({}; .[$file] = input)' \
+            <(ls json/*.json) <(git ls-files -s json/*.json | awk '{print $4, $2}' | jq -R 'split(" ") | { (.[0]): .[1] }') > json/json_sha.json
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add json/json_sha.json
+          git diff --staged --quiet || (git commit -m "Update JSON SHA file" && git push)
