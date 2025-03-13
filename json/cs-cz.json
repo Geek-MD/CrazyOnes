@@ -1,0 +1,776 @@
+[
+    {
+        "update_name": "Safari 18.3.1",
+        "update_link": "/cs-cz/122285",
+        "description": "macOS Ventura a macOS Sonoma",
+        "update_date": "11. 3. 2025"
+    },
+    {
+        "update_name": "iOS 18.3.2 a iPadOS 18.3.2",
+        "update_link": "/cs-cz/122281",
+        "description": "iPhone XS a novější, 13palcový iPad Pro, 12,9palcový iPad Pro 3. generace a novější, 11palcový iPad Pro 1. generace a novější, iPad Air 3. generace a novější, iPad 7. generace a novější a iPad mini 5. generace a novější",
+        "update_date": "11. 3. 2025"
+    },
+    {
+        "update_name": "macOS Sequoia 15.3.2",
+        "update_link": "/cs-cz/122283",
+        "description": "macOS Sequoia",
+        "update_date": "11. 3. 2025"
+    },
+    {
+        "update_name": "visionOS 2.3.2",
+        "update_link": "/cs-cz/122284",
+        "description": "Apple Vision Pro",
+        "update_date": "11. 3. 2025"
+    },
+    {
+        "update_name": "tvOS 18.3.1Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "Apple TV 4K (3. generace)",
+        "update_date": "11. 3. 2025"
+    },
+    {
+        "update_name": "iOS 18.3.1 a iPadOS 18.3.1",
+        "update_link": "/cs-cz/122174",
+        "description": "iPhone XS a novější, 13palcový iPad Pro, 12,9palcový iPad Pro 3. generace a novější, 11palcový iPad Pro 1. generace a novější, iPad Air 3. generace a novější, iPad 7. generace a novější a iPad mini 5. generace a novější",
+        "update_date": "10. února 2025"
+    },
+    {
+        "update_name": "iPadOS 17.7.5",
+        "update_link": "/cs-cz/122173",
+        "description": "12,9palcový iPad Pro 2. generace, 10,5palcový iPad Pro a iPad 6. generace",
+        "update_date": "10. února 2025"
+    },
+    {
+        "update_name": "macOS Sequoia 15.3.1Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "macOS Sequoia",
+        "update_date": "10. února 2025"
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.4Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "macOS Sonoma",
+        "update_date": "10. února 2025"
+    },
+    {
+        "update_name": "macOS Ventura 13.7.4Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "macOS Ventura",
+        "update_date": "10. února 2025"
+    },
+    {
+        "update_name": "watchOS 11.3.1Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "Apple Watch Series 6 a novější",
+        "update_date": "10. února 2025"
+    },
+    {
+        "update_name": "visionOS 2.3.1Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "10. února 2025"
+    },
+    {
+        "update_name": "GarageBand 10.4.12",
+        "update_link": "/cs-cz/121866",
+        "description": "macOS Sonoma 14.4 a novější",
+        "update_date": "30. ledna 2025"
+    },
+    {
+        "update_name": "visionOS 2.3",
+        "update_link": "/cs-cz/122073",
+        "description": "Apple Vision Pro",
+        "update_date": "27. ledna 2025"
+    },
+    {
+        "update_name": "iOS 18.3 a iPadOS 18.3",
+        "update_link": "/cs-cz/122066",
+        "description": "iPhone XS a novější, 13palcový iPad Pro, 12,9palcový iPad Pro 3. generace a novější, 11palcový iPad Pro 1. generace a novější, iPad Air 3. generace a novější, iPad 7. generace a novější a iPad mini 5. generace a novější",
+        "update_date": "27. ledna 2025"
+    },
+    {
+        "update_name": "iPadOS 17.7.4",
+        "update_link": "/cs-cz/122067",
+        "description": "12,9palcový iPad Pro 2. generace, 10,5palcový iPad Pro a iPad 6. generace",
+        "update_date": "27. ledna 2025"
+    },
+    {
+        "update_name": "macOS Sequoia 15.3",
+        "update_link": "/cs-cz/122068",
+        "description": "macOS Sequoia",
+        "update_date": "27. ledna 2025"
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.3",
+        "update_link": "/cs-cz/122069",
+        "description": "macOS Sonoma",
+        "update_date": "27. ledna 2025"
+    },
+    {
+        "update_name": "macOS Ventura 13.7.3",
+        "update_link": "/cs-cz/122070",
+        "description": "macOS Ventura",
+        "update_date": "27. ledna 2025"
+    },
+    {
+        "update_name": "watchOS 11.3",
+        "update_link": "/cs-cz/122071",
+        "description": "Apple Watch Series 6 a novější",
+        "update_date": "27. ledna 2025"
+    },
+    {
+        "update_name": "tvOS 18.3",
+        "update_link": "/cs-cz/122072",
+        "description": "Apple TV HD a Apple TV 4K (všechny modely)",
+        "update_date": "27. ledna 2025"
+    },
+    {
+        "update_name": "Safari 18.3",
+        "update_link": "/cs-cz/122074",
+        "description": "macOS Ventura a macOS Sonoma",
+        "update_date": "27. ledna 2025"
+    },
+    {
+        "update_name": "tvOS 18.2.1Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "Apple TV HD a Apple TV 4K (všechny modely)",
+        "update_date": "16. ledna 2025"
+    },
+    {
+        "update_name": "iOS 18.2.1 a iPadOS 18.2.1Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "iPhone XS a novější, 13palcový iPad Pro, 12,9palcový iPad Pro 3. generace a novější, 11palcový iPad Pro 1. generace a novější, iPad Air 3. generace a novější, iPad 7. generace a novější a iPad mini 5. generace a novější",
+        "update_date": "6. ledna 2025"
+    },
+    {
+        "update_name": "Safari 18.2",
+        "update_link": "/cs-cz/121846",
+        "description": "macOS Ventura a macOS Sonoma",
+        "update_date": "11. prosince 2024"
+    },
+    {
+        "update_name": "iOS 18.2 a iPadOS 18.2",
+        "update_link": "/cs-cz/121837",
+        "description": "iPhone XS a novější, 13palcový iPad Pro, 12,9palcový iPad Pro 3. generace a novější, 11palcový iPad Pro 1. generace a novější, iPad Air 3. generace a novější, iPad 7. generace a novější a iPad mini 5. generace a novější",
+        "update_date": "11. prosince 2024"
+    },
+    {
+        "update_name": "iPadOS 17.7.3",
+        "update_link": "/cs-cz/121838",
+        "description": "12,9palcový iPad Pro 2. generace, 10,5palcový iPad Pro a iPad 6. generace",
+        "update_date": "11. prosince 2024"
+    },
+    {
+        "update_name": "macOS Sequoia 15.2",
+        "update_link": "/cs-cz/121839",
+        "description": "macOS Sequoia",
+        "update_date": "11. prosince 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.2",
+        "update_link": "/cs-cz/121840",
+        "description": "macOS Sonoma",
+        "update_date": "11. prosince 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.7.2",
+        "update_link": "/cs-cz/121842",
+        "description": "macOS Ventura",
+        "update_date": "11. prosince 2024"
+    },
+    {
+        "update_name": "watchOS 11.2",
+        "update_link": "/cs-cz/121843",
+        "description": "Apple Watch Series 6 a novější",
+        "update_date": "11. prosince 2024"
+    },
+    {
+        "update_name": "tvOS 18.2",
+        "update_link": "/cs-cz/121844",
+        "description": "Apple TV HD a Apple TV 4K (všechny modely)",
+        "update_date": "11. prosince 2024"
+    },
+    {
+        "update_name": "visionOS 2.2",
+        "update_link": "/cs-cz/121845",
+        "description": "Apple Vision Pro",
+        "update_date": "11. prosince 2024"
+    },
+    {
+        "update_name": "Safari 18.1.1",
+        "update_link": "/cs-cz/121756",
+        "description": "macOS Ventura a macOS Sonoma",
+        "update_date": "19. listopadu 2024"
+    },
+    {
+        "update_name": "visionOS 2.1.1",
+        "update_link": "/cs-cz/121755",
+        "description": "Apple Vision Pro",
+        "update_date": "19. listopadu 2024"
+    },
+    {
+        "update_name": "iOS 18.1.1 a iPadOS 18.1.1",
+        "update_link": "/cs-cz/121752",
+        "description": "iPhone XS a novější, 13palcový iPad Pro, 12,9palcový iPad Pro 3. generace a novější, 11palcový iPad Pro 1. generace a novější, iPad Air 3. generace a novější, iPad 7. generace a novější a iPad mini 5. generace a novější",
+        "update_date": "19. listopadu 2024"
+    },
+    {
+        "update_name": "iOS 17.7.2 a iPadOS 17.7.2",
+        "update_link": "/cs-cz/121754",
+        "description": "iPhone XS a novější, 13palcový iPad Pro, 12,9palcový iPad Pro 2. generace a novější, 10,5palcový iPad Pro, 11palcový iPad Pro 1. generace a novější, iPad Air 3. generace a novější, iPad 6. generace a novější a iPad mini 5. generace a novější",
+        "update_date": "19. listopadu 2024"
+    },
+    {
+        "update_name": "macOS Sequoia 15.1.1",
+        "update_link": "/cs-cz/121753",
+        "description": "macOS Sequoia",
+        "update_date": "19. listopadu 2024"
+    },
+    {
+        "update_name": "Safari 18.1",
+        "update_link": "/cs-cz/121571",
+        "description": "macOS Ventura a macOS Sonoma",
+        "update_date": "29. října 2024"
+    },
+    {
+        "update_name": "iOS 18.1 a iPadOS 18.1",
+        "update_link": "/cs-cz/121563",
+        "description": "iPhone XS a novější, 13palcový iPad Pro, 12,9palcový iPad Pro 3. generace a novější, 11palcový iPad Pro 1. generace a novější, iPad Air 3. generace a novější, iPad 7. generace a novější a iPad mini 5. generace a novější",
+        "update_date": "28. října 2024"
+    },
+    {
+        "update_name": "iOS 17.7.1 a iPadOS 17.7.1",
+        "update_link": "/cs-cz/121567",
+        "description": "iPhone XS a novější, 13palcový iPad Pro, 12,9palcový iPad Pro 2. generace a novější, 10,5palcový iPad Pro, 11palcový iPad Pro 1. generace a novější, iPad Air 3. generace a novější, iPad 6. generace a novější a iPad mini 5. generace a novější",
+        "update_date": "28. října 2024"
+    },
+    {
+        "update_name": "macOS Sequoia 15.1",
+        "update_link": "/cs-cz/121564",
+        "description": "macOS Sequoia",
+        "update_date": "28. října 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.1",
+        "update_link": "/cs-cz/121570",
+        "description": "macOS Sonoma",
+        "update_date": "28. října 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.7.1",
+        "update_link": "/cs-cz/121568",
+        "description": "macOS Ventura",
+        "update_date": "28. října 2024"
+    },
+    {
+        "update_name": "watchOS 11.1",
+        "update_link": "/cs-cz/121565",
+        "description": "Apple Watch Series 6 a novější",
+        "update_date": "28. října 2024"
+    },
+    {
+        "update_name": "tvOS 18.1",
+        "update_link": "/cs-cz/121569",
+        "description": "Apple TV HD a Apple TV 4K (všechny modely)",
+        "update_date": "28. října 2024"
+    },
+    {
+        "update_name": "visionOS 2.1",
+        "update_link": "/cs-cz/121566",
+        "description": "Apple Vision Pro",
+        "update_date": "28. října 2024"
+    },
+    {
+        "update_name": "Apple Music 1.5.0.152 pro Windows",
+        "update_link": "/cs-cz/122043",
+        "description": "Windows 10 22H2 a novější pro zařízení s čipem Intel, Windows 11 24H2 a novější pro zařízení s čipem Arm",
+        "update_date": "3. října 2024"
+    },
+    {
+        "update_name": "Apple TV 1.5.0.152 pro Windows",
+        "update_link": "/cs-cz/121441",
+        "description": "Windows 10 22H2 a novější",
+        "update_date": "3. října 2024"
+    },
+    {
+        "update_name": "iOS 18.0.1 a iPadOS 18.0.1",
+        "update_link": "/cs-cz/121373",
+        "description": "iPhone XS a novější, 13palcový iPad Pro, 12,9palcový iPad Pro 3. generace a novější, 11palcový iPad Pro 1. generace a novější, iPad Air 3. generace a novější, iPad 7. generace a novější a iPad mini 5. generace a novější",
+        "update_date": "3. října 2024"
+    },
+    {
+        "update_name": "macOS Sequoia 15.0.1Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "macOS Sequoia",
+        "update_date": "3. října 2024"
+    },
+    {
+        "update_name": "watchOS 11.0.1Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "Apple Watch Series 6 a novější",
+        "update_date": "3. října 2024"
+    },
+    {
+        "update_name": "visionOS 2.0.1Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "3. října 2024"
+    },
+    {
+        "update_name": "Safari 18.0.1Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "macOS Ventura a macOS Sonoma",
+        "update_date": "3. října 2024"
+    },
+    {
+        "update_name": "iOS 18 a iPadOS 18",
+        "update_link": "/cs-cz/121250",
+        "description": "iPhone XS a novější, 13palcový iPad Pro, 12,9palcový iPad Pro 3. generace a novější, 11palcový iPad Pro 1. generace a novější, iPad Air 3. generace a novější, iPad 7. generace a novější a iPad mini 5. generace a novější",
+        "update_date": "16. září 2024"
+    },
+    {
+        "update_name": "macOS Sequoia 15",
+        "update_link": "/cs-cz/121238",
+        "description": "Mac Studio (2022 a novější), iMac (2019 a novější), Mac Pro (2019 a novější), Mac mini (2018 a novější), MacBook Air (2020 a novější), MacBook Pro (2018 a novější) a iMac Pro (2017 a novější)",
+        "update_date": "16. září 2024"
+    },
+    {
+        "update_name": "tvOS 18",
+        "update_link": "/cs-cz/121248",
+        "description": "Apple TV HD a Apple TV 4K (všechny modely)",
+        "update_date": "16. září 2024"
+    },
+    {
+        "update_name": "watchOS 11",
+        "update_link": "/cs-cz/121240",
+        "description": "Apple Watch Series 6 a novější",
+        "update_date": "16. září 2024"
+    },
+    {
+        "update_name": "visionOS 2",
+        "update_link": "/cs-cz/121249",
+        "description": "Apple Vision Pro",
+        "update_date": "16. září 2024"
+    },
+    {
+        "update_name": "Safari 18",
+        "update_link": "/cs-cz/121241",
+        "description": "macOS Ventura a macOS Sonoma",
+        "update_date": "16. září 2024"
+    },
+    {
+        "update_name": "Xcode 16",
+        "update_link": "/cs-cz/121239",
+        "description": "macOS Sonoma 14.5 a novější",
+        "update_date": "16. září 2024"
+    },
+    {
+        "update_name": "iOS 17.7 a iPadOS 17.7",
+        "update_link": "/cs-cz/121246",
+        "description": "iPhone XS a novější, 13palcový iPad Pro, 12,9palcový iPad Pro 2. generace a novější, 10,5palcový iPad Pro, 11palcový iPad Pro 1. generace a novější, iPad Air 3. generace a novější, iPad 6. generace a novější a iPad mini 5. generace a novější",
+        "update_date": "16. září 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.7",
+        "update_link": "/cs-cz/121247",
+        "description": "macOS Sonoma",
+        "update_date": "16. září 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.7",
+        "update_link": "/cs-cz/121234",
+        "description": "macOS Ventura",
+        "update_date": "16. září 2024"
+    },
+    {
+        "update_name": "iTunes 12.13.3 pro Windows",
+        "update_link": "/cs-cz/121328",
+        "description": "Windows 10 a novější",
+        "update_date": "12. září 2024"
+    },
+    {
+        "update_name": "watchOS 10.6.1Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "Apple Watch Series 4 a novější",
+        "update_date": "19. srpna 2024"
+    },
+    {
+        "update_name": "tvOS 17.6.1Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "Apple TV HD a Apple TV 4K (všechny modely)",
+        "update_date": "19. srpna 2024"
+    },
+    {
+        "update_name": "iOS 17.6.1 a iPadOS 17.6.1Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "iPhone XS a novější, 13palcový iPad Pro, 12,9palcový iPad Pro 2. generace a novější, 10,5palcový iPad Pro, 11palcový iPad Pro 1. generace a novější, iPad Air 3. generace a novější, iPad 6. generace a novější a iPad mini 5. generace a novější",
+        "update_date": "7. srpna 2024"
+    },
+    {
+        "update_name": "iOS 16.7.10 a iPadOS 16.7.10Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5. generace, 9,7palcový iPad Pro a 12,9palcový iPad Pro 1. generace",
+        "update_date": "7. srpna 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.6.1Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "macOS Sonoma",
+        "update_date": "7. srpna 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.9Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "macOS Ventura",
+        "update_date": "7. srpna 2024"
+    },
+    {
+        "update_name": "Safari 17.6",
+        "update_link": "/cs-cz/120913",
+        "description": "macOS Monterey a macOS Ventura",
+        "update_date": "29. července 2024"
+    },
+    {
+        "update_name": "iOS 17.6 a iPadOS 17.6",
+        "update_link": "/cs-cz/120909",
+        "description": "iPhone XS a novější, 13palcový iPad Pro, 12,9palcový iPad Pro 2. generace a novější, 10,5palcový iPad Pro, 11palcový iPad Pro 1. generace a novější, iPad Air 3. generace a novější, iPad 6. generace a novější a iPad mini 5. generace a novější",
+        "update_date": "29. července 2024"
+    },
+    {
+        "update_name": "iOS 16.7.9 a iPadOS 16.7.9",
+        "update_link": "/cs-cz/120908",
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5. generace, 9,7palcový iPad Pro a 12,9palcový iPad Pro 1. generace",
+        "update_date": "29. července 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.6",
+        "update_link": "/cs-cz/120911",
+        "description": "macOS Sonoma",
+        "update_date": "29. července 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.8",
+        "update_link": "/cs-cz/120912",
+        "description": "macOS Ventura",
+        "update_date": "29. července 2024"
+    },
+    {
+        "update_name": "macOS Monterey 12.7.6",
+        "update_link": "/cs-cz/120910",
+        "description": "macOS Monterey",
+        "update_date": "29. července 2024"
+    },
+    {
+        "update_name": "watchOS 10.6",
+        "update_link": "/cs-cz/120916",
+        "description": "Apple Watch Series 4 a novější",
+        "update_date": "29. července 2024"
+    },
+    {
+        "update_name": "tvOS 17.6",
+        "update_link": "/cs-cz/120914",
+        "description": "Apple TV HD a Apple TV 4K (všechny modely)",
+        "update_date": "29. července 2024"
+    },
+    {
+        "update_name": "visionOS 1.3",
+        "update_link": "/cs-cz/120915",
+        "description": "Apple Vision Pro",
+        "update_date": "29. července 2024"
+    },
+    {
+        "update_name": "iOS 15.8.3 a iPadOS 15.8.3Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "iPhone 6s (všechny modely), iPhone 7 (všechny modely), iPhone SE (1. generace), iPad Air 2, iPad mini (4. generace a novější) a iPod touch (7. generace)",
+        "update_date": "29. července 2024"
+    },
+    {
+        "update_name": "Aktualizace firmwaru AirPods 6A326, aktualizace firmwaru AirPods 6F8 a aktualizace firmwaru Beats 6F8",
+        "update_link": "/cs-cz/120907",
+        "description": "AirPods (2. generace a novější), AirPods Pro (všechny modely), AirPods Max, Powerbeats Pro a Beats Fit Pro",
+        "update_date": "25. června 2024"
+    },
+    {
+        "update_name": "visionOS 1.2",
+        "update_link": "/cs-cz/120906",
+        "description": "Apple Vision Pro",
+        "update_date": "10. června 2024"
+    },
+    {
+        "update_name": "tvOS 17.5.1Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "Apple TV HD a Apple TV 4K (všechny modely)",
+        "update_date": "21. května 2024"
+    },
+    {
+        "update_name": "iOS 17.5.1 a iPadOS 17.5.1Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "iPhone XS a novější, 13palcový iPad Pro, 12,9palcový iPad Pro 2. generace a novější, 10,5palcový iPad Pro, 11palcový iPad Pro 1. generace a novější, iPad Air 3. generace a novější, iPad 6. generace a novější a iPad mini 5. generace a novější",
+        "update_date": "20. května 2024"
+    },
+    {
+        "update_name": "Safari 17.5",
+        "update_link": "/cs-cz/120896",
+        "description": "macOS Monterey a macOS Ventura",
+        "update_date": "13. května 2024"
+    },
+    {
+        "update_name": "iOS 17.5 a iPadOS 17.5",
+        "update_link": "/cs-cz/120905",
+        "description": "iPhone XS a novější, 13palcový iPad Pro, 12,9palcový iPad Pro 2. generace a novější, 10,5palcový iPad Pro, 11palcový iPad Pro 1. generace a novější, iPad Air 3. generace a novější, iPad 6. generace a novější a iPad mini 5. generace a novější",
+        "update_date": "13. května 2024"
+    },
+    {
+        "update_name": "iOS 16.7.8 a iPadOS 16.7.8",
+        "update_link": "/cs-cz/120898",
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5. generace, 9,7palcový iPad Pro a 12,9palcový iPad Pro 1. generace",
+        "update_date": "13. května 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.5",
+        "update_link": "/cs-cz/120903",
+        "description": "macOS Sonoma",
+        "update_date": "13. května 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.7",
+        "update_link": "/cs-cz/120900",
+        "description": "macOS Ventura",
+        "update_date": "13. května 2024"
+    },
+    {
+        "update_name": "macOS Monterey 12.7.5",
+        "update_link": "/cs-cz/120899",
+        "description": "macOS Monterey",
+        "update_date": "13. května 2024"
+    },
+    {
+        "update_name": "watchOS 10.5",
+        "update_link": "/cs-cz/120902",
+        "description": "Apple Watch Series 4 a novější",
+        "update_date": "13. května 2024"
+    },
+    {
+        "update_name": "tvOS 17.5",
+        "update_link": "/cs-cz/120901",
+        "description": "Apple TV HD a Apple TV 4K (všechny modely)",
+        "update_date": "13. května 2024"
+    },
+    {
+        "update_name": "iTunes 12.13.2 pro Windows",
+        "update_link": "/cs-cz/120897",
+        "description": "Windows 10 a novější",
+        "update_date": "8. května 2024"
+    },
+    {
+        "update_name": "visionOS 1.1.2Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "9. dubna 2024"
+    },
+    {
+        "update_name": "Safari 17.4.1",
+        "update_link": "/cs-cz/120888",
+        "description": "macOS Monterey a macOS Ventura",
+        "update_date": "25. března 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.4.1",
+        "update_link": "/cs-cz/120889",
+        "description": "macOS Sonoma",
+        "update_date": "25. března 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.6",
+        "update_link": "/cs-cz/120891",
+        "description": "macOS Ventura",
+        "update_date": "25. března 2024"
+    },
+    {
+        "update_name": "iOS 17.4.1 a iPadOS 17.4.1",
+        "update_link": "/cs-cz/120890",
+        "description": "iPhone XS a novější, 12,9palcový iPad Pro 2. generace a novější, 10,5palcový iPad Pro, 11palcový iPad Pro 1. generace a novější, iPad Air 3. generace a novější, iPad 6. generace a novější a iPad mini 5. generace a novější",
+        "update_date": "21. března 2024"
+    },
+    {
+        "update_name": "iOS 16.7.7 a iPadOS 16.7.7",
+        "update_link": "/cs-cz/120892",
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5. generace, 9,7palcový iPad Pro a 12,9palcový iPad Pro 1. generace",
+        "update_date": "21. března 2024"
+    },
+    {
+        "update_name": "visionOS 1.1.1",
+        "update_link": "/cs-cz/120312",
+        "description": "Apple Vision Pro",
+        "update_date": "21. března 2024"
+    },
+    {
+        "update_name": "GarageBand 10.4.11",
+        "update_link": "/cs-cz/120885",
+        "description": "macOS Ventura a macOS Sonoma",
+        "update_date": "12. března 2024"
+    },
+    {
+        "update_name": "Safari 17.4",
+        "update_link": "/cs-cz/120894",
+        "description": "macOS Monterey a macOS Ventura",
+        "update_date": "7. března 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.4",
+        "update_link": "/cs-cz/120895",
+        "description": "macOS Sonoma",
+        "update_date": "7. března 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.5",
+        "update_link": "/cs-cz/120886",
+        "description": "macOS Ventura",
+        "update_date": "7. března 2024"
+    },
+    {
+        "update_name": "macOS Monterey 12.7.4",
+        "update_link": "/cs-cz/120884",
+        "description": "macOS Monterey",
+        "update_date": "7. března 2024"
+    },
+    {
+        "update_name": "watchOS 10.4",
+        "update_link": "/cs-cz/120881",
+        "description": "Apple Watch Series 4 a novější",
+        "update_date": "7. března 2024"
+    },
+    {
+        "update_name": "tvOS 17.4",
+        "update_link": "/cs-cz/120882",
+        "description": "Apple TV HD a Apple TV 4K (všechny modely)",
+        "update_date": "7. března 2024"
+    },
+    {
+        "update_name": "visionOS 1.1",
+        "update_link": "/cs-cz/120883",
+        "description": "Apple Vision Pro",
+        "update_date": "7. března 2024"
+    },
+    {
+        "update_name": "Xcode 15.3",
+        "update_link": "/cs-cz/120887",
+        "description": "macOS Sonoma 14 a novější",
+        "update_date": "5. března 2024"
+    },
+    {
+        "update_name": "iOS 17.4 a iPadOS 17.4",
+        "update_link": "/cs-cz/120893",
+        "description": "iPhone XS a novější, 12,9palcový iPad Pro 2. generace a novější, 10,5palcový iPad Pro, 11palcový iPad Pro 1. generace a novější, iPad Air 3. generace a novější, iPad 6. generace a novější a iPad mini 5. generace a novější",
+        "update_date": "5. března 2024"
+    },
+    {
+        "update_name": "iOS 16.7.6 a iPadOS 16.7.6",
+        "update_link": "/cs-cz/120880",
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5. generace, 9,7palcový iPad Pro a 12,9palcový iPad Pro 1. generace",
+        "update_date": "5. března 2024"
+    },
+    {
+        "update_name": "iOS 15.8.2 a iPadOS 15.8.2Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "iPhone 6s (všechny modely), iPhone 7 (všechny modely), iPhone SE (1. generace), iPad Air 2, iPad mini (4. generace a novější) a iPod touch (7. generace)",
+        "update_date": "5. března 2024"
+    },
+    {
+        "update_name": "visionOS 1.0.3Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "12. února 2024"
+    },
+    {
+        "update_name": "Safari 17.3.1Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "macOS Monterey a macOS Ventura",
+        "update_date": "9. února 2024"
+    },
+    {
+        "update_name": "iOS 17.3.1 a iPadOS 17.3.1Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "iPhone XS a novější, 12,9palcový iPad Pro 2. generace a novější, 10,5palcový iPad Pro, 11palcový iPad Pro 1. generace a novější, iPad Air 3. generace a novější, iPad 6. generace a novější a iPad mini 5. generace a novější",
+        "update_date": "8. února 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.3.1Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "macOS Sonoma",
+        "update_date": "8. února 2024"
+    },
+    {
+        "update_name": "watchOS 10.3.1Tato aktualizace nemá žádné publikované CVE záznamy.",
+        "update_link": null,
+        "description": "Apple Watch Series 4 a novější",
+        "update_date": "8. února 2024"
+    },
+    {
+        "update_name": "visionOS 1.0.2",
+        "update_link": "/cs-cz/118479",
+        "description": "Apple Vision Pro",
+        "update_date": "31. ledna 2024"
+    },
+    {
+        "update_name": "Safari 17.3",
+        "update_link": "/cs-cz/120339",
+        "description": "macOS Monterey a macOS Ventura",
+        "update_date": "22. ledna 2024"
+    },
+    {
+        "update_name": "iOS 17.3 a iPadOS 17.3",
+        "update_link": "/cs-cz/120304",
+        "description": "iPhone XS a novější, 12,9palcový iPad Pro 2. generace a novější, 10,5palcový iPad Pro, 11palcový iPad Pro 1. generace a novější, iPad Air 3. generace a novější, iPad 6. generace a novější a iPad mini 5. generace a novější",
+        "update_date": "22. ledna 2024"
+    },
+    {
+        "update_name": "iOS 16.7.5 a iPadOS 16.7.5",
+        "update_link": "/cs-cz/120310",
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5. generace, 9,7palcový iPad Pro a 12,9palcový iPad Pro 1. generace",
+        "update_date": "22. ledna 2024"
+    },
+    {
+        "update_name": "iOS 15.8.1 a iPadOS 15.8.1",
+        "update_link": "/cs-cz/120308",
+        "description": "iPhone 6s (všechny modely), iPhone 7 (všechny modely), iPhone SE (1. generace), iPad Air 2, iPad mini (4. generace a novější) a iPod touch (7. generace)",
+        "update_date": "22. ledna 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.3",
+        "update_link": "/cs-cz/120309",
+        "description": "macOS Sonoma",
+        "update_date": "22. ledna 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.4",
+        "update_link": "/cs-cz/120307",
+        "description": "macOS Ventura",
+        "update_date": "22. ledna 2024"
+    },
+    {
+        "update_name": "macOS Monterey 12.7.3",
+        "update_link": "/cs-cz/120305",
+        "description": "macOS Monterey",
+        "update_date": "22. ledna 2024"
+    },
+    {
+        "update_name": "watchOS 10.3",
+        "update_link": "/cs-cz/120306",
+        "description": "Apple Watch Series 4 a novější",
+        "update_date": "22. ledna 2024"
+    },
+    {
+        "update_name": "tvOS 17.3",
+        "update_link": "/cs-cz/120311",
+        "description": "Apple TV HD a Apple TV 4K (všechny modely)",
+        "update_date": "22. ledna 2024"
+    },
+    {
+        "update_name": "Aktualizace firmwaru pro Magic Keyboard 2.0.6",
+        "update_link": "/cs-cz/120303",
+        "description": "Magic Keyboard; Magic Keyboard (2021); Magic Keyboard s numerickou klávesnicí; Magic Keyboard s Touch ID a Magic Keyboard s Touch ID a numerickou klávesnicí",
+        "update_date": "9. ledna 2024"
+    }
+]

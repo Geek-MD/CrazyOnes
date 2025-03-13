@@ -1,0 +1,776 @@
+[
+    {
+        "update_name": "Safari 18.3.1",
+        "update_link": "/ja-jp/122285",
+        "description": "macOS VenturaおよびmacOS Sonoma",
+        "update_date": "2025年3月11日"
+    },
+    {
+        "update_name": "iOS 18.3.2およびiPadOS 18.3.2",
+        "update_link": "/ja-jp/122281",
+        "description": "iPhone XS以降、iPad Pro 13インチ、iPad Pro 12.9インチ（第3世代）以降、iPad Pro 11インチ（第1世代）以降、iPad Air（第3世代）以降、iPad（第7世代）以降、iPad mini（第5世代）以降",
+        "update_date": "2025年3月11日"
+    },
+    {
+        "update_name": "macOS Sequoia 15.3.2",
+        "update_link": "/ja-jp/122283",
+        "description": "macOS Sequoia",
+        "update_date": "2025年3月11日"
+    },
+    {
+        "update_name": "visionOS 2.3.2",
+        "update_link": "/ja-jp/122284",
+        "description": "Apple Vision Pro",
+        "update_date": "2025年3月11日"
+    },
+    {
+        "update_name": "tvOS 18.3.1このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "Apple TV 4K（第3世代）",
+        "update_date": "2025年3月11日"
+    },
+    {
+        "update_name": "iOS 18.3.1およびiPadOS 18.3.1",
+        "update_link": "/ja-jp/122174",
+        "description": "iPhone XS以降、iPad Pro 13インチ、iPad Pro 12.9インチ（第3世代）以降、iPad Pro 11インチ（第1世代）以降、iPad Air（第3世代）以降、iPad（第7世代）以降、iPad mini（第5世代）以降",
+        "update_date": "2025-02-10"
+    },
+    {
+        "update_name": "iPadOS 17.7.5",
+        "update_link": "/ja-jp/122173",
+        "description": "iPad Pro 12.9インチ（第2世代）、iPad Pro 10.5インチ、iPad（第6世代）",
+        "update_date": "2025-02-10"
+    },
+    {
+        "update_name": "macOS Sequoia 15.3.1このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "macOS Sequoia",
+        "update_date": "2025-02-10"
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.4このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "macOS Sonoma",
+        "update_date": "2025-02-10"
+    },
+    {
+        "update_name": "macOS Ventura 13.7.4このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "macOS Ventura",
+        "update_date": "2025-02-10"
+    },
+    {
+        "update_name": "watchOS 11.3.1このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "Apple Watch Series 6以降",
+        "update_date": "2025-02-10"
+    },
+    {
+        "update_name": "visionOS 2.3.1このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "2025-02-10"
+    },
+    {
+        "update_name": "GarageBand 10.4.12",
+        "update_link": "/ja-jp/121866",
+        "description": "macOS Sonoma 14.4以降",
+        "update_date": "2025-01-30"
+    },
+    {
+        "update_name": "visionOS 2.3",
+        "update_link": "/ja-jp/122073",
+        "description": "Apple Vision Pro",
+        "update_date": "2025-01-27"
+    },
+    {
+        "update_name": "iOS 18.3およびiPadOS 18.3",
+        "update_link": "/ja-jp/122066",
+        "description": "iPhone XS以降、iPad Pro 13インチ、iPad Pro 12.9インチ（第3世代）以降、iPad Pro 11インチ（第1世代）以降、iPad Air（第3世代）以降、iPad（第7世代）以降、iPad mini（第5世代）以降",
+        "update_date": "2025-01-27"
+    },
+    {
+        "update_name": "iPadOS 17.7.4",
+        "update_link": "/ja-jp/122067",
+        "description": "iPad Pro 12.9インチ（第2世代）、iPad Pro 10.5インチ、iPad（第6世代）",
+        "update_date": "2025-01-27"
+    },
+    {
+        "update_name": "macOS Sequoia 15.3",
+        "update_link": "/ja-jp/122068",
+        "description": "macOS Sequoia",
+        "update_date": "2025-01-27"
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.3",
+        "update_link": "/ja-jp/122069",
+        "description": "macOS Sonoma",
+        "update_date": "2025-01-27"
+    },
+    {
+        "update_name": "macOS Ventura 13.7.3",
+        "update_link": "/ja-jp/122070",
+        "description": "macOS Ventura",
+        "update_date": "2025-01-27"
+    },
+    {
+        "update_name": "watchOS 11.3",
+        "update_link": "/ja-jp/122071",
+        "description": "Apple Watch Series 6以降",
+        "update_date": "2025-01-27"
+    },
+    {
+        "update_name": "tvOS 18.3",
+        "update_link": "/ja-jp/122072",
+        "description": "Apple TV HDおよびApple TV 4K（すべてのモデル）",
+        "update_date": "2025-01-27"
+    },
+    {
+        "update_name": "Safari 18.3",
+        "update_link": "/ja-jp/122074",
+        "description": "macOS VenturaおよびmacOS Sonoma",
+        "update_date": "2025-01-27"
+    },
+    {
+        "update_name": "tvOS 18.2.1このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "Apple TV HDおよびApple TV 4K（すべてのモデル）",
+        "update_date": "2025-01-16"
+    },
+    {
+        "update_name": "iOS 18.2.1およびiPadOS 18.2.1このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "iPhone XS以降、iPad Pro 13インチ、iPad Pro 12.9インチ（第3世代）以降、iPad Pro 11インチ（第1世代）以降、iPad Air（第3世代）以降、iPad（第7世代）以降、iPad mini（第5世代）以降",
+        "update_date": "2025-01-06"
+    },
+    {
+        "update_name": "Safari 18.2",
+        "update_link": "/ja-jp/121846",
+        "description": "macOS VenturaおよびmacOS Sonoma",
+        "update_date": "2024-12-11"
+    },
+    {
+        "update_name": "iOS 18.2およびiPadOS 18.2",
+        "update_link": "/ja-jp/121837",
+        "description": "iPhone XS以降、iPad Pro 13インチ、iPad Pro 12.9インチ（第3世代）以降、iPad Pro 11インチ（第1世代）以降、iPad Air（第3世代）以降、iPad（第7世代）以降、iPad mini（第5世代）以降",
+        "update_date": "2024-12-11"
+    },
+    {
+        "update_name": "iPadOS 17.7.3",
+        "update_link": "/ja-jp/121838",
+        "description": "iPad Pro 12.9インチ（第2世代）、iPad Pro 10.5インチ、iPad（第6世代）",
+        "update_date": "2024-12-11"
+    },
+    {
+        "update_name": "macOS Sequoia 15.2",
+        "update_link": "/ja-jp/121839",
+        "description": "macOS Sequoia",
+        "update_date": "2024-12-11"
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.2",
+        "update_link": "/ja-jp/121840",
+        "description": "macOS Sonoma",
+        "update_date": "2024-12-11"
+    },
+    {
+        "update_name": "macOS Ventura 13.7.2",
+        "update_link": "/ja-jp/121842",
+        "description": "macOS Ventura",
+        "update_date": "2024-12-11"
+    },
+    {
+        "update_name": "watchOS 11.2",
+        "update_link": "/ja-jp/121843",
+        "description": "Apple Watch Series 6以降",
+        "update_date": "2024-12-11"
+    },
+    {
+        "update_name": "tvOS 18.2",
+        "update_link": "/ja-jp/121844",
+        "description": "Apple TV HDおよびApple TV 4K（すべてのモデル）",
+        "update_date": "2024-12-11"
+    },
+    {
+        "update_name": "visionOS 2.2",
+        "update_link": "/ja-jp/121845",
+        "description": "Apple Vision Pro",
+        "update_date": "2024-12-11"
+    },
+    {
+        "update_name": "Safari 18.1.1",
+        "update_link": "/ja-jp/121756",
+        "description": "macOS VenturaおよびmacOS Sonoma",
+        "update_date": "2024-11-19"
+    },
+    {
+        "update_name": "visionOS 2.1.1",
+        "update_link": "/ja-jp/121755",
+        "description": "Apple Vision Pro",
+        "update_date": "2024-11-19"
+    },
+    {
+        "update_name": "iOS 18.1.1およびiPadOS 18.1.1",
+        "update_link": "/ja-jp/121752",
+        "description": "iPhone XS以降、iPad Pro 13インチ、iPad Pro 12.9インチ（第3世代）以降、iPad Pro 11インチ（第1世代）以降、iPad Air（第3世代）以降、iPad（第7世代）以降、iPad mini（第5世代）以降",
+        "update_date": "2024-11-19"
+    },
+    {
+        "update_name": "iOS 17.7.2およびiPadOS 17.7.2",
+        "update_link": "/ja-jp/121754",
+        "description": "iPhone XS以降、iPad Pro 13インチ、iPad Pro 12.9インチ（第2世代）以降、iPad Pro 10.5インチ、iPad Pro 11インチ（第1世代）以降、iPad Air（第3世代）以降、iPad（第6世代）以降、iPad mini（第5世代）以降",
+        "update_date": "2024-11-19"
+    },
+    {
+        "update_name": "macOS Sequoia 15.1.1",
+        "update_link": "/ja-jp/121753",
+        "description": "macOS Sequoia",
+        "update_date": "2024-11-19"
+    },
+    {
+        "update_name": "Safari 18.1",
+        "update_link": "/ja-jp/121571",
+        "description": "macOS VenturaおよびmacOS Sonoma",
+        "update_date": "2024-10-29"
+    },
+    {
+        "update_name": "iOS 18.1およびiPadOS 18.1",
+        "update_link": "/ja-jp/121563",
+        "description": "iPhone XS以降、iPad Pro 13インチ、iPad Pro 12.9インチ（第3世代）以降、iPad Pro 11インチ（第1世代）以降、iPad Air（第3世代）以降、iPad（第7世代）以降、iPad mini（第5世代）以降",
+        "update_date": "2024-10-28"
+    },
+    {
+        "update_name": "iOS 17.7.1およびiPadOS 17.7.1",
+        "update_link": "/ja-jp/121567",
+        "description": "iPhone XS以降、iPad Pro 13インチ、iPad Pro 12.9インチ（第2世代）以降、iPad Pro 10.5インチ、iPad Pro 11インチ（第1世代）以降、iPad Air（第3世代）以降、iPad（第6世代）以降、iPad mini（第5世代）以降",
+        "update_date": "2024-10-28"
+    },
+    {
+        "update_name": "macOS Sequoia 15.1",
+        "update_link": "/ja-jp/121564",
+        "description": "macOS Sequoia",
+        "update_date": "2024-10-28"
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.1",
+        "update_link": "/ja-jp/121570",
+        "description": "macOS Sonoma",
+        "update_date": "2024-10-28"
+    },
+    {
+        "update_name": "macOS Ventura 13.7.1",
+        "update_link": "/ja-jp/121568",
+        "description": "macOS Ventura",
+        "update_date": "2024-10-28"
+    },
+    {
+        "update_name": "watchOS 11.1",
+        "update_link": "/ja-jp/121565",
+        "description": "Apple Watch Series 6以降",
+        "update_date": "2024-10-28"
+    },
+    {
+        "update_name": "tvOS 18.1",
+        "update_link": "/ja-jp/121569",
+        "description": "Apple TV HDおよびApple TV 4K（すべてのモデル）",
+        "update_date": "2024-10-28"
+    },
+    {
+        "update_name": "visionOS 2.1",
+        "update_link": "/ja-jp/121566",
+        "description": "Apple Vision Pro",
+        "update_date": "2024-10-28"
+    },
+    {
+        "update_name": "Windows用Apple Music 1.5.0.152",
+        "update_link": "/ja-jp/122043",
+        "description": "Intelマシン用Windows 10 22H2以降、Armマシン用Windows 11 24H2以降",
+        "update_date": "2024-10-03"
+    },
+    {
+        "update_name": "Windows用Apple TV 1.5.0.152",
+        "update_link": "/ja-jp/121441",
+        "description": "Windows 10 22H2以降",
+        "update_date": "2024-10-03"
+    },
+    {
+        "update_name": "iOS 18.0.1およびiPadOS 18.0.1",
+        "update_link": "/ja-jp/121373",
+        "description": "iPhone XS以降、iPad Pro 13インチ、iPad Pro 12.9インチ（第3世代）以降、iPad Pro 11インチ（第1世代）以降、iPad Air（第3世代）以降、iPad（第7世代）以降、iPad mini（第5世代）以降",
+        "update_date": "2024-10-03"
+    },
+    {
+        "update_name": "macOS Sequoia 15.0.1このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "macOS Sequoia",
+        "update_date": "2024-10-03"
+    },
+    {
+        "update_name": "watchOS 11.0.1このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "Apple Watch Series 6以降",
+        "update_date": "2024-10-03"
+    },
+    {
+        "update_name": "visionOS 2.0.1このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "2024-10-03"
+    },
+    {
+        "update_name": "Safari 18.0.1このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "macOS VenturaおよびmacOS Sonoma",
+        "update_date": "2024-10-03"
+    },
+    {
+        "update_name": "iOS 18およびiPadOS 18",
+        "update_link": "/ja-jp/121250",
+        "description": "iPhone XS以降、iPad Pro 13インチ、iPad Pro 12.9インチ（第3世代）以降、iPad Pro 11インチ（第1世代）以降、iPad Air（第3世代）以降、iPad（第7世代）以降、iPad mini（第5世代）以降",
+        "update_date": "2024-09-16"
+    },
+    {
+        "update_name": "macOS Sequoia 15",
+        "update_link": "/ja-jp/121238",
+        "description": "Mac Studio（2022年以降）、iMac（2019年以降）、Mac Pro（2019年以降）、Mac mini（2018年以降）、MacBook Air（2020年以降）、MacBook Pro（2018年以降）、iMac Pro（2017年以降）",
+        "update_date": "2024-09-16"
+    },
+    {
+        "update_name": "tvOS 18",
+        "update_link": "/ja-jp/121248",
+        "description": "Apple TV HDおよびApple TV 4K（すべてのモデル）",
+        "update_date": "2024-09-16"
+    },
+    {
+        "update_name": "watchOS 11",
+        "update_link": "/ja-jp/121240",
+        "description": "Apple Watch Series 6以降",
+        "update_date": "2024-09-16"
+    },
+    {
+        "update_name": "visionOS 2",
+        "update_link": "/ja-jp/121249",
+        "description": "Apple Vision Pro",
+        "update_date": "2024-09-16"
+    },
+    {
+        "update_name": "Safari 18",
+        "update_link": "/ja-jp/121241",
+        "description": "macOS VenturaおよびmacOS Sonoma",
+        "update_date": "2024-09-16"
+    },
+    {
+        "update_name": "Xcode 16",
+        "update_link": "/ja-jp/121239",
+        "description": "macOS Sonoma 14.5以降",
+        "update_date": "2024-09-16"
+    },
+    {
+        "update_name": "iOS 17.7およびiPadOS 17.7",
+        "update_link": "/ja-jp/121246",
+        "description": "iPhone XS以降、iPad Pro 13インチ、iPad Pro 12.9インチ（第2世代）以降、iPad Pro 10.5インチ、iPad Pro 11インチ（第1世代）以降、iPad Air（第3世代）以降、iPad（第6世代）以降、iPad mini（第5世代）以降",
+        "update_date": "2024-09-16"
+    },
+    {
+        "update_name": "macOS Sonoma 14.7",
+        "update_link": "/ja-jp/121247",
+        "description": "macOS Sonoma",
+        "update_date": "2024-09-16"
+    },
+    {
+        "update_name": "macOS Ventura 13.7",
+        "update_link": "/ja-jp/121234",
+        "description": "macOS Ventura",
+        "update_date": "2024-09-16"
+    },
+    {
+        "update_name": "iTunes 12.13.3 for Windows",
+        "update_link": "/ja-jp/121328",
+        "description": "Windows 10以降",
+        "update_date": "2024-09-12"
+    },
+    {
+        "update_name": "watchOS 10.6.1このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "Apple Watch Series 4以降",
+        "update_date": "2024-08-19"
+    },
+    {
+        "update_name": "tvOS 17.6.1このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "Apple TV HDおよびApple TV 4K（すべてのモデル）",
+        "update_date": "2024-08-19"
+    },
+    {
+        "update_name": "iOS 17.6.1およびiPadOS 17.6.1このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "iPhone XS以降、iPad Pro 13インチ、iPad Pro 12.9インチ（第2世代）以降、iPad Pro 10.5インチ、iPad Pro 11インチ（第1世代）以降、iPad Air（第3世代）以降、iPad（第6世代）以降、iPad mini（第5世代）以降",
+        "update_date": "2024-08-07"
+    },
+    {
+        "update_name": "iOS 16.7.10およびiPadOS 16.7.10このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "iPhone 8、iPhone 8 Plus、iPhone X、iPad（第5世代）、iPad Pro 9.7インチ、iPad Pro 12.9インチ（第1世代）",
+        "update_date": "2024-08-07"
+    },
+    {
+        "update_name": "macOS Sonoma 14.6.1このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "macOS Sonoma",
+        "update_date": "2024-08-07"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.9このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "macOS Ventura",
+        "update_date": "2024-08-07"
+    },
+    {
+        "update_name": "Safari 17.6",
+        "update_link": "/ja-jp/120913",
+        "description": "macOS MontereyおよびmacOS Ventura",
+        "update_date": "2024-07-29"
+    },
+    {
+        "update_name": "iOS 17.6およびiPadOS 17.6",
+        "update_link": "/ja-jp/120909",
+        "description": "iPhone XS以降、iPad Pro 13インチ、iPad Pro 12.9インチ（第2世代）以降、iPad Pro 10.5インチ、iPad Pro 11インチ（第1世代）以降、iPad Air（第3世代）以降、iPad（第6世代）以降、iPad mini（第5世代）以降",
+        "update_date": "2024-07-29"
+    },
+    {
+        "update_name": "iOS 16.7.9およびiPadOS 16.7.9",
+        "update_link": "/ja-jp/120908",
+        "description": "iPhone 8、iPhone 8 Plus、iPhone X、iPad（第5世代）、iPad Pro 9.7インチ、iPad Pro 12.9インチ（第1世代）",
+        "update_date": "2024-07-29"
+    },
+    {
+        "update_name": "macOS Sonoma 14.6",
+        "update_link": "/ja-jp/120911",
+        "description": "macOS Sonoma",
+        "update_date": "2024-07-29"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.8",
+        "update_link": "/ja-jp/120912",
+        "description": "macOS Ventura",
+        "update_date": "2024-07-29"
+    },
+    {
+        "update_name": "macOS Monterey 12.7.6",
+        "update_link": "/ja-jp/120910",
+        "description": "macOS Monterey",
+        "update_date": "2024-07-29"
+    },
+    {
+        "update_name": "watchOS 10.6",
+        "update_link": "/ja-jp/120916",
+        "description": "Apple Watch Series 4以降",
+        "update_date": "2024-07-29"
+    },
+    {
+        "update_name": "tvOS 17.6",
+        "update_link": "/ja-jp/120914",
+        "description": "Apple TV HDおよびApple TV 4K（すべてのモデル）",
+        "update_date": "2024-07-29"
+    },
+    {
+        "update_name": "visionOS 1.3",
+        "update_link": "/ja-jp/120915",
+        "description": "Apple Vision Pro",
+        "update_date": "2024-07-29"
+    },
+    {
+        "update_name": "iOS 15.8.3およびiPadOS 15.8.3このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "iPhone 6s（すべてのモデル）、iPhone 7（すべてのモデル）、iPhone SE（第1世代）、iPad Air 2、iPad mini（第4世代）、iPod touch（第7世代）",
+        "update_date": "2024-07-29"
+    },
+    {
+        "update_name": "AirPodsファームウェアアップデート6A326、AirPodsファームウェアアップデート6F8、Beatsファームウェアアップデート6F8",
+        "update_link": "/ja-jp/120907",
+        "description": "AirPods（第2世代以降）、AirPods Pro（すべてのモデル）、AirPods Max、Powerbeats Pro、Beats Fit Pro",
+        "update_date": "2024-06-25"
+    },
+    {
+        "update_name": "visionOS 1.2",
+        "update_link": "/ja-jp/120906",
+        "description": "Apple Vision Pro",
+        "update_date": "2024-06-10"
+    },
+    {
+        "update_name": "tvOS 17.5.1このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "Apple TV HDおよびApple TV 4K（すべてのモデル）",
+        "update_date": "2024-05-21"
+    },
+    {
+        "update_name": "iOS 17.5.1およびiPadOS 17.5.1このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "iPhone XS以降、iPad Pro 13インチ、iPad Pro 12.9インチ（第2世代）以降、iPad Pro 10.5インチ、iPad Pro 11インチ（第1世代）以降、iPad Air（第3世代）以降、iPad（第6世代）以降、iPad mini（第5世代）以降",
+        "update_date": "2024-05-20"
+    },
+    {
+        "update_name": "Safari 17.5",
+        "update_link": "/ja-jp/120896",
+        "description": "macOS MontereyおよびmacOS Ventura",
+        "update_date": "2024-05-13"
+    },
+    {
+        "update_name": "iOS 17.5およびiPadOS 17.5",
+        "update_link": "/ja-jp/120905",
+        "description": "iPhone XS以降、iPad Pro 13インチ、iPad Pro 12.9インチ（第2世代）以降、iPad Pro 10.5インチ、iPad Pro 11インチ（第1世代）以降、iPad Air（第3世代）以降、iPad（第6世代）以降、iPad mini（第5世代）以降",
+        "update_date": "2024-05-13"
+    },
+    {
+        "update_name": "iOS 16.7.8およびiPadOS 16.7.8",
+        "update_link": "/ja-jp/120898",
+        "description": "iPhone 8、iPhone 8 Plus、iPhone X、iPad（第5世代）、iPad Pro 9.7インチ、iPad Pro 12.9インチ（第1世代）",
+        "update_date": "2024-05-13"
+    },
+    {
+        "update_name": "macOS Sonoma 14.5",
+        "update_link": "/ja-jp/120903",
+        "description": "macOS Sonoma",
+        "update_date": "2024-05-13"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.7",
+        "update_link": "/ja-jp/120900",
+        "description": "macOS Ventura",
+        "update_date": "2024-05-13"
+    },
+    {
+        "update_name": "macOS Monterey 12.7.5",
+        "update_link": "/ja-jp/120899",
+        "description": "macOS Monterey",
+        "update_date": "2024-05-13"
+    },
+    {
+        "update_name": "watchOS 10.5",
+        "update_link": "/ja-jp/120902",
+        "description": "Apple Watch Series 4以降",
+        "update_date": "2024-05-13"
+    },
+    {
+        "update_name": "tvOS 17.5",
+        "update_link": "/ja-jp/120901",
+        "description": "Apple TV HDおよびApple TV 4K（すべてのモデル）",
+        "update_date": "2024-05-13"
+    },
+    {
+        "update_name": "iTunes 12.13.2 for Windows",
+        "update_link": "/ja-jp/120897",
+        "description": "Windows 10以降",
+        "update_date": "2024-05-08"
+    },
+    {
+        "update_name": "visionOS 1.1.2このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "2024-04-09"
+    },
+    {
+        "update_name": "Safari 17.4.1",
+        "update_link": "/ja-jp/120888",
+        "description": "macOS MontereyおよびmacOS Ventura",
+        "update_date": "2024-03-25"
+    },
+    {
+        "update_name": "macOS Sonoma 14.4.1",
+        "update_link": "/ja-jp/120889",
+        "description": "macOS Sonoma",
+        "update_date": "2024-03-25"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.6",
+        "update_link": "/ja-jp/120891",
+        "description": "macOS Ventura",
+        "update_date": "2024-03-25"
+    },
+    {
+        "update_name": "iOS 17.4.1およびiPadOS 17.4.1",
+        "update_link": "/ja-jp/120890",
+        "description": "iPhone XS以降、iPad Pro 12.9インチ（第2世代）以降、iPad Pro 10.5インチ、iPad Pro 11インチ（第1世代）以降、iPad Air（第3世代）以降、iPad（第6世代）以降、iPad mini（第5世代）以降",
+        "update_date": "2024-03-21"
+    },
+    {
+        "update_name": "iOS 16.7.7およびiPadOS 16.7.7",
+        "update_link": "/ja-jp/120892",
+        "description": "iPhone 8、iPhone 8 Plus、iPhone X、iPad（第5世代）、iPad Pro 9.7インチ、iPad Pro 12.9インチ（第1世代）",
+        "update_date": "2024-03-21"
+    },
+    {
+        "update_name": "visionOS 1.1.1",
+        "update_link": "/ja-jp/120312",
+        "description": "Apple Vision Pro",
+        "update_date": "2024-03-21"
+    },
+    {
+        "update_name": "GarageBand 10.4.11",
+        "update_link": "/ja-jp/120885",
+        "description": "macOS VenturaおよびmacOS Sonoma",
+        "update_date": "2024-03-12"
+    },
+    {
+        "update_name": "Safari 17.4",
+        "update_link": "/ja-jp/120894",
+        "description": "macOS MontereyおよびmacOS Ventura",
+        "update_date": "2024-03-07"
+    },
+    {
+        "update_name": "macOS Sonoma 14.4",
+        "update_link": "/ja-jp/120895",
+        "description": "macOS Sonoma",
+        "update_date": "2024-03-07"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.5",
+        "update_link": "/ja-jp/120886",
+        "description": "macOS Ventura",
+        "update_date": "2024-03-07"
+    },
+    {
+        "update_name": "macOS Monterey 12.7.4",
+        "update_link": "/ja-jp/120884",
+        "description": "macOS Monterey",
+        "update_date": "2024-03-07"
+    },
+    {
+        "update_name": "watchOS 10.4",
+        "update_link": "/ja-jp/120881",
+        "description": "Apple Watch Series 4以降",
+        "update_date": "2024-03-07"
+    },
+    {
+        "update_name": "tvOS 17.4",
+        "update_link": "/ja-jp/120882",
+        "description": "Apple TV HDおよびApple TV 4K（すべてのモデル）",
+        "update_date": "2024-03-07"
+    },
+    {
+        "update_name": "visionOS 1.1",
+        "update_link": "/ja-jp/120883",
+        "description": "Apple Vision Pro",
+        "update_date": "2024-03-07"
+    },
+    {
+        "update_name": "Xcode 15.3",
+        "update_link": "/ja-jp/120887",
+        "description": "macOS Sonoma 14以降",
+        "update_date": "2024-03-05"
+    },
+    {
+        "update_name": "iOS 17.4およびiPadOS 17.4",
+        "update_link": "/ja-jp/120893",
+        "description": "iPhone XS以降、iPad Pro 12.9インチ（第2世代）以降、iPad Pro 10.5インチ、iPad Pro 11インチ（第1世代）以降、iPad Air（第3世代）以降、iPad（第6世代）以降、iPad mini（第5世代）以降",
+        "update_date": "2024-03-05"
+    },
+    {
+        "update_name": "iOS 16.7.6およびiPadOS 16.7.6",
+        "update_link": "/ja-jp/120880",
+        "description": "iPhone 8、iPhone 8 Plus、iPhone X、iPad（第5世代）、iPad Pro 9.7インチ、iPad Pro 12.9インチ（第1世代）",
+        "update_date": "2024-03-05"
+    },
+    {
+        "update_name": "iOS 15.8.2およびiPadOS 15.8.2このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "iPhone 6s（すべてのモデル）、iPhone 7（すべてのモデル）、iPhone SE（第1世代）、iPad Air 2、iPad mini（第4世代）、iPod touch（第7世代）",
+        "update_date": "2024-03-05"
+    },
+    {
+        "update_name": "visionOS 1.0.3このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "2024-02-12"
+    },
+    {
+        "update_name": "Safari 17.3.1このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "macOS MontereyおよびmacOS Ventura",
+        "update_date": "2024-02-09"
+    },
+    {
+        "update_name": "iOS 17.3.1およびiPadOS 17.3.1このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "iPhone XS以降、iPad Pro 12.9インチ（第2世代）以降、iPad Pro 10.5インチ、iPad Pro 11インチ（第1世代）以降、iPad Air（第3世代）以降、iPad（第6世代）以降、iPad mini（第5世代）以降",
+        "update_date": "2024-02-08"
+    },
+    {
+        "update_name": "macOS Sonoma 14.3.1このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "macOS Sonoma",
+        "update_date": "2024-02-08"
+    },
+    {
+        "update_name": "watchOS 10.3.1このアップデートにはCVEの公開エントリがありません。",
+        "update_link": null,
+        "description": "Apple Watch Series 4以降",
+        "update_date": "2024-02-08"
+    },
+    {
+        "update_name": "visionOS 1.0.2",
+        "update_link": "/ja-jp/118479",
+        "description": "Apple Vision Pro",
+        "update_date": "2024-01-31"
+    },
+    {
+        "update_name": "Safari 17.3",
+        "update_link": "/ja-jp/120339",
+        "description": "macOS MontereyおよびmacOS Ventura",
+        "update_date": "2024-01-22"
+    },
+    {
+        "update_name": "iOS 17.3およびiPadOS 17.3",
+        "update_link": "/ja-jp/120304",
+        "description": "iPhone XS以降、iPad Pro 12.9インチ（第2世代）以降、iPad Pro 10.5インチ、iPad Pro 11インチ（第1世代）以降、iPad Air（第3世代）以降、iPad（第6世代）以降、iPad mini（第5世代）以降",
+        "update_date": "2024-01-22"
+    },
+    {
+        "update_name": "iOS 16.7.5およびiPadOS 16.7.5",
+        "update_link": "/ja-jp/120310",
+        "description": "iPhone 8、iPhone 8 Plus、iPhone X、iPad（第5世代）、iPad Pro 9.7インチ、iPad Pro 12.9インチ（第1世代）",
+        "update_date": "2024-01-22"
+    },
+    {
+        "update_name": "iOS 15.8.1およびiPadOS 15.8.1",
+        "update_link": "/ja-jp/120308",
+        "description": "iPhone 6s（すべてのモデル）、iPhone 7（すべてのモデル）、iPhone SE（第1世代）、iPad Air 2、iPad mini（第4世代）、iPod touch（第7世代）",
+        "update_date": "2024-01-22"
+    },
+    {
+        "update_name": "macOS Sonoma 14.3",
+        "update_link": "/ja-jp/120309",
+        "description": "macOS Sonoma",
+        "update_date": "2024-01-22"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.4",
+        "update_link": "/ja-jp/120307",
+        "description": "macOS Ventura",
+        "update_date": "2024-01-22"
+    },
+    {
+        "update_name": "macOS Monterey 12.7.3",
+        "update_link": "/ja-jp/120305",
+        "description": "macOS Monterey",
+        "update_date": "2024-01-22"
+    },
+    {
+        "update_name": "watchOS 10.3",
+        "update_link": "/ja-jp/120306",
+        "description": "Apple Watch Series 4以降",
+        "update_date": "2024-01-22"
+    },
+    {
+        "update_name": "tvOS 17.3",
+        "update_link": "/ja-jp/120311",
+        "description": "Apple TV HDおよびApple TV 4K（すべてのモデル）",
+        "update_date": "2024-01-22"
+    },
+    {
+        "update_name": "Magic Keyboardファームウェアアップデート2.0.6",
+        "update_link": "/ja-jp/120303",
+        "description": "Magic Keyboard、Magic Keyboard（2021）、Magic Keyboard（テンキー付き）、Magic Keyboard（Touch ID搭載）、Magic Keyboard（Touch ID搭載、テンキー付き）",
+        "update_date": "2024-01-09"
+    }
+]

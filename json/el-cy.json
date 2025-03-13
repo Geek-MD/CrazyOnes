@@ -1,0 +1,776 @@
+[
+    {
+        "update_name": "Safari 18.3.1",
+        "update_link": "/el-cy/122285",
+        "description": "macOS Ventura και macOS Sonoma",
+        "update_date": "11 Μαρτίου 2025"
+    },
+    {
+        "update_name": "iOS 18.3.2 και iPadOS 18.3.2",
+        "update_link": "/el-cy/122281",
+        "description": "iPhone XS και νεότερα μοντέλα, iPad Pro 13 ιντσών, iPad Pro 12,9 ιντσών 3ης γενιάς και νεότερα μοντέλα, iPad Pro 11 ιντσών 1ης γενιάς και νεότερα μοντέλα, iPad Air 3ης γενιάς και νεότερα μοντέλα, iPad 7ης γενιάς και νεότερα μοντέλα και iPad mini 5ης γενιάς και νεότερα μοντέλα",
+        "update_date": "11 Μαρτίου 2025"
+    },
+    {
+        "update_name": "macOS Sequoia 15.3.2",
+        "update_link": "/el-cy/122283",
+        "description": "macOS Sequoia",
+        "update_date": "11 Μαρτίου 2025"
+    },
+    {
+        "update_name": "visionOS 2.3.2",
+        "update_link": "/el-cy/122284",
+        "description": "Apple Vision Pro",
+        "update_date": "11 Μαρτίου 2025"
+    },
+    {
+        "update_name": "tvOS 18.3.1Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "Apple TV 4K (3ης γενιάς)",
+        "update_date": "11 Μαρτίου 2025"
+    },
+    {
+        "update_name": "iOS 18.3.1 και iPadOS 18.3.1",
+        "update_link": "/el-cy/122174",
+        "description": "iPhone XS και νεότερα μοντέλα, iPad Pro 13 ιντσών, iPad Pro 12,9 ιντσών 3ης γενιάς και νεότερα μοντέλα, iPad Pro 11 ιντσών 1ης γενιάς και νεότερα μοντέλα, iPad Air 3ης γενιάς και νεότερα μοντέλα, iPad 7ης γενιάς και νεότερα μοντέλα και iPad mini 5ης γενιάς και νεότερα μοντέλα",
+        "update_date": "10 Φεβρουαρίου 2025"
+    },
+    {
+        "update_name": "iPadOS 17.7.5",
+        "update_link": "/el-cy/122173",
+        "description": "iPad Pro 12,9 ιντσών 2ης γενιάς, iPad Pro 10,5 ιντσών και iPad 6ης γενιάς",
+        "update_date": "10 Φεβρουαρίου 2025"
+    },
+    {
+        "update_name": "macOS Sequoia 15.3.1Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "macOS Sequoia",
+        "update_date": "10 Φεβρουαρίου 2025"
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.4Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "macOS Sonoma",
+        "update_date": "10 Φεβρουαρίου 2025"
+    },
+    {
+        "update_name": "macOS Ventura 13.7.4Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "macOS Ventura",
+        "update_date": "10 Φεβρουαρίου 2025"
+    },
+    {
+        "update_name": "watchOS 11.3.1Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "Apple Watch Series 6 και νεότερα μοντέλα",
+        "update_date": "10 Φεβρουαρίου 2025"
+    },
+    {
+        "update_name": "visionOS 2.3.1Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "10 Φεβρουαρίου 2025"
+    },
+    {
+        "update_name": "GarageBand 10.4.12",
+        "update_link": "/el-cy/121866",
+        "description": "macOS Sonoma 14.4 και νεότερη έκδοση",
+        "update_date": "30 Ιανουαρίου 2025"
+    },
+    {
+        "update_name": "visionOS 2.3",
+        "update_link": "/el-cy/122073",
+        "description": "Apple Vision Pro",
+        "update_date": "27 Ιανουαρίου 2025"
+    },
+    {
+        "update_name": "iOS 18.3 και iPadOS 18.3",
+        "update_link": "/el-cy/122066",
+        "description": "iPhone XS και νεότερα μοντέλα, iPad Pro 13 ιντσών, iPad Pro 12,9 ιντσών 3ης γενιάς και νεότερα μοντέλα, iPad Pro 11 ιντσών 1ης γενιάς και νεότερα μοντέλα, iPad Air 3ης γενιάς και νεότερα μοντέλα, iPad 7ης γενιάς και νεότερα μοντέλα και iPad mini 5ης γενιάς και νεότερα μοντέλα",
+        "update_date": "27 Ιανουαρίου 2025"
+    },
+    {
+        "update_name": "iPadOS 17.7.4",
+        "update_link": "/el-cy/122067",
+        "description": "iPad Pro 12,9 ιντσών 2ης γενιάς, iPad Pro 10,5 ιντσών και iPad 6ης γενιάς",
+        "update_date": "27 Ιανουαρίου 2025"
+    },
+    {
+        "update_name": "macOS Sequoia 15.3",
+        "update_link": "/el-cy/122068",
+        "description": "macOS Sequoia",
+        "update_date": "27 Ιανουαρίου 2025"
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.3",
+        "update_link": "/el-cy/122069",
+        "description": "macOS Sonoma",
+        "update_date": "27 Ιανουαρίου 2025"
+    },
+    {
+        "update_name": "macOS Ventura 13.7.3",
+        "update_link": "/el-cy/122070",
+        "description": "macOS Ventura",
+        "update_date": "27 Ιανουαρίου 2025"
+    },
+    {
+        "update_name": "watchOS 11.3",
+        "update_link": "/el-cy/122071",
+        "description": "Apple Watch Series 6 και νεότερα μοντέλα",
+        "update_date": "27 Ιανουαρίου 2025"
+    },
+    {
+        "update_name": "tvOS 18.3",
+        "update_link": "/el-cy/122072",
+        "description": "Apple TV HD και Apple TV 4K (όλα τα μοντέλα)",
+        "update_date": "27 Ιανουαρίου 2025"
+    },
+    {
+        "update_name": "Safari 18.3",
+        "update_link": "/el-cy/122074",
+        "description": "macOS Ventura και macOS Sonoma",
+        "update_date": "27 Ιανουαρίου 2025"
+    },
+    {
+        "update_name": "tvOS 18.2.1Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "Apple TV HD και Apple TV 4K (όλα τα μοντέλα)",
+        "update_date": "16 Ιανουαρίου 2025"
+    },
+    {
+        "update_name": "iOS 18.2.1 και iPadOS 18.2.1Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "iPhone XS και νεότερα μοντέλα, iPad Pro 13 ιντσών, iPad Pro 12,9 ιντσών 3ης γενιάς και νεότερα μοντέλα, iPad Pro 11 ιντσών 1ης γενιάς και νεότερα μοντέλα, iPad Air 3ης γενιάς και νεότερα μοντέλα, iPad 7ης γενιάς και νεότερα μοντέλα και iPad mini 5ης γενιάς και νεότερα μοντέλα",
+        "update_date": "6 Ιανουαρίου 2025"
+    },
+    {
+        "update_name": "Safari 18.2",
+        "update_link": "/el-cy/121846",
+        "description": "macOS Ventura και macOS Sonoma",
+        "update_date": "11 Δεκεμβρίου 2024"
+    },
+    {
+        "update_name": "iOS 18.2 και iPadOS 18.2",
+        "update_link": "/el-cy/121837",
+        "description": "iPhone XS και νεότερα μοντέλα, iPad Pro 13 ιντσών, iPad Pro 12,9 ιντσών 3ης γενιάς και νεότερα μοντέλα, iPad Pro 11 ιντσών 1ης γενιάς και νεότερα μοντέλα, iPad Air 3ης γενιάς και νεότερα μοντέλα, iPad 7ης γενιάς και νεότερα μοντέλα και iPad mini 5ης γενιάς και νεότερα μοντέλα",
+        "update_date": "11 Δεκεμβρίου 2024"
+    },
+    {
+        "update_name": "iPadOS 17.7.3",
+        "update_link": "/el-cy/121838",
+        "description": "iPad Pro 12,9 ιντσών 2ης γενιάς, iPad Pro 10,5 ιντσών και iPad 6ης γενιάς",
+        "update_date": "11 Δεκεμβρίου 2024"
+    },
+    {
+        "update_name": "macOS Sequoia 15.2",
+        "update_link": "/el-cy/121839",
+        "description": "macOS Sequoia",
+        "update_date": "11 Δεκεμβρίου 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.2",
+        "update_link": "/el-cy/121840",
+        "description": "macOS Sonoma",
+        "update_date": "11 Δεκεμβρίου 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.7.2",
+        "update_link": "/el-cy/121842",
+        "description": "macOS Ventura",
+        "update_date": "11 Δεκεμβρίου 2024"
+    },
+    {
+        "update_name": "watchOS 11.2",
+        "update_link": "/el-cy/121843",
+        "description": "Apple Watch Series 6 και νεότερα μοντέλα",
+        "update_date": "11 Δεκεμβρίου 2024"
+    },
+    {
+        "update_name": "tvOS 18.2",
+        "update_link": "/el-cy/121844",
+        "description": "Apple TV HD και Apple TV 4K (όλα τα μοντέλα)",
+        "update_date": "11 Δεκεμβρίου 2024"
+    },
+    {
+        "update_name": "visionOS 2.2",
+        "update_link": "/el-cy/121845",
+        "description": "Apple Vision Pro",
+        "update_date": "11 Δεκεμβρίου 2024"
+    },
+    {
+        "update_name": "Safari 18.1.1",
+        "update_link": "/el-cy/121756",
+        "description": "macOS Ventura και macOS Sonoma",
+        "update_date": "19 Νοεμβρίου 2024"
+    },
+    {
+        "update_name": "visionOS 2.1.1",
+        "update_link": "/el-cy/121755",
+        "description": "Apple Vision Pro",
+        "update_date": "19 Νοεμβρίου 2024"
+    },
+    {
+        "update_name": "iOS 18.1.1 και iPadOS 18.1.1",
+        "update_link": "/el-cy/121752",
+        "description": "iPhone XS και νεότερα μοντέλα, iPad Pro 13 ιντσών, iPad Pro 12,9 ιντσών 3ης γενιάς και νεότερα μοντέλα, iPad Pro 11 ιντσών 1ης γενιάς και νεότερα μοντέλα, iPad Air 3ης γενιάς και νεότερα μοντέλα, iPad 7ης γενιάς και νεότερα μοντέλα και iPad mini 5ης γενιάς και νεότερα μοντέλα",
+        "update_date": "19 Νοεμβρίου 2024"
+    },
+    {
+        "update_name": "iOS 17.7.2 και iPadOS 17.7.2",
+        "update_link": "/el-cy/121754",
+        "description": "iPhone XS και νεότερα μοντέλα, iPad Pro 13 ιντσών, iPad Pro 12,9 ιντσών 2ης γενιάς και νεότερα μοντέλα, iPad Pro 10,5 ιντσών, iPad Pro 11 ιντσών 1ης γενιάς και νεότερα μοντέλα, iPad Air 3ης γενιάς και νεότερα μοντέλα, iPad 6ης γενιάς και νεότερα μοντέλα και iPad mini 5ης γενιάς και νεότερα μοντέλα",
+        "update_date": "19 Νοεμβρίου 2024"
+    },
+    {
+        "update_name": "macOS Sequoia 15.1.1",
+        "update_link": "/el-cy/121753",
+        "description": "macOS Sequoia",
+        "update_date": "19 Νοεμβρίου 2024"
+    },
+    {
+        "update_name": "Safari 18.1",
+        "update_link": "/el-cy/121571",
+        "description": "macOS Ventura και macOS Sonoma",
+        "update_date": "29 Οκτωβρίου 2024"
+    },
+    {
+        "update_name": "iOS 18.1 και iPadOS 18.1",
+        "update_link": "/el-cy/121563",
+        "description": "iPhone XS και νεότερα μοντέλα, iPad Pro 13 ιντσών, iPad Pro 12,9 ιντσών 3ης γενιάς και νεότερα μοντέλα, iPad Pro 11 ιντσών 1ης γενιάς και νεότερα μοντέλα, iPad Air 3ης γενιάς και νεότερα μοντέλα, iPad 7ης γενιάς και νεότερα μοντέλα και iPad mini 5ης γενιάς και νεότερα μοντέλα",
+        "update_date": "28 Οκτωβρίου 2024"
+    },
+    {
+        "update_name": "iOS 17.7.1 και iPadOS 17.7.1",
+        "update_link": "/el-cy/121567",
+        "description": "iPhone XS και νεότερα μοντέλα, iPad Pro 13 ιντσών, iPad Pro 12,9 ιντσών 2ης γενιάς και νεότερα μοντέλα, iPad Pro 10,5 ιντσών, iPad Pro 11 ιντσών 1ης γενιάς και νεότερα μοντέλα, iPad Air 3ης γενιάς και νεότερα μοντέλα, iPad 6ης γενιάς και νεότερα μοντέλα και iPad mini 5ης γενιάς και νεότερα μοντέλα",
+        "update_date": "28 Οκτωβρίου 2024"
+    },
+    {
+        "update_name": "macOS Sequoia 15.1",
+        "update_link": "/el-cy/121564",
+        "description": "macOS Sequoia",
+        "update_date": "28 Οκτωβρίου 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.1",
+        "update_link": "/el-cy/121570",
+        "description": "macOS Sonoma",
+        "update_date": "28 Οκτωβρίου 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.7.1",
+        "update_link": "/el-cy/121568",
+        "description": "macOS Ventura",
+        "update_date": "28 Οκτωβρίου 2024"
+    },
+    {
+        "update_name": "watchOS 11.1",
+        "update_link": "/el-cy/121565",
+        "description": "Apple Watch Series 6 και νεότερα μοντέλα",
+        "update_date": "28 Οκτωβρίου 2024"
+    },
+    {
+        "update_name": "tvOS 18.1",
+        "update_link": "/el-cy/121569",
+        "description": "Apple TV HD και Apple TV 4K (όλα τα μοντέλα)",
+        "update_date": "28 Οκτωβρίου 2024"
+    },
+    {
+        "update_name": "visionOS 2.1",
+        "update_link": "/el-cy/121566",
+        "description": "Apple Vision Pro",
+        "update_date": "28 Οκτωβρίου 2024"
+    },
+    {
+        "update_name": "Apple Music 1.5.0.152 για Windows",
+        "update_link": "/el-cy/122043",
+        "description": "Windows 10 22H2 και νεότερες εκδόσεις για υπολογιστές Intel, Windows 11 24H2 και νεότερες εκδόσεις για υπολογιστές Arm",
+        "update_date": "3 Οκτωβρίου 2024"
+    },
+    {
+        "update_name": "Apple TV 1.5.0.152 για Windows",
+        "update_link": "/el-cy/121441",
+        "description": "Windows 10 22H2 και νεότερη έκδοση",
+        "update_date": "3 Οκτωβρίου 2024"
+    },
+    {
+        "update_name": "iOS 18.0.1 και iPadOS 18.0.1",
+        "update_link": "/el-cy/121373",
+        "description": "iPhone XS και νεότερα μοντέλα, iPad Pro 13 ιντσών, iPad Pro 12,9 ιντσών 3ης γενιάς και νεότερα μοντέλα, iPad Pro 11 ιντσών 1ης γενιάς και νεότερα μοντέλα, iPad Air 3ης γενιάς και νεότερα μοντέλα, iPad 7ης γενιάς και νεότερα μοντέλα και iPad mini 5ης γενιάς και νεότερα μοντέλα",
+        "update_date": "3 Οκτωβρίου 2024"
+    },
+    {
+        "update_name": "macOS Sequoia 15.0.1Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "macOS Sequoia",
+        "update_date": "3 Οκτωβρίου 2024"
+    },
+    {
+        "update_name": "watchOS 11.0.1Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "Apple Watch Series 6 και νεότερα μοντέλα",
+        "update_date": "3 Οκτωβρίου 2024"
+    },
+    {
+        "update_name": "visionOS 2.0.1Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "3 Οκτωβρίου 2024"
+    },
+    {
+        "update_name": "Safari 18.0.1Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "macOS Ventura και macOS Sonoma",
+        "update_date": "3 Οκτωβρίου 2024"
+    },
+    {
+        "update_name": "iOS 18 και iPadOS 18",
+        "update_link": "/el-cy/121250",
+        "description": "iPhone XS και νεότερα μοντέλα, iPad Pro 13 ιντσών, iPad Pro 12,9 ιντσών 3ης γενιάς και νεότερα μοντέλα, iPad Pro 11 ιντσών 1ης γενιάς και νεότερα μοντέλα, iPad Air 3ης γενιάς και νεότερα μοντέλα, iPad 7ης γενιάς και νεότερα μοντέλα και iPad mini 5ης γενιάς και νεότερα μοντέλα",
+        "update_date": "16 Σεπτεμβρίου 2024"
+    },
+    {
+        "update_name": "macOS Sequoia 15",
+        "update_link": "/el-cy/121238",
+        "description": "Mac Studio (2022 και νεότερα μοντέλα), iMac (2019 και νεότερα μοντέλα), Mac Pro (2019 και νεότερα μοντέλα), Mac mini (2018 και νεότερα μοντέλα), MacBook Air (2020 και νεότερα μοντέλα), MacBook Pro (2018 και νεότερα μοντέλα) και iMac Pro (2017 και νεότερα μοντέλα)",
+        "update_date": "16 Σεπτεμβρίου 2024"
+    },
+    {
+        "update_name": "tvOS 18",
+        "update_link": "/el-cy/121248",
+        "description": "Apple TV HD και Apple TV 4K (όλα τα μοντέλα)",
+        "update_date": "16 Σεπτεμβρίου 2024"
+    },
+    {
+        "update_name": "watchOS 11",
+        "update_link": "/el-cy/121240",
+        "description": "Apple Watch Series 6 και νεότερα μοντέλα",
+        "update_date": "16 Σεπτεμβρίου 2024"
+    },
+    {
+        "update_name": "visionOS 2",
+        "update_link": "/el-cy/121249",
+        "description": "Apple Vision Pro",
+        "update_date": "16 Σεπτεμβρίου 2024"
+    },
+    {
+        "update_name": "Safari 18",
+        "update_link": "/el-cy/121241",
+        "description": "macOS Ventura και macOS Sonoma",
+        "update_date": "16 Σεπτεμβρίου 2024"
+    },
+    {
+        "update_name": "Xcode 16",
+        "update_link": "/el-cy/121239",
+        "description": "macOS Sonoma 14.5 και νεότερη έκδοση",
+        "update_date": "16 Σεπτεμβρίου 2024"
+    },
+    {
+        "update_name": "iOS 17.7 και iPadOS 17.7",
+        "update_link": "/el-cy/121246",
+        "description": "iPhone XS και νεότερα μοντέλα, iPad Pro 13 ιντσών, iPad Pro 12,9 ιντσών 2ης γενιάς και νεότερα μοντέλα, iPad Pro 10,5 ιντσών, iPad Pro 11 ιντσών 1ης γενιάς και νεότερα μοντέλα, iPad Air 3ης γενιάς και νεότερα μοντέλα, iPad 6ης γενιάς και νεότερα μοντέλα και iPad mini 5ης γενιάς και νεότερα μοντέλα",
+        "update_date": "16 Σεπτεμβρίου 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.7",
+        "update_link": "/el-cy/121247",
+        "description": "macOS Sonoma",
+        "update_date": "16 Σεπτεμβρίου 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.7",
+        "update_link": "/el-cy/121234",
+        "description": "macOS Ventura",
+        "update_date": "16 Σεπτεμβρίου 2024"
+    },
+    {
+        "update_name": "iTunes 12.13.3 για Windows",
+        "update_link": "/el-cy/121328",
+        "description": "Windows 10 και νεότερη έκδοση",
+        "update_date": "12 Σεπτεμβρίου 2024"
+    },
+    {
+        "update_name": "watchOS 10.6.1Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "Apple Watch Series 4 και νεότερα μοντέλα",
+        "update_date": "19 Αυγούστου 2024"
+    },
+    {
+        "update_name": "tvOS 17.6.1Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "Apple TV HD και Apple TV 4K (όλα τα μοντέλα)",
+        "update_date": "19 Αυγούστου 2024"
+    },
+    {
+        "update_name": "iOS 17.6.1 και iPadOS 17.6.1Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "iPhone XS και νεότερα μοντέλα, iPad Pro 13 ιντσών, iPad Pro 12,9 ιντσών 2ης γενιάς και νεότερα μοντέλα, iPad Pro 10,5 ιντσών, iPad Pro 11 ιντσών 1ης γενιάς και νεότερα μοντέλα, iPad Air 3ης γενιάς και νεότερα μοντέλα, iPad 6ης γενιάς και νεότερα μοντέλα και iPad mini 5ης γενιάς και νεότερα μοντέλα",
+        "update_date": "7 Αυγούστου 2024"
+    },
+    {
+        "update_name": "iOS 16.7.10 και iPadOS 16.7.10Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5ης γενιάς, iPad Pro 9,7 ιντσών και iPad Pro 12,9 ιντσών 1ης γενιάς",
+        "update_date": "7 Αυγούστου 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.6.1Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "macOS Sonoma",
+        "update_date": "7 Αυγούστου 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.9Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "macOS Ventura",
+        "update_date": "7 Αυγούστου 2024"
+    },
+    {
+        "update_name": "Safari 17.6",
+        "update_link": "/el-cy/120913",
+        "description": "macOS Monterey και macOS Ventura",
+        "update_date": "29 Ιουλίου 2024"
+    },
+    {
+        "update_name": "iOS 17.6 και iPadOS 17.6",
+        "update_link": "/el-cy/120909",
+        "description": "iPhone XS και νεότερα μοντέλα, iPad Pro 13 ιντσών, iPad Pro 12,9 ιντσών 2ης γενιάς και νεότερα μοντέλα, iPad Pro 10,5 ιντσών, iPad Pro 11 ιντσών 1ης γενιάς και νεότερα μοντέλα, iPad Air 3ης γενιάς και νεότερα μοντέλα, iPad 6ης γενιάς και νεότερα μοντέλα και iPad mini 5ης γενιάς και νεότερα μοντέλα",
+        "update_date": "29 Ιουλίου 2024"
+    },
+    {
+        "update_name": "iOS 16.7.9 και iPadOS 16.7.9",
+        "update_link": "/el-cy/120908",
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5ης γενιάς, iPad Pro 9,7 ιντσών και iPad Pro 12,9 ιντσών 1ης γενιάς",
+        "update_date": "29 Ιουλίου 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.6",
+        "update_link": "/el-cy/120911",
+        "description": "macOS Sonoma",
+        "update_date": "29 Ιουλίου 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.8",
+        "update_link": "/el-cy/120912",
+        "description": "macOS Ventura",
+        "update_date": "29 Ιουλίου 2024"
+    },
+    {
+        "update_name": "macOS Monterey 12.7.6",
+        "update_link": "/el-cy/120910",
+        "description": "macOS Monterey",
+        "update_date": "29 Ιουλίου 2024"
+    },
+    {
+        "update_name": "watchOS 10.6",
+        "update_link": "/el-cy/120916",
+        "description": "Apple Watch Series 4 και νεότερα μοντέλα",
+        "update_date": "29 Ιουλίου 2024"
+    },
+    {
+        "update_name": "tvOS 17.6",
+        "update_link": "/el-cy/120914",
+        "description": "Apple TV HD και Apple TV 4K (όλα τα μοντέλα)",
+        "update_date": "29 Ιουλίου 2024"
+    },
+    {
+        "update_name": "visionOS 1.3",
+        "update_link": "/el-cy/120915",
+        "description": "Apple Vision Pro",
+        "update_date": "29 Ιουλίου 2024"
+    },
+    {
+        "update_name": "iOS 15.8.3 και iPadOS 15.8.3Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "iPhone 6s (όλα τα μοντέλα), iPhone 7 (όλα τα μοντέλα), iPhone SE (1ης γενιάς), iPad Air 2, iPad mini (4ης γενιάς) και iPod touch (7ης γενιάς)",
+        "update_date": "29 Ιουλίου 2024"
+    },
+    {
+        "update_name": "Ενημέρωση υλικολογισμικού AirPods 6A326, ενημέρωση υλικολογισμικού AirPods 6F8 και ενημέρωση υλικολογισμικού Beats 6F8",
+        "update_link": "/el-cy/120907",
+        "description": "AirPods (2ης γενιά και νεότερο μοντέλο), AirPods Pro (όλα τα μοντέλα), AirPods Max, Powerbeats Pro και Beats Fit Pro",
+        "update_date": "25 Ιουνίου 2024"
+    },
+    {
+        "update_name": "visionOS 1.2",
+        "update_link": "/el-cy/120906",
+        "description": "Apple Vision Pro",
+        "update_date": "10 Ιουνίου 2024"
+    },
+    {
+        "update_name": "tvOS 17.5.1Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "Apple TV HD και Apple TV 4K (όλα τα μοντέλα)",
+        "update_date": "21 Μαΐου 2024"
+    },
+    {
+        "update_name": "iOS 17.5.1 και iPadOS 17.5.1Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "iPhone XS και νεότερα μοντέλα, iPad Pro 13 ιντσών, iPad Pro 12,9 ιντσών 2ης γενιάς και νεότερα μοντέλα, iPad Pro 10,5 ιντσών, iPad Pro 11 ιντσών 1ης γενιάς και νεότερα μοντέλα, iPad Air 3ης γενιάς και νεότερα μοντέλα, iPad 6ης γενιάς και νεότερα μοντέλα και iPad mini 5ης γενιάς και νεότερα μοντέλα",
+        "update_date": "20 Μαΐου 2024"
+    },
+    {
+        "update_name": "Safari 17.5",
+        "update_link": "/el-cy/120896",
+        "description": "macOS Monterey και macOS Ventura",
+        "update_date": "13 Μαΐου 2024"
+    },
+    {
+        "update_name": "iOS 17.5 και iPadOS 17.5",
+        "update_link": "/el-cy/120905",
+        "description": "iPhone XS και νεότερα μοντέλα, iPad Pro 13 ιντσών, iPad Pro 12,9 ιντσών 2ης γενιάς και νεότερα μοντέλα, iPad Pro 10,5 ιντσών, iPad Pro 11 ιντσών 1ης γενιάς και νεότερα μοντέλα, iPad Air 3ης γενιάς και νεότερα μοντέλα, iPad 6ης γενιάς και νεότερα μοντέλα και iPad mini 5ης γενιάς και νεότερα μοντέλα",
+        "update_date": "13 Μαΐου 2024"
+    },
+    {
+        "update_name": "iOS 16.7.8 και iPadOS 16.7.8",
+        "update_link": "/el-cy/120898",
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5ης γενιάς, iPad Pro 9,7 ιντσών και iPad Pro 12,9 ιντσών 1ης γενιάς",
+        "update_date": "13 Μαΐου 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.5",
+        "update_link": "/el-cy/120903",
+        "description": "macOS Sonoma",
+        "update_date": "13 Μαΐου 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.7",
+        "update_link": "/el-cy/120900",
+        "description": "macOS Ventura",
+        "update_date": "13 Μαΐου 2024"
+    },
+    {
+        "update_name": "macOS Monterey 12.7.5",
+        "update_link": "/el-cy/120899",
+        "description": "macOS Monterey",
+        "update_date": "13 Μαΐου 2024"
+    },
+    {
+        "update_name": "watchOS 10.5",
+        "update_link": "/el-cy/120902",
+        "description": "Apple Watch Series 4 και νεότερα μοντέλα",
+        "update_date": "13 Μαΐου 2024"
+    },
+    {
+        "update_name": "tvOS 17.5",
+        "update_link": "/el-cy/120901",
+        "description": "Apple TV HD και Apple TV 4K (όλα τα μοντέλα)",
+        "update_date": "13 Μαΐου 2024"
+    },
+    {
+        "update_name": "iTunes 12.13.2 για Windows",
+        "update_link": "/el-cy/120897",
+        "description": "Windows 10 και νεότερη έκδοση",
+        "update_date": "8 Μαΐου 2024"
+    },
+    {
+        "update_name": "visionOS 1.1.2Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "9 Απριλίου 2024"
+    },
+    {
+        "update_name": "Safari 17.4.1",
+        "update_link": "/el-cy/120888",
+        "description": "macOS Monterey και macOS Ventura",
+        "update_date": "25 Μαρτίου 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.4.1",
+        "update_link": "/el-cy/120889",
+        "description": "macOS Sonoma",
+        "update_date": "25 Μαρτίου 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.6",
+        "update_link": "/el-cy/120891",
+        "description": "macOS Ventura",
+        "update_date": "25 Μαρτίου 2024"
+    },
+    {
+        "update_name": "iOS 17.4.1 και iPadOS 17.4.1",
+        "update_link": "/el-cy/120890",
+        "description": "iPhone XS και νεότερα μοντέλα, iPad Pro 12,9 ιντσών 2ης γενιάς και νεότερα μοντέλα, iPad Pro 10,5 ιντσών, iPad Pro 11 ιντσών 1ης γενιάς και νεότερα μοντέλα, iPad Air 3ης γενιάς και νεότερα μοντέλα, iPad 6ης γενιάς και νεότερα μοντέλα και iPad mini 5ης γενιάς και νεότερα μοντέλα",
+        "update_date": "21 Μαρτίου 2024"
+    },
+    {
+        "update_name": "iOS 16.7.7 και iPadOS 16.7.7",
+        "update_link": "/el-cy/120892",
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5ης γενιάς, iPad Pro 9,7 ιντσών και iPad Pro 12,9 ιντσών 1ης γενιάς",
+        "update_date": "21 Μαρτίου 2024"
+    },
+    {
+        "update_name": "visionOS 1.1.1",
+        "update_link": "/el-cy/120312",
+        "description": "Apple Vision Pro",
+        "update_date": "21 Μαρτίου 2024"
+    },
+    {
+        "update_name": "GarageBand 10.4.11",
+        "update_link": "/el-cy/120885",
+        "description": "macOS Ventura και macOS Sonoma",
+        "update_date": "12 Μαρτίου 2024"
+    },
+    {
+        "update_name": "Safari 17.4",
+        "update_link": "/el-cy/120894",
+        "description": "macOS Monterey και macOS Ventura",
+        "update_date": "7 Μαρτίου 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.4",
+        "update_link": "/el-cy/120895",
+        "description": "macOS Sonoma",
+        "update_date": "7 Μαρτίου 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.5",
+        "update_link": "/el-cy/120886",
+        "description": "macOS Ventura",
+        "update_date": "7 Μαρτίου 2024"
+    },
+    {
+        "update_name": "macOS Monterey 12.7.4",
+        "update_link": "/el-cy/120884",
+        "description": "macOS Monterey",
+        "update_date": "7 Μαρτίου 2024"
+    },
+    {
+        "update_name": "watchOS 10.4",
+        "update_link": "/el-cy/120881",
+        "description": "Apple Watch Series 4 και νεότερα μοντέλα",
+        "update_date": "7 Μαρτίου 2024"
+    },
+    {
+        "update_name": "tvOS 17.4",
+        "update_link": "/el-cy/120882",
+        "description": "Apple TV HD και Apple TV 4K (όλα τα μοντέλα)",
+        "update_date": "7 Μαρτίου 2024"
+    },
+    {
+        "update_name": "visionOS 1.1",
+        "update_link": "/el-cy/120883",
+        "description": "Apple Vision Pro",
+        "update_date": "7 Μαρτίου 2024"
+    },
+    {
+        "update_name": "Xcode 15.3",
+        "update_link": "/el-cy/120887",
+        "description": "macOS Sonoma 14 και νεότερη έκδοση",
+        "update_date": "5 Μαρτίου 2024"
+    },
+    {
+        "update_name": "iOS 17.4 και iPadOS 17.4",
+        "update_link": "/el-cy/120893",
+        "description": "iPhone XS και νεότερα μοντέλα, iPad Pro 12,9 ιντσών 2ης γενιάς και νεότερα μοντέλα, iPad Pro 10,5 ιντσών, iPad Pro 11 ιντσών 1ης γενιάς και νεότερα μοντέλα, iPad Air 3ης γενιάς και νεότερα μοντέλα, iPad 6ης γενιάς και νεότερα μοντέλα και iPad mini 5ης γενιάς και νεότερα μοντέλα",
+        "update_date": "5 Μαρτίου 2024"
+    },
+    {
+        "update_name": "iOS 16.7.6 και iPadOS 16.7.6",
+        "update_link": "/el-cy/120880",
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5ης γενιάς, iPad Pro 9,7 ιντσών και iPad Pro 12,9 ιντσών 1ης γενιάς",
+        "update_date": "5 Μαρτίου 2024"
+    },
+    {
+        "update_name": "iOS 15.8.2 και iPadOS 15.8.2Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "iPhone 6s (όλα τα μοντέλα), iPhone 7 (όλα τα μοντέλα), iPhone SE (1ης γενιάς), iPad Air 2, iPad mini (4ης γενιάς) και iPod touch (7ης γενιάς)",
+        "update_date": "5 Μαρτίου 2024"
+    },
+    {
+        "update_name": "visionOS 1.0.3Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "12 Φεβρουαρίου 2024"
+    },
+    {
+        "update_name": "Safari 17.3.1Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "macOS Monterey και macOS Ventura",
+        "update_date": "9 Φεβρουαρίου 2024"
+    },
+    {
+        "update_name": "iOS 17.3.1 και iPadOS 17.3.1Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "iPhone XS και νεότερα μοντέλα, iPad Pro 12,9 ιντσών 2ης γενιάς και νεότερα μοντέλα, iPad Pro 10,5 ιντσών, iPad Pro 11 ιντσών 1ης γενιάς και νεότερα μοντέλα, iPad Air 3ης γενιάς και νεότερα μοντέλα, iPad 6ης γενιάς και νεότερα μοντέλα και iPad mini 5ης γενιάς και νεότερα μοντέλα",
+        "update_date": "8 Φεβρουαρίου 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.3.1Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "macOS Sonoma",
+        "update_date": "8 Φεβρουαρίου 2024"
+    },
+    {
+        "update_name": "watchOS 10.3.1Αυτή η ενημέρωση δεν περιέχει δημοσιευμένες καταχωρίσεις CVE.",
+        "update_link": null,
+        "description": "Apple Watch Series 4 και νεότερα μοντέλα",
+        "update_date": "8 Φεβρουαρίου 2024"
+    },
+    {
+        "update_name": "visionOS 1.0.2",
+        "update_link": "/el-cy/118479",
+        "description": "Apple Vision Pro",
+        "update_date": "31 Ιανουαρίου 2024"
+    },
+    {
+        "update_name": "Safari 17.3",
+        "update_link": "/el-cy/120339",
+        "description": "macOS Monterey και macOS Ventura",
+        "update_date": "22 Ιανουαρίου 2024"
+    },
+    {
+        "update_name": "iOS 17.3 και iPadOS 17.3",
+        "update_link": "/el-cy/120304",
+        "description": "iPhone XS και νεότερα μοντέλα, iPad Pro 12,9 ιντσών 2ης γενιάς και νεότερα μοντέλα, iPad Pro 10,5 ιντσών, iPad Pro 11 ιντσών 1ης γενιάς και νεότερα μοντέλα, iPad Air 3ης γενιάς και νεότερα μοντέλα, iPad 6ης γενιάς και νεότερα μοντέλα και iPad mini 5ης γενιάς και νεότερα μοντέλα",
+        "update_date": "22 Ιανουαρίου 2024"
+    },
+    {
+        "update_name": "iOS 16.7.5 και iPadOS 16.7.5",
+        "update_link": "/el-cy/120310",
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5ης γενιάς, iPad Pro 9,7 ιντσών και iPad Pro 12,9 ιντσών 1ης γενιάς",
+        "update_date": "22 Ιανουαρίου 2024"
+    },
+    {
+        "update_name": "iOS 15.8.1 και iPadOS 15.8.1",
+        "update_link": "/el-cy/120308",
+        "description": "iPhone 6s (όλα τα μοντέλα), iPhone 7 (όλα τα μοντέλα), iPhone SE (1ης γενιάς), iPad Air 2, iPad mini (4ης γενιάς) και iPod touch (7ης γενιάς)",
+        "update_date": "22 Ιανουαρίου 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.3",
+        "update_link": "/el-cy/120309",
+        "description": "macOS Sonoma",
+        "update_date": "22 Ιανουαρίου 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.4",
+        "update_link": "/el-cy/120307",
+        "description": "macOS Ventura",
+        "update_date": "22 Ιανουαρίου 2024"
+    },
+    {
+        "update_name": "macOS Monterey 12.7.3",
+        "update_link": "/el-cy/120305",
+        "description": "macOS Monterey",
+        "update_date": "22 Ιανουαρίου 2024"
+    },
+    {
+        "update_name": "watchOS 10.3",
+        "update_link": "/el-cy/120306",
+        "description": "Apple Watch Series 4 και νεότερα μοντέλα",
+        "update_date": "22 Ιανουαρίου 2024"
+    },
+    {
+        "update_name": "tvOS 17.3",
+        "update_link": "/el-cy/120311",
+        "description": "Apple TV HD και Apple TV 4K (όλα τα μοντέλα)",
+        "update_date": "22 Ιανουαρίου 2024"
+    },
+    {
+        "update_name": "Ενημέρωση υλικολογισμικού 2.0.6 του Magic Keyboard",
+        "update_link": "/el-cy/120303",
+        "description": "Magic Keyboard, Magic Keyboard (2021), Magic Keyboard με αριθμητικό πληκτρολόγιο, Magic Keyboard με Touch ID και Magic Keyboard με Touch ID και αριθμητικό πληκτρολόγιο",
+        "update_date": "9 Ιανουαρίου 2024"
+    }
+]

@@ -1,0 +1,776 @@
+[
+    {
+        "update_name": "Safari 18.3.1",
+        "update_link": "/uk-ua/122285",
+        "description": "macOS Ventura та macOS Sonoma",
+        "update_date": "11 березня 2025 р."
+    },
+    {
+        "update_name": "iOS 18.3.2 та iPadOS 18.3.2",
+        "update_link": "/uk-ua/122281",
+        "description": "iPhone XS і новіші моделі, iPad Pro 13 дюймів, iPad Pro 12,9 дюйма 3-го покоління та новіші моделі, iPad Pro 11 дюймів 1-го покоління та новіші моделі, iPad Air 3-го покоління та новіші моделі, iPad 7-го покоління та новіші моделі, а також iPad mini 5-го покоління та новіші моделі",
+        "update_date": "11 березня 2025 р."
+    },
+    {
+        "update_name": "macOS Sequoia 15.3.2",
+        "update_link": "/uk-ua/122283",
+        "description": "macOS Sequoia",
+        "update_date": "11 березня 2025 р."
+    },
+    {
+        "update_name": "visionOS 2.3.2",
+        "update_link": "/uk-ua/122284",
+        "description": "Apple Vision Pro",
+        "update_date": "11 березня 2025 р."
+    },
+    {
+        "update_name": "tvOS 18.3.1Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "Apple TV 4K (3-го покоління)",
+        "update_date": "11 березня 2025 р."
+    },
+    {
+        "update_name": "iOS 18.3.1 та iPadOS 18.3.1",
+        "update_link": "/uk-ua/122174",
+        "description": "iPhone XS і новіші моделі, iPad Pro 13 дюймів, iPad Pro 12,9 дюйма 3-го покоління та новіші моделі, iPad Pro 11 дюймів 1-го покоління та новіші моделі, iPad Air 3-го покоління та новіші моделі, iPad 7-го покоління та новіші моделі, а також iPad mini 5-го покоління та новіші моделі",
+        "update_date": "10 лютого 2025 р."
+    },
+    {
+        "update_name": "iPadOS 17.7.5",
+        "update_link": "/uk-ua/122173",
+        "description": "iPad Pro 12,9 дюйма 2-го покоління, iPad Pro 10,5 дюйма та iPad 6-го покоління",
+        "update_date": "10 лютого 2025 р."
+    },
+    {
+        "update_name": "macOS Sequoia 15.3.1Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "macOS Sequoia",
+        "update_date": "10 лютого 2025 р."
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.4Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "macOS Sonoma",
+        "update_date": "10 лютого 2025 р."
+    },
+    {
+        "update_name": "macOS Ventura 13.7.4Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "macOS Ventura",
+        "update_date": "10 лютого 2025 р."
+    },
+    {
+        "update_name": "watchOS 11.3.1Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "Apple Watch Series 6 і новіші моделі",
+        "update_date": "10 лютого 2025 р."
+    },
+    {
+        "update_name": "visionOS 2.3.1Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "10 лютого 2025 р."
+    },
+    {
+        "update_name": "GarageBand 10.4.12",
+        "update_link": "/uk-ua/121866",
+        "description": "macOS Sonoma 14.4 і новіших версій",
+        "update_date": "30 січня 2025 р."
+    },
+    {
+        "update_name": "visionOS 2.3",
+        "update_link": "/uk-ua/122073",
+        "description": "Apple Vision Pro",
+        "update_date": "27 січня 2025 р."
+    },
+    {
+        "update_name": "iOS 18.3 та iPadOS 18.3",
+        "update_link": "/uk-ua/122066",
+        "description": "iPhone XS і новіші моделі, iPad Pro 13 дюймів, iPad Pro 12,9 дюйма 3-го покоління та новіші моделі, iPad Pro 11 дюймів 1-го покоління та новіші моделі, iPad Air 3-го покоління та новіші моделі, iPad 7-го покоління та новіші моделі, а також iPad mini 5-го покоління та новіші моделі",
+        "update_date": "27 січня 2025 р."
+    },
+    {
+        "update_name": "iPadOS 17.7.4",
+        "update_link": "/uk-ua/122067",
+        "description": "iPad Pro 12,9 дюйма 2-го покоління, iPad Pro 10,5 дюйма та iPad 6-го покоління",
+        "update_date": "27 січня 2025 р."
+    },
+    {
+        "update_name": "macOS Sequoia 15.3",
+        "update_link": "/uk-ua/122068",
+        "description": "macOS Sequoia",
+        "update_date": "27 січня 2025 р."
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.3",
+        "update_link": "/uk-ua/122069",
+        "description": "macOS Sonoma",
+        "update_date": "27 січня 2025 р."
+    },
+    {
+        "update_name": "macOS Ventura 13.7.3",
+        "update_link": "/uk-ua/122070",
+        "description": "macOS Ventura",
+        "update_date": "27 січня 2025 р."
+    },
+    {
+        "update_name": "watchOS 11.3",
+        "update_link": "/uk-ua/122071",
+        "description": "Apple Watch Series 6 і новіші моделі",
+        "update_date": "27 січня 2025 р."
+    },
+    {
+        "update_name": "tvOS 18.3",
+        "update_link": "/uk-ua/122072",
+        "description": "Apple TV HD і Apple TV 4K (усі моделі)",
+        "update_date": "27 січня 2025 р."
+    },
+    {
+        "update_name": "Safari 18.3",
+        "update_link": "/uk-ua/122074",
+        "description": "macOS Ventura та macOS Sonoma",
+        "update_date": "27 січня 2025 р."
+    },
+    {
+        "update_name": "tvOS 18.2.1Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "Apple TV HD і Apple TV 4K (усі моделі)",
+        "update_date": "16 січня 2025 р."
+    },
+    {
+        "update_name": "iOS 18.2.1 та iPadOS 18.2.1Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "iPhone XS і новіші моделі, iPad Pro 13 дюймів, iPad Pro 12,9 дюйма 3-го покоління та новіші моделі, iPad Pro 11 дюймів 1-го покоління та новіші моделі, iPad Air 3-го покоління та новіші моделі, iPad 7-го покоління та новіші моделі, а також iPad mini 5-го покоління та новіші моделі",
+        "update_date": "06 січня 2025 р."
+    },
+    {
+        "update_name": "Safari 18.2",
+        "update_link": "/uk-ua/121846",
+        "description": "macOS Ventura та macOS Sonoma",
+        "update_date": "11 грудня 2024 р."
+    },
+    {
+        "update_name": "iOS 18.2 та iPadOS 18.2",
+        "update_link": "/uk-ua/121837",
+        "description": "iPhone XS і новіші моделі, iPad Pro 13 дюймів, iPad Pro 12,9 дюйма 3-го покоління та новіші моделі, iPad Pro 11 дюймів 1-го покоління та новіші моделі, iPad Air 3-го покоління та новіші моделі, iPad 7-го покоління та новіші моделі, а також iPad mini 5-го покоління та новіші моделі",
+        "update_date": "11 грудня 2024 р."
+    },
+    {
+        "update_name": "iPadOS 17.7.3",
+        "update_link": "/uk-ua/121838",
+        "description": "iPad Pro 12,9 дюйма 2-го покоління, iPad Pro 10,5 дюйма та iPad 6-го покоління",
+        "update_date": "11 грудня 2024 р."
+    },
+    {
+        "update_name": "macOS Sequoia 15.2",
+        "update_link": "/uk-ua/121839",
+        "description": "macOS Sequoia",
+        "update_date": "11 грудня 2024 р."
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.2",
+        "update_link": "/uk-ua/121840",
+        "description": "macOS Sonoma",
+        "update_date": "11 грудня 2024 р."
+    },
+    {
+        "update_name": "macOS Ventura 13.7.2",
+        "update_link": "/uk-ua/121842",
+        "description": "macOS Ventura",
+        "update_date": "11 грудня 2024 р."
+    },
+    {
+        "update_name": "watchOS 11.2",
+        "update_link": "/uk-ua/121843",
+        "description": "Apple Watch Series 6 і новіші моделі",
+        "update_date": "11 грудня 2024 р."
+    },
+    {
+        "update_name": "tvOS 18.2",
+        "update_link": "/uk-ua/121844",
+        "description": "Apple TV HD і Apple TV 4K (усі моделі)",
+        "update_date": "11 грудня 2024 р."
+    },
+    {
+        "update_name": "visionOS 2.2",
+        "update_link": "/uk-ua/121845",
+        "description": "Apple Vision Pro",
+        "update_date": "11 грудня 2024 р."
+    },
+    {
+        "update_name": "Safari 18.1.1",
+        "update_link": "/uk-ua/121756",
+        "description": "macOS Ventura та macOS Sonoma",
+        "update_date": "19 листопада 2024 р."
+    },
+    {
+        "update_name": "visionOS 2.1.1",
+        "update_link": "/uk-ua/121755",
+        "description": "Apple Vision Pro",
+        "update_date": "19 листопада 2024 р."
+    },
+    {
+        "update_name": "iOS 18.1.1 та iPadOS 18.1.1",
+        "update_link": "/uk-ua/121752",
+        "description": "iPhone XS і новіші моделі, iPad Pro 13 дюймів, iPad Pro 12,9 дюйма 3-го покоління та новіші моделі, iPad Pro 11 дюймів 1-го покоління та новіші моделі, iPad Air 3-го покоління та новіші моделі, iPad 7-го покоління та новіші моделі, а також iPad mini 5-го покоління та новіші моделі",
+        "update_date": "19 листопада 2024 р."
+    },
+    {
+        "update_name": "iOS 17.7.2 та iPadOS 17.7.2",
+        "update_link": "/uk-ua/121754",
+        "description": "iPhone XS і новіші моделі, iPad Pro 13 дюймів, iPad Pro 12,9 дюйма 2-го покоління та новіші моделі, iPad Pro 10,5 дюйма, iPad Pro 11 дюймів 1-го покоління та новіші моделі, iPad Air 3-го покоління та новіші моделі, iPad 6-го покоління та новіші моделі, а також iPad mini 5-го покоління та новіші моделі",
+        "update_date": "19 листопада 2024 р."
+    },
+    {
+        "update_name": "macOS Sequoia 15.1.1",
+        "update_link": "/uk-ua/121753",
+        "description": "macOS Sequoia",
+        "update_date": "19 листопада 2024 р."
+    },
+    {
+        "update_name": "Safari 18.1",
+        "update_link": "/uk-ua/121571",
+        "description": "macOS Ventura та macOS Sonoma",
+        "update_date": "29 жовтня 2024 р."
+    },
+    {
+        "update_name": "iOS 18.1 та iPadOS 18.1",
+        "update_link": "/uk-ua/121563",
+        "description": "iPhone XS і новіші моделі, iPad Pro 13 дюймів, iPad Pro 12,9 дюйма 3-го покоління та новіші моделі, iPad Pro 11 дюймів 1-го покоління та новіші моделі, iPad Air 3-го покоління та новіші моделі, iPad 7-го покоління та новіші моделі, а також iPad mini 5-го покоління та новіші моделі",
+        "update_date": "28 жовтня 2024 р."
+    },
+    {
+        "update_name": "iOS 17.7.1 та iPadOS 17.7.1",
+        "update_link": "/uk-ua/121567",
+        "description": "iPhone XS і новіші моделі, iPad Pro 13 дюймів, iPad Pro 12,9 дюйма 2-го покоління та новіші моделі, iPad Pro 10,5 дюйма, iPad Pro 11 дюймів 1-го покоління та новіші моделі, iPad Air 3-го покоління та новіші моделі, iPad 6-го покоління та новіші моделі, а також iPad mini 5-го покоління та новіші моделі",
+        "update_date": "28 жовтня 2024 р."
+    },
+    {
+        "update_name": "macOS Sequoia 15.1",
+        "update_link": "/uk-ua/121564",
+        "description": "macOS Sequoia",
+        "update_date": "28 жовтня 2024 р."
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.1",
+        "update_link": "/uk-ua/121570",
+        "description": "macOS Sonoma",
+        "update_date": "28 жовтня 2024 р."
+    },
+    {
+        "update_name": "macOS Ventura 13.7.1",
+        "update_link": "/uk-ua/121568",
+        "description": "macOS Ventura",
+        "update_date": "28 жовтня 2024 р."
+    },
+    {
+        "update_name": "watchOS 11.1",
+        "update_link": "/uk-ua/121565",
+        "description": "Apple Watch Series 6 і новіші моделі",
+        "update_date": "28 жовтня 2024 р."
+    },
+    {
+        "update_name": "tvOS 18.1",
+        "update_link": "/uk-ua/121569",
+        "description": "Apple TV HD і Apple TV 4K (усі моделі)",
+        "update_date": "28 жовтня 2024 р."
+    },
+    {
+        "update_name": "visionOS 2.1",
+        "update_link": "/uk-ua/121566",
+        "description": "Apple Vision Pro",
+        "update_date": "28 жовтня 2024 р."
+    },
+    {
+        "update_name": "Apple Music 1.5.0.152 для Windows",
+        "update_link": "/uk-ua/122043",
+        "description": "Windows 10 22H2 і новіших версій для комп’ютерів на базі Intel, Windows 11 24H2 і новіших версій для комп’ютерів на базі Arm",
+        "update_date": "3 жовтня 2024 р."
+    },
+    {
+        "update_name": "Apple TV 1.5.0.152 для Windows",
+        "update_link": "/uk-ua/121441",
+        "description": "Windows 10 22H2 і новіших версій",
+        "update_date": "3 жовтня 2024 р."
+    },
+    {
+        "update_name": "iOS 18.0.1 та iPadOS 18.0.1",
+        "update_link": "/uk-ua/121373",
+        "description": "iPhone XS і новіші моделі, iPad Pro 13 дюймів, iPad Pro 12,9 дюйма 3-го покоління та новіші моделі, iPad Pro 11 дюймів 1-го покоління та новіші моделі, iPad Air 3-го покоління та новіші моделі, iPad 7-го покоління та новіші моделі, а також iPad mini 5-го покоління та новіші моделі",
+        "update_date": "3 жовтня 2024 р."
+    },
+    {
+        "update_name": "macOS Sequoia 15.0.1Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "macOS Sequoia",
+        "update_date": "3 жовтня 2024 р."
+    },
+    {
+        "update_name": "watchOS 11.0.1Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "Apple Watch Series 6 і новіші моделі",
+        "update_date": "3 жовтня 2024 р."
+    },
+    {
+        "update_name": "visionOS 2.0.1Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "3 жовтня 2024 р."
+    },
+    {
+        "update_name": "Safari 18.0.1Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "macOS Ventura та macOS Sonoma",
+        "update_date": "3 жовтня 2024 р."
+    },
+    {
+        "update_name": "iOS 18 та iPadOS 18",
+        "update_link": "/uk-ua/121250",
+        "description": "iPhone XS і новіші моделі, iPad Pro 13 дюймів, iPad Pro 12,9 дюйма 3-го покоління та новіші моделі, iPad Pro 11 дюймів 1-го покоління та новіші моделі, iPad Air 3-го покоління та новіші моделі, iPad 7-го покоління та новіші моделі, а також iPad mini 5-го покоління та новіші моделі",
+        "update_date": "16 вересня 2024 р."
+    },
+    {
+        "update_name": "macOS Sequoia 15",
+        "update_link": "/uk-ua/121238",
+        "description": "Mac Studio (2022 р. і пізніші моделі), iMac (2019 р. і пізніші моделі), Mac Pro (2019 р. і пізніші моделі), Mac Mini (2018 р. і пізніші моделі), MacBook Air (2020 р. і пізніші моделі), MacBook Pro (2018 р. і пізніші моделі) та iMac Pro (2017 р. і пізніші моделі)",
+        "update_date": "16 вересня 2024 р."
+    },
+    {
+        "update_name": "tvOS 18",
+        "update_link": "/uk-ua/121248",
+        "description": "Apple TV HD і Apple TV 4K (усі моделі)",
+        "update_date": "16 вересня 2024 р."
+    },
+    {
+        "update_name": "watchOS 11",
+        "update_link": "/uk-ua/121240",
+        "description": "Apple Watch Series 6 і новіші моделі",
+        "update_date": "16 вересня 2024 р."
+    },
+    {
+        "update_name": "visionOS 2",
+        "update_link": "/uk-ua/121249",
+        "description": "Apple Vision Pro",
+        "update_date": "16 вересня 2024 р."
+    },
+    {
+        "update_name": "Safari 18",
+        "update_link": "/uk-ua/121241",
+        "description": "macOS Ventura та macOS Sonoma",
+        "update_date": "16 вересня 2024 р."
+    },
+    {
+        "update_name": "Xcode 16",
+        "update_link": "/uk-ua/121239",
+        "description": "macOS Sonoma 14.5 і новіших версій",
+        "update_date": "16 вересня 2024 р."
+    },
+    {
+        "update_name": "iOS 17.7 та iPadOS 17.7",
+        "update_link": "/uk-ua/121246",
+        "description": "iPhone XS і новіші моделі, iPad Pro 13 дюймів, iPad Pro 12,9 дюйма 2-го покоління та новіші моделі, iPad Pro 10,5 дюйма, iPad Pro 11 дюймів 1-го покоління та новіші моделі, iPad Air 3-го покоління та новіші моделі, iPad 6-го покоління та новіші моделі, а також iPad mini 5-го покоління та новіші моделі",
+        "update_date": "16 вересня 2024 р."
+    },
+    {
+        "update_name": "macOS Sonoma 14.7",
+        "update_link": "/uk-ua/121247",
+        "description": "macOS Sonoma",
+        "update_date": "16 вересня 2024 р."
+    },
+    {
+        "update_name": "macOS Ventura 13.7",
+        "update_link": "/uk-ua/121234",
+        "description": "macOS Ventura",
+        "update_date": "16 вересня 2024 р."
+    },
+    {
+        "update_name": "iTunes 12.13.3 для Windows",
+        "update_link": "/uk-ua/121328",
+        "description": "Windows 10 і новіших версій",
+        "update_date": "12 вересня 2024 р."
+    },
+    {
+        "update_name": "watchOS 10.6.1Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "Apple Watch Series 4 та новіші моделі",
+        "update_date": "19 серпня 2024 р."
+    },
+    {
+        "update_name": "tvOS 17.6.1Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "Apple TV HD і Apple TV 4K (усі моделі)",
+        "update_date": "19 серпня 2024 р."
+    },
+    {
+        "update_name": "iOS 17.6.1 та iPadOS 17.6.1Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "iPhone XS і новіші моделі, iPad Pro 13 дюймів, iPad Pro 12,9 дюйма 2-го покоління та новіші моделі, iPad Pro 10,5 дюйма, iPad Pro 11 дюймів 1-го покоління та новіші моделі, iPad Air 3-го покоління та новіші моделі, iPad 6-го покоління та новіші моделі, а також iPad mini 5-го покоління та новіші моделі",
+        "update_date": "7 серпня 2024 р."
+    },
+    {
+        "update_name": "iOS 16.7.10 та iPadOS 16.7.10Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5-го покоління, iPad Pro 9,7 дюйма та iPad Pro 12,9 дюйма 1-го покоління",
+        "update_date": "7 серпня 2024 р."
+    },
+    {
+        "update_name": "macOS Sonoma 14.6.1Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "macOS Sonoma",
+        "update_date": "7 серпня 2024 р."
+    },
+    {
+        "update_name": "macOS Ventura 13.6.9Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "macOS Ventura",
+        "update_date": "7 серпня 2024 р."
+    },
+    {
+        "update_name": "Safari 17.6",
+        "update_link": "/uk-ua/120913",
+        "description": "macOS Monterey і macOS Ventura",
+        "update_date": "29 липня 2024 р."
+    },
+    {
+        "update_name": "iOS 17.6 та iPadOS 17.6",
+        "update_link": "/uk-ua/120909",
+        "description": "iPhone XS і новіші моделі, iPad Pro 13 дюймів, iPad Pro 12,9 дюйма 2-го покоління та новіші моделі, iPad Pro 10,5 дюйма, iPad Pro 11 дюймів 1-го покоління та новіші моделі, iPad Air 3-го покоління та новіші моделі, iPad 6-го покоління та новіші моделі, а також iPad mini 5-го покоління та новіші моделі",
+        "update_date": "29 липня 2024 р."
+    },
+    {
+        "update_name": "iOS 16.7.9 та iPadOS 16.7.9",
+        "update_link": "/uk-ua/120908",
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5-го покоління, iPad Pro 9,7 дюйма та iPad Pro 12,9 дюйма 1-го покоління",
+        "update_date": "29 липня 2024 р."
+    },
+    {
+        "update_name": "macOS Sonoma 14.6",
+        "update_link": "/uk-ua/120911",
+        "description": "macOS Sonoma",
+        "update_date": "29 липня 2024 р."
+    },
+    {
+        "update_name": "macOS Ventura 13.6.8",
+        "update_link": "/uk-ua/120912",
+        "description": "macOS Ventura",
+        "update_date": "29 липня 2024 р."
+    },
+    {
+        "update_name": "macOS Monterey 12.7.6",
+        "update_link": "/uk-ua/120910",
+        "description": "macOS Monterey",
+        "update_date": "29 липня 2024 р."
+    },
+    {
+        "update_name": "watchOS 10.6",
+        "update_link": "/uk-ua/120916",
+        "description": "Apple Watch Series 4 та новіші моделі",
+        "update_date": "29 липня 2024 р."
+    },
+    {
+        "update_name": "tvOS 17.6",
+        "update_link": "/uk-ua/120914",
+        "description": "Apple TV HD і Apple TV 4K (усі моделі)",
+        "update_date": "29 липня 2024 р."
+    },
+    {
+        "update_name": "visionOS 1.3",
+        "update_link": "/uk-ua/120915",
+        "description": "Apple Vision Pro",
+        "update_date": "29 липня 2024 р."
+    },
+    {
+        "update_name": "iOS 15.8.3 та iPadOS 15.8.3Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "iPhone 6s (усі моделі), iPhone 7 (усі моделі), iPhone SE (1-го покоління), iPad Air 2, iPad mini (4-го покоління) та iPod touch (7-го покоління)",
+        "update_date": "29 липня 2024 р."
+    },
+    {
+        "update_name": "Оновлення прошивки AirPods 6A326, оновлення прошивки AirPods 6F8 і оновлення прошивки Beats 6F8",
+        "update_link": "/uk-ua/120907",
+        "description": "AirPods (2-го покоління та новіші моделі), AirPods Pro (усі моделі), AirPods Max, Powerbeats Pro та Beats Fit Pro",
+        "update_date": "25 червня 2024 р."
+    },
+    {
+        "update_name": "visionOS 1.2",
+        "update_link": "/uk-ua/120906",
+        "description": "Apple Vision Pro",
+        "update_date": "10 червня 2024 р."
+    },
+    {
+        "update_name": "tvOS 17.5.1Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "Apple TV HD і Apple TV 4K (усі моделі)",
+        "update_date": "21 травня 2024 р."
+    },
+    {
+        "update_name": "iOS 17.5.1 та iPadOS 17.5.1Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "iPhone XS і новіші моделі, iPad Pro 13 дюймів, iPad Pro 12,9 дюйма 2-го покоління та новіші моделі, iPad Pro 10,5 дюйма, iPad Pro 11 дюймів 1-го покоління та новіші моделі, iPad Air 3-го покоління та новіші моделі, iPad 6-го покоління та новіші моделі, а також iPad mini 5-го покоління та новіші моделі",
+        "update_date": "20 травня 2024 р."
+    },
+    {
+        "update_name": "Safari 17.5",
+        "update_link": "/uk-ua/120896",
+        "description": "macOS Monterey і macOS Ventura",
+        "update_date": "13 травня 2024 р."
+    },
+    {
+        "update_name": "iOS 17.5 та iPadOS 17.5",
+        "update_link": "/uk-ua/120905",
+        "description": "iPhone XS і новіші моделі, iPad Pro 13 дюймів, iPad Pro 12,9 дюйма 2-го покоління та новіші моделі, iPad Pro 10,5 дюйма, iPad Pro 11 дюймів 1-го покоління та новіші моделі, iPad Air 3-го покоління та новіші моделі, iPad 6-го покоління та новіші моделі, а також iPad mini 5-го покоління та новіші моделі",
+        "update_date": "13 травня 2024 р."
+    },
+    {
+        "update_name": "iOS 16.7.8 та iPadOS 16.7.8",
+        "update_link": "/uk-ua/120898",
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5-го покоління, iPad Pro 9,7 дюйма та iPad Pro 12,9 дюйма 1-го покоління",
+        "update_date": "13 травня 2024 р."
+    },
+    {
+        "update_name": "macOS Sonoma 14.5",
+        "update_link": "/uk-ua/120903",
+        "description": "macOS Sonoma",
+        "update_date": "13 травня 2024 р."
+    },
+    {
+        "update_name": "macOS Ventura 13.6.7",
+        "update_link": "/uk-ua/120900",
+        "description": "macOS Ventura",
+        "update_date": "13 травня 2024 р."
+    },
+    {
+        "update_name": "macOS Monterey 12.7.5",
+        "update_link": "/uk-ua/120899",
+        "description": "macOS Monterey",
+        "update_date": "13 травня 2024 р."
+    },
+    {
+        "update_name": "watchOS 10.5",
+        "update_link": "/uk-ua/120902",
+        "description": "Apple Watch Series 4 та новіші моделі",
+        "update_date": "13 травня 2024 р."
+    },
+    {
+        "update_name": "tvOS 17.5",
+        "update_link": "/uk-ua/120901",
+        "description": "Apple TV HD і Apple TV 4K (усі моделі)",
+        "update_date": "13 травня 2024 р."
+    },
+    {
+        "update_name": "iTunes 12.13.2 для Windows",
+        "update_link": "/uk-ua/120897",
+        "description": "Windows 10 і новіших версій",
+        "update_date": "8 травня 2024 р."
+    },
+    {
+        "update_name": "visionOS 1.1.2Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "9 квітня 2024 р."
+    },
+    {
+        "update_name": "Safari 17.4.1",
+        "update_link": "/uk-ua/120888",
+        "description": "macOS Monterey і macOS Ventura",
+        "update_date": "25 березня 2024 р."
+    },
+    {
+        "update_name": "macOS Sonoma 14.4.1",
+        "update_link": "/uk-ua/120889",
+        "description": "macOS Sonoma",
+        "update_date": "25 березня 2024 р."
+    },
+    {
+        "update_name": "macOS Ventura 13.6.6",
+        "update_link": "/uk-ua/120891",
+        "description": "macOS Ventura",
+        "update_date": "25 березня 2024 р."
+    },
+    {
+        "update_name": "iOS 17.4.1 та iPadOS 17.4.1",
+        "update_link": "/uk-ua/120890",
+        "description": "iPhone XS і новіші моделі, iPad Pro 12,9 дюйма 2-го покоління та новіші моделі, iPad Pro 10,5 дюйма, iPad Pro 11 дюймів 1-го покоління та новіші моделі, iPad Air 3-го покоління та новіші моделі, iPad 6-го покоління та новіші моделі, а також iPad mini 5-го покоління та новіші моделі",
+        "update_date": "21 березня 2024 р."
+    },
+    {
+        "update_name": "iOS 16.7.7 та iPadOS 16.7.7",
+        "update_link": "/uk-ua/120892",
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5-го покоління, iPad Pro 9,7 дюйма та iPad Pro 12,9 дюйма 1-го покоління",
+        "update_date": "21 березня 2024 р."
+    },
+    {
+        "update_name": "visionOS 1.1.1",
+        "update_link": "/uk-ua/120312",
+        "description": "Apple Vision Pro",
+        "update_date": "21 березня 2024 р."
+    },
+    {
+        "update_name": "GarageBand 10.4.11",
+        "update_link": "/uk-ua/120885",
+        "description": "macOS Ventura та macOS Sonoma",
+        "update_date": "12 березня 2024 р."
+    },
+    {
+        "update_name": "Safari 17.4",
+        "update_link": "/uk-ua/120894",
+        "description": "macOS Monterey і macOS Ventura",
+        "update_date": "7 березня 2024 р."
+    },
+    {
+        "update_name": "macOS Sonoma 14.4",
+        "update_link": "/uk-ua/120895",
+        "description": "macOS Sonoma",
+        "update_date": "7 березня 2024 р."
+    },
+    {
+        "update_name": "macOS Ventura 13.6.5",
+        "update_link": "/uk-ua/120886",
+        "description": "macOS Ventura",
+        "update_date": "7 березня 2024 р."
+    },
+    {
+        "update_name": "macOS Monterey 12.7.4",
+        "update_link": "/uk-ua/120884",
+        "description": "macOS Monterey",
+        "update_date": "7 березня 2024 р."
+    },
+    {
+        "update_name": "watchOS 10.4",
+        "update_link": "/uk-ua/120881",
+        "description": "Apple Watch Series 4 та новіші моделі",
+        "update_date": "7 березня 2024 р."
+    },
+    {
+        "update_name": "tvOS 17.4",
+        "update_link": "/uk-ua/120882",
+        "description": "Apple TV HD і Apple TV 4K (усі моделі)",
+        "update_date": "7 березня 2024 р."
+    },
+    {
+        "update_name": "visionOS 1.1",
+        "update_link": "/uk-ua/120883",
+        "description": "Apple Vision Pro",
+        "update_date": "7 березня 2024 р."
+    },
+    {
+        "update_name": "Xcode 15.3",
+        "update_link": "/uk-ua/120887",
+        "description": "macOS Sonoma 14 і новіших версій",
+        "update_date": "5 березня 2024 р."
+    },
+    {
+        "update_name": "iOS 17.4 та iPadOS 17.4",
+        "update_link": "/uk-ua/120893",
+        "description": "iPhone XS і новіші моделі, iPad Pro 12,9 дюйма 2-го покоління та новіші моделі, iPad Pro 10,5 дюйма, iPad Pro 11 дюймів 1-го покоління та новіші моделі, iPad Air 3-го покоління та новіші моделі, iPad 6-го покоління та новіші моделі, а також iPad mini 5-го покоління та новіші моделі",
+        "update_date": "5 березня 2024 р."
+    },
+    {
+        "update_name": "iOS 16.7.6 та iPadOS 16.7.6",
+        "update_link": "/uk-ua/120880",
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5-го покоління, iPad Pro 9,7 дюйма та iPad Pro 12,9 дюйма 1-го покоління",
+        "update_date": "5 березня 2024 р."
+    },
+    {
+        "update_name": "iOS 15.8.2 та iPadOS 15.8.2Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "iPhone 6s (усі моделі), iPhone 7 (усі моделі), iPhone SE (1-го покоління), iPad Air 2, iPad mini (4-го покоління) та iPod touch (7-го покоління)",
+        "update_date": "5 березня 2024 р."
+    },
+    {
+        "update_name": "visionOS 1.0.3Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "12 лютого 2024 р."
+    },
+    {
+        "update_name": "Safari 17.3.1Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "macOS Monterey і macOS Ventura",
+        "update_date": "9 лютого 2024 р."
+    },
+    {
+        "update_name": "iOS 17.3.1 та iPadOS 17.3.1Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "iPhone XS і новіші моделі, iPad Pro 12,9 дюйма 2-го покоління та новіші моделі, iPad Pro 10,5 дюйма, iPad Pro 11 дюймів 1-го покоління та новіші моделі, iPad Air 3-го покоління та новіші моделі, iPad 6-го покоління та новіші моделі, а також iPad mini 5-го покоління та новіші моделі",
+        "update_date": "8 лютого 2024 р."
+    },
+    {
+        "update_name": "macOS Sonoma 14.3.1Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "macOS Sonoma",
+        "update_date": "8 лютого 2024 р."
+    },
+    {
+        "update_name": "watchOS 10.3.1Для цього оновлення відсутні опубліковані записи CVE.",
+        "update_link": null,
+        "description": "Apple Watch Series 4 та новіші моделі",
+        "update_date": "8 лютого 2024 р."
+    },
+    {
+        "update_name": "visionOS 1.0.2",
+        "update_link": "/uk-ua/118479",
+        "description": "Apple Vision Pro",
+        "update_date": "31 січня 2024 р."
+    },
+    {
+        "update_name": "Safari 17.3",
+        "update_link": "/uk-ua/120339",
+        "description": "macOS Monterey і macOS Ventura",
+        "update_date": "22 січня 2024 р."
+    },
+    {
+        "update_name": "iOS 17.3 та iPadOS 17.3",
+        "update_link": "/uk-ua/120304",
+        "description": "iPhone XS і новіші моделі, iPad Pro 12,9 дюйма 2-го покоління та новіші моделі, iPad Pro 10,5 дюйма, iPad Pro 11 дюймів 1-го покоління та новіші моделі, iPad Air 3-го покоління та новіші моделі, iPad 6-го покоління та новіші моделі, а також iPad mini 5-го покоління та новіші моделі",
+        "update_date": "22 січня 2024 р."
+    },
+    {
+        "update_name": "iOS 16.7.5 та iPadOS 16.7.5",
+        "update_link": "/uk-ua/120310",
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5-го покоління, iPad Pro 9,7 дюйма та iPad Pro 12,9 дюйма 1-го покоління",
+        "update_date": "22 січня 2024 р."
+    },
+    {
+        "update_name": "iOS 15.8.1 та iPadOS 15.8.1",
+        "update_link": "/uk-ua/120308",
+        "description": "iPhone 6s (усі моделі), iPhone 7 (усі моделі), iPhone SE (1-го покоління), iPad Air 2, iPad mini (4-го покоління) та iPod touch (7-го покоління)",
+        "update_date": "22 січня 2024 р."
+    },
+    {
+        "update_name": "macOS Sonoma 14.3",
+        "update_link": "/uk-ua/120309",
+        "description": "macOS Sonoma",
+        "update_date": "22 січня 2024 р."
+    },
+    {
+        "update_name": "macOS Ventura 13.6.4",
+        "update_link": "/uk-ua/120307",
+        "description": "macOS Ventura",
+        "update_date": "22 січня 2024 р."
+    },
+    {
+        "update_name": "macOS Monterey 12.7.3",
+        "update_link": "/uk-ua/120305",
+        "description": "macOS Monterey",
+        "update_date": "22 січня 2024 р."
+    },
+    {
+        "update_name": "watchOS 10.3",
+        "update_link": "/uk-ua/120306",
+        "description": "Apple Watch Series 4 та новіші моделі",
+        "update_date": "22 січня 2024 р."
+    },
+    {
+        "update_name": "tvOS 17.3",
+        "update_link": "/uk-ua/120311",
+        "description": "Apple TV HD і Apple TV 4K (усі моделі)",
+        "update_date": "22 січня 2024 р."
+    },
+    {
+        "update_name": "Оновлення прошивки Magic Keyboard 2.0.6",
+        "update_link": "/uk-ua/120303",
+        "description": "Magic Keyboard, Magic Keyboard (2021 р.), Magic Keyboard із цифровою клавіатурою, Magic Keyboard із Touch ID та Magic Keyboard із Touch ID та цифровою клавіатурою",
+        "update_date": "9 січня 2024 р."
+    }
+]

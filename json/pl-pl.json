@@ -1,0 +1,776 @@
+[
+    {
+        "update_name": "Safari 18.3.1",
+        "update_link": "/pl-pl/122285",
+        "description": "macOS Ventura i macOS Sonoma",
+        "update_date": "11 marca 2025 r."
+    },
+    {
+        "update_name": "iOS 18.3.2 i iPadOS 18.3.2",
+        "update_link": "/pl-pl/122281",
+        "description": "iPhone XS i nowszy, iPad Pro 13 cali, iPad Pro 12,9 cala 3. generacji i nowszy, iPad Pro 11 cali 1. generacji i nowszy, iPad Air 3. generacji i nowszy, iPad 7. generacji i nowszy oraz iPad mini 5. generacji i nowszy",
+        "update_date": "11 marca 2025 r."
+    },
+    {
+        "update_name": "macOS Sequoia 15.3.2",
+        "update_link": "/pl-pl/122283",
+        "description": "macOS Sequoia",
+        "update_date": "11 marca 2025 r."
+    },
+    {
+        "update_name": "visionOS 2.3.2",
+        "update_link": "/pl-pl/122284",
+        "description": "Apple Vision Pro",
+        "update_date": "11 marca 2025 r."
+    },
+    {
+        "update_name": "tvOS 18.3.1To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "Apple TV 4K (3. generacji)",
+        "update_date": "11 marca 2025 r."
+    },
+    {
+        "update_name": "iOS 18.3.1 i iPadOS 18.3.1",
+        "update_link": "/pl-pl/122174",
+        "description": "iPhone XS i nowszy, iPad Pro 13 cali, iPad Pro 12,9 cala 3. generacji i nowszy, iPad Pro 11 cali 1. generacji i nowszy, iPad Air 3. generacji i nowszy, iPad 7. generacji i nowszy oraz iPad mini 5. generacji i nowszy",
+        "update_date": "10 lutego 2025 r."
+    },
+    {
+        "update_name": "iPadOS 17.7.5",
+        "update_link": "/pl-pl/122173",
+        "description": "iPad Pro 12,9 cala 2. generacji, iPad Pro 10,5 cala i iPad 6. generacji",
+        "update_date": "10 lutego 2025 r."
+    },
+    {
+        "update_name": "macOS Sequoia 15.3.1To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "macOS Sequoia",
+        "update_date": "10 lutego 2025 r."
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.4To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "macOS Sonoma",
+        "update_date": "10 lutego 2025 r."
+    },
+    {
+        "update_name": "macOS Ventura 13.7.4To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "macOS Ventura",
+        "update_date": "10 lutego 2025 r."
+    },
+    {
+        "update_name": "watchOS 11.3.1To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "Apple Watch Series 6 lub nowszy",
+        "update_date": "10 lutego 2025 r."
+    },
+    {
+        "update_name": "visionOS 2.3.1To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "10 lutego 2025 r."
+    },
+    {
+        "update_name": "GarageBand 10.4.12",
+        "update_link": "/pl-pl/121866",
+        "description": "macOS Sonoma 14.4 i nowszy",
+        "update_date": "30 stycznia 2025 r."
+    },
+    {
+        "update_name": "visionOS 2.3",
+        "update_link": "/pl-pl/122073",
+        "description": "Apple Vision Pro",
+        "update_date": "27 stycznia 2025 r."
+    },
+    {
+        "update_name": "iOS 18.3 i iPadOS 18.3",
+        "update_link": "/pl-pl/122066",
+        "description": "iPhone XS i nowszy, iPad Pro 13 cali, iPad Pro 12,9 cala 3. generacji i nowszy, iPad Pro 11 cali 1. generacji i nowszy, iPad Air 3. generacji i nowszy, iPad 7. generacji i nowszy oraz iPad mini 5. generacji i nowszy",
+        "update_date": "27 stycznia 2025 r."
+    },
+    {
+        "update_name": "iPadOS 17.7.4",
+        "update_link": "/pl-pl/122067",
+        "description": "iPad Pro 12,9 cala 2. generacji, iPad Pro 10,5 cala i iPad 6. generacji",
+        "update_date": "27 stycznia 2025 r."
+    },
+    {
+        "update_name": "macOS Sequoia 15.3",
+        "update_link": "/pl-pl/122068",
+        "description": "macOS Sequoia",
+        "update_date": "27 stycznia 2025 r."
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.3",
+        "update_link": "/pl-pl/122069",
+        "description": "macOS Sonoma",
+        "update_date": "27 stycznia 2025 r."
+    },
+    {
+        "update_name": "macOS Ventura 13.7.3",
+        "update_link": "/pl-pl/122070",
+        "description": "macOS Ventura",
+        "update_date": "27 stycznia 2025 r."
+    },
+    {
+        "update_name": "watchOS 11.3",
+        "update_link": "/pl-pl/122071",
+        "description": "Apple Watch Series 6 lub nowszy",
+        "update_date": "27 stycznia 2025 r."
+    },
+    {
+        "update_name": "tvOS 18.3",
+        "update_link": "/pl-pl/122072",
+        "description": "Apple TV HD i Apple TV 4K (wszystkie modele)",
+        "update_date": "27 stycznia 2025 r."
+    },
+    {
+        "update_name": "Safari 18.3",
+        "update_link": "/pl-pl/122074",
+        "description": "macOS Ventura i macOS Sonoma",
+        "update_date": "27 stycznia 2025 r."
+    },
+    {
+        "update_name": "tvOS 18.2.1To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "Apple TV HD i Apple TV 4K (wszystkie modele)",
+        "update_date": "16 stycznia 2025 r."
+    },
+    {
+        "update_name": "iOS 18.2.1 oraz iPadOS 18.2.1To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "iPhone XS i nowszy, iPad Pro 13 cali, iPad Pro 12,9 cala 3. generacji i nowszy, iPad Pro 11 cali 1. generacji i nowszy, iPad Air 3. generacji i nowszy, iPad 7. generacji i nowszy oraz iPad mini 5. generacji i nowszy",
+        "update_date": "6 stycznia 2025 r."
+    },
+    {
+        "update_name": "Safari 18.2",
+        "update_link": "/pl-pl/121846",
+        "description": "macOS Ventura i macOS Sonoma",
+        "update_date": "11 grudnia 2024 r."
+    },
+    {
+        "update_name": "iOS 18.2 i iPadOS 18.2",
+        "update_link": "/pl-pl/121837",
+        "description": "iPhone XS i nowszy, iPad Pro 13 cali, iPad Pro 12,9 cala 3. generacji i nowszy, iPad Pro 11 cali 1. generacji i nowszy, iPad Air 3. generacji i nowszy, iPad 7. generacji i nowszy oraz iPad mini 5. generacji i nowszy",
+        "update_date": "11 grudnia 2024 r."
+    },
+    {
+        "update_name": "iPadOS 17.7.3",
+        "update_link": "/pl-pl/121838",
+        "description": "iPad Pro 12,9 cala 2. generacji, iPad Pro 10,5 cala i iPad 6. generacji",
+        "update_date": "11 grudnia 2024 r."
+    },
+    {
+        "update_name": "macOS Sequoia 15.2",
+        "update_link": "/pl-pl/121839",
+        "description": "macOS Sequoia",
+        "update_date": "11 grudnia 2024 r."
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.2",
+        "update_link": "/pl-pl/121840",
+        "description": "macOS Sonoma",
+        "update_date": "11 grudnia 2024 r."
+    },
+    {
+        "update_name": "macOS Ventura 13.7.2",
+        "update_link": "/pl-pl/121842",
+        "description": "macOS Ventura",
+        "update_date": "11 grudnia 2024 r."
+    },
+    {
+        "update_name": "watchOS 11.2",
+        "update_link": "/pl-pl/121843",
+        "description": "Apple Watch Series 6 lub nowszy",
+        "update_date": "11 grudnia 2024 r."
+    },
+    {
+        "update_name": "tvOS 18.2",
+        "update_link": "/pl-pl/121844",
+        "description": "Apple TV HD i Apple TV 4K (wszystkie modele)",
+        "update_date": "11 grudnia 2024 r."
+    },
+    {
+        "update_name": "visionOS 2.2",
+        "update_link": "/pl-pl/121845",
+        "description": "Apple Vision Pro",
+        "update_date": "11 grudnia 2024 r."
+    },
+    {
+        "update_name": "Safari 18.1.1",
+        "update_link": "/pl-pl/121756",
+        "description": "macOS Ventura i macOS Sonoma",
+        "update_date": "19 listopada 2024 r."
+    },
+    {
+        "update_name": "visionOS 2.1.1",
+        "update_link": "/pl-pl/121755",
+        "description": "Apple Vision Pro",
+        "update_date": "19 listopada 2024 r."
+    },
+    {
+        "update_name": "iOS 18.1.1 i iPadOS 18.1.1",
+        "update_link": "/pl-pl/121752",
+        "description": "iPhone XS i nowszy, iPad Pro 13 cali, iPad Pro 12,9 cala 3. generacji i nowszy, iPad Pro 11 cali 1. generacji i nowszy, iPad Air 3. generacji i nowszy, iPad 7. generacji i nowszy oraz iPad mini 5. generacji i nowszy",
+        "update_date": "19 listopada 2024 r."
+    },
+    {
+        "update_name": "iOS 17.7.2 i iPadOS 17.7.2",
+        "update_link": "/pl-pl/121754",
+        "description": "iPhone XS i nowszy, iPad Pro 13 cali, iPad Pro 12,9 cala 2. generacji i nowszy, iPad Pro 10,5 cala, iPad Pro 11 cali 1. generacji i nowszy, iPad Air 3. generacji i nowszy, iPad 6. generacji i nowszy oraz iPad mini 5. generacji i nowszy",
+        "update_date": "19 listopada 2024 r."
+    },
+    {
+        "update_name": "macOS Sequoia 15.1.1",
+        "update_link": "/pl-pl/121753",
+        "description": "macOS Sequoia",
+        "update_date": "19 listopada 2024 r."
+    },
+    {
+        "update_name": "Safari 18.1",
+        "update_link": "/pl-pl/121571",
+        "description": "macOS Ventura i macOS Sonoma",
+        "update_date": "29 października 2024 r."
+    },
+    {
+        "update_name": "iOS 18.1 i iPadOS 18.1",
+        "update_link": "/pl-pl/121563",
+        "description": "iPhone XS i nowszy, iPad Pro 13 cali, iPad Pro 12,9 cala 3. generacji i nowszy, iPad Pro 11 cali 1. generacji i nowszy, iPad Air 3. generacji i nowszy, iPad 7. generacji i nowszy oraz iPad mini 5. generacji i nowszy",
+        "update_date": "28 października 2024 r."
+    },
+    {
+        "update_name": "iOS 17.7.1 i iPadOS 17.7.1",
+        "update_link": "/pl-pl/121567",
+        "description": "iPhone XS i nowszy, iPad Pro 13 cali, iPad Pro 12,9 cala 2. generacji i nowszy, iPad Pro 10,5 cala, iPad Pro 11 cali 1. generacji i nowszy, iPad Air 3. generacji i nowszy, iPad 6. generacji i nowszy oraz iPad mini 5. generacji i nowszy",
+        "update_date": "28 października 2024 r."
+    },
+    {
+        "update_name": "macOS Sequoia 15.1",
+        "update_link": "/pl-pl/121564",
+        "description": "macOS Sequoia",
+        "update_date": "28 października 2024 r."
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.1",
+        "update_link": "/pl-pl/121570",
+        "description": "macOS Sonoma",
+        "update_date": "28 października 2024 r."
+    },
+    {
+        "update_name": "macOS Ventura 13.7.1",
+        "update_link": "/pl-pl/121568",
+        "description": "macOS Ventura",
+        "update_date": "28 października 2024 r."
+    },
+    {
+        "update_name": "watchOS 11.1",
+        "update_link": "/pl-pl/121565",
+        "description": "Apple Watch Series 6 lub nowszy",
+        "update_date": "28 października 2024 r."
+    },
+    {
+        "update_name": "tvOS 18.1",
+        "update_link": "/pl-pl/121569",
+        "description": "Apple TV HD i Apple TV 4K (wszystkie modele)",
+        "update_date": "28 października 2024 r."
+    },
+    {
+        "update_name": "visionOS 2.1",
+        "update_link": "/pl-pl/121566",
+        "description": "Apple Vision Pro",
+        "update_date": "28 października 2024 r."
+    },
+    {
+        "update_name": "Apple Music 1.5.0.152 dla Windows",
+        "update_link": "/pl-pl/122043",
+        "description": "Windows 10 22H2 i nowsze dla komputerów Intel, Windows 11 24H2 i nowsze dla komputerów Arm",
+        "update_date": "3 października 2024 r."
+    },
+    {
+        "update_name": "Apple TV 1.5.0.152 dla systemu Windows",
+        "update_link": "/pl-pl/121441",
+        "description": "Windows 10 22H2 lub nowszy",
+        "update_date": "3 października 2024 r."
+    },
+    {
+        "update_name": "iOS 18.0.1 i iPadOS 18.0.1",
+        "update_link": "/pl-pl/121373",
+        "description": "iPhone XS i nowszy, iPad Pro 13 cali, iPad Pro 12,9 cala 3. generacji i nowszy, iPad Pro 11 cali 1. generacji i nowszy, iPad Air 3. generacji i nowszy, iPad 7. generacji i nowszy oraz iPad mini 5. generacji i nowszy",
+        "update_date": "3 października 2024 r."
+    },
+    {
+        "update_name": "macOS Sequoia 15.0.1To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "macOS Sequoia",
+        "update_date": "3 października 2024 r."
+    },
+    {
+        "update_name": "watchOS 11.0.1To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "Apple Watch Series 6 lub nowszy",
+        "update_date": "3 października 2024 r."
+    },
+    {
+        "update_name": "visionOS 2.0.1To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "3 października 2024 r."
+    },
+    {
+        "update_name": "Safari 18.0.1To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "macOS Ventura i macOS Sonoma",
+        "update_date": "3 października 2024 r."
+    },
+    {
+        "update_name": "iOS 18 i iPadOS 18",
+        "update_link": "/pl-pl/121250",
+        "description": "iPhone XS i nowszy, iPad Pro 13 cali, iPad Pro 12,9 cala 3. generacji i nowszy, iPad Pro 11 cali 1. generacji i nowszy, iPad Air 3. generacji i nowszy, iPad 7. generacji i nowszy oraz iPad mini 5. generacji i nowszy",
+        "update_date": "16 września 2024 r."
+    },
+    {
+        "update_name": "macOS Sequoia 15",
+        "update_link": "/pl-pl/121238",
+        "description": "Mac Studio (2022 r. i nowszy), iMac (2019 r. i nowszy), Mac Pro (2019 r. i nowszy), Mac mini (2018 r. i nowszy), MacBook Air (2020 r. i nowszy), MacBook Pro (2018 r. i nowszy) oraz iMac Pro (2017 r. i nowszy)",
+        "update_date": "16 września 2024 r."
+    },
+    {
+        "update_name": "tvOS 18",
+        "update_link": "/pl-pl/121248",
+        "description": "Apple TV HD i Apple TV 4K (wszystkie modele)",
+        "update_date": "16 września 2024 r."
+    },
+    {
+        "update_name": "watchOS 11",
+        "update_link": "/pl-pl/121240",
+        "description": "Apple Watch Series 6 lub nowszy",
+        "update_date": "16 września 2024 r."
+    },
+    {
+        "update_name": "visionOS 2",
+        "update_link": "/pl-pl/121249",
+        "description": "Apple Vision Pro",
+        "update_date": "16 września 2024 r."
+    },
+    {
+        "update_name": "Safari 18",
+        "update_link": "/pl-pl/121241",
+        "description": "macOS Ventura i macOS Sonoma",
+        "update_date": "16 września 2024 r."
+    },
+    {
+        "update_name": "Xcode 16",
+        "update_link": "/pl-pl/121239",
+        "description": "macOS Sonoma 14.5 i nowszy",
+        "update_date": "16 września 2024 r."
+    },
+    {
+        "update_name": "iOS 17.7 i iPadOS 17.7",
+        "update_link": "/pl-pl/121246",
+        "description": "iPhone XS i nowszy, iPad Pro 13 cali, iPad Pro 12,9 cala 2. generacji i nowszy, iPad Pro 10,5 cala, iPad Pro 11 cali 1. generacji i nowszy, iPad Air 3. generacji i nowszy, iPad 6. generacji i nowszy oraz iPad mini 5. generacji i nowszy",
+        "update_date": "16 września 2024 r."
+    },
+    {
+        "update_name": "macOS Sonoma 14.7",
+        "update_link": "/pl-pl/121247",
+        "description": "macOS Sonoma",
+        "update_date": "16 września 2024 r."
+    },
+    {
+        "update_name": "macOS Ventura 13.7",
+        "update_link": "/pl-pl/121234",
+        "description": "macOS Ventura",
+        "update_date": "16 września 2024 r."
+    },
+    {
+        "update_name": "iTunes 12.13.3 dla systemu Windows",
+        "update_link": "/pl-pl/121328",
+        "description": "Windows 10 lub nowszy",
+        "update_date": "12 września 2024 r."
+    },
+    {
+        "update_name": "watchOS 10.6.1To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "Apple Watch Series 4 i nowsze",
+        "update_date": "19 sierpnia 2024 r."
+    },
+    {
+        "update_name": "tvOS 17.6.1To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "Apple TV HD i Apple TV 4K (wszystkie modele)",
+        "update_date": "19 sierpnia 2024 r."
+    },
+    {
+        "update_name": "iOS 17.6.1 i iPadOS 17.6.1To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "iPhone XS i nowszy, iPad Pro 13 cali, iPad Pro 12,9 cala 2. generacji i nowszy, iPad Pro 10,5 cala, iPad Pro 11 cali 1. generacji i nowszy, iPad Air 3. generacji i nowszy, iPad 6. generacji i nowszy oraz iPad mini 5. generacji i nowszy",
+        "update_date": "7 sierpnia 2024 r."
+    },
+    {
+        "update_name": "iOS 16.7.10 i iPadOS 16.7.10To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5. generacji, iPad Pro 9,7 cala i iPad Pro 12,9 cala 1. generacji",
+        "update_date": "7 sierpnia 2024 r."
+    },
+    {
+        "update_name": "macOS Sonoma 14.6.1To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "macOS Sonoma",
+        "update_date": "7 sierpnia 2024 r."
+    },
+    {
+        "update_name": "macOS Ventura 13.6.9To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "macOS Ventura",
+        "update_date": "7 sierpnia 2024 r."
+    },
+    {
+        "update_name": "Safari 17.6",
+        "update_link": "/pl-pl/120913",
+        "description": "macOS Monterey i macOS Ventura",
+        "update_date": "29 lipca 2024 r."
+    },
+    {
+        "update_name": "iOS 17.6 i iPadOS 17.6",
+        "update_link": "/pl-pl/120909",
+        "description": "iPhone XS i nowszy, iPad Pro 13 cali, iPad Pro 12,9 cala 2. generacji i nowszy, iPad Pro 10,5 cala, iPad Pro 11 cali 1. generacji i nowszy, iPad Air 3. generacji i nowszy, iPad 6. generacji i nowszy oraz iPad mini 5. generacji i nowszy",
+        "update_date": "29 lipca 2024 r."
+    },
+    {
+        "update_name": "iOS 16.7.9 i iPadOS 16.7.9",
+        "update_link": "/pl-pl/120908",
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5. generacji, iPad Pro 9,7 cala i iPad Pro 12,9 cala 1. generacji",
+        "update_date": "29 lipca 2024 r."
+    },
+    {
+        "update_name": "macOS Sonoma 14.6",
+        "update_link": "/pl-pl/120911",
+        "description": "macOS Sonoma",
+        "update_date": "29 lipca 2024 r."
+    },
+    {
+        "update_name": "macOS Ventura 13.6.8",
+        "update_link": "/pl-pl/120912",
+        "description": "macOS Ventura",
+        "update_date": "29 lipca 2024 r."
+    },
+    {
+        "update_name": "macOS Monterey 12.7.6",
+        "update_link": "/pl-pl/120910",
+        "description": "macOS Monterey",
+        "update_date": "29 lipca 2024 r."
+    },
+    {
+        "update_name": "watchOS 10.6",
+        "update_link": "/pl-pl/120916",
+        "description": "Apple Watch Series 4 i nowsze",
+        "update_date": "29 lipca 2024 r."
+    },
+    {
+        "update_name": "tvOS 17.6",
+        "update_link": "/pl-pl/120914",
+        "description": "Apple TV HD i Apple TV 4K (wszystkie modele)",
+        "update_date": "29 lipca 2024 r."
+    },
+    {
+        "update_name": "visionOS 1.3",
+        "update_link": "/pl-pl/120915",
+        "description": "Apple Vision Pro",
+        "update_date": "29 lipca 2024 r."
+    },
+    {
+        "update_name": "iOS 15.8.3 i iPadOS 15.8.3To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "iPhone 6s (wszystkie modele), iPhone 7 (wszystkie modele), iPhone SE (1. generacji), iPad Air 2, iPad mini (4. generacji) oraz iPod touch (7. generacji)",
+        "update_date": "29 lipca 2024 r."
+    },
+    {
+        "update_name": "Uaktualnienie oprogramowania sprzętowego słuchawek AirPods 6A326, uaktualnienie oprogramowania sprzętowego słuchawek AirPods 6F8 i uaktualnienie oprogramowania sprzętowego słuchawek Beats 6F8",
+        "update_link": "/pl-pl/120907",
+        "description": "AirPods (2. generacji i nowsze), AirPods Pro (wszystkie modele), AirPods Max, Powerbeats Pro i Beats Fit Pro",
+        "update_date": "25 czerwca 2024 r."
+    },
+    {
+        "update_name": "visionOS 1.2",
+        "update_link": "/pl-pl/120906",
+        "description": "Apple Vision Pro",
+        "update_date": "10 czerwca 2024 r."
+    },
+    {
+        "update_name": "tvOS 17.5.1To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "Apple TV HD i Apple TV 4K (wszystkie modele)",
+        "update_date": "21 maja 2024 r."
+    },
+    {
+        "update_name": "iOS 17.5.1 i iPadOS 17.5.1To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "iPhone XS i nowszy, iPad Pro 13 cali, iPad Pro 12,9 cala 2. generacji i nowszy, iPad Pro 10,5 cala, iPad Pro 11 cali 1. generacji i nowszy, iPad Air 3. generacji i nowszy, iPad 6. generacji i nowszy oraz iPad mini 5. generacji i nowszy",
+        "update_date": "20 maja 2024 r."
+    },
+    {
+        "update_name": "Safari 17.5",
+        "update_link": "/pl-pl/120896",
+        "description": "macOS Monterey i macOS Ventura",
+        "update_date": "13 maja 2024 r."
+    },
+    {
+        "update_name": "iOS 17.5 i iPadOS 17.5",
+        "update_link": "/pl-pl/120905",
+        "description": "iPhone XS i nowszy, iPad Pro 13 cali, iPad Pro 12,9 cala 2. generacji i nowszy, iPad Pro 10,5 cala, iPad Pro 11 cali 1. generacji i nowszy, iPad Air 3. generacji i nowszy, iPad 6. generacji i nowszy oraz iPad mini 5. generacji i nowszy",
+        "update_date": "13 maja 2024 r."
+    },
+    {
+        "update_name": "iOS 16.7.8 i iPadOS 16.7.8",
+        "update_link": "/pl-pl/120898",
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5. generacji, iPad Pro 9,7 cala i iPad Pro 12,9 cala 1. generacji",
+        "update_date": "13 maja 2024 r."
+    },
+    {
+        "update_name": "macOS Sonoma 14.5",
+        "update_link": "/pl-pl/120903",
+        "description": "macOS Sonoma",
+        "update_date": "13 maja 2024 r."
+    },
+    {
+        "update_name": "macOS Ventura 13.6.7",
+        "update_link": "/pl-pl/120900",
+        "description": "macOS Ventura",
+        "update_date": "13 maja 2024 r."
+    },
+    {
+        "update_name": "macOS Monterey 12.7.5",
+        "update_link": "/pl-pl/120899",
+        "description": "macOS Monterey",
+        "update_date": "13 maja 2024 r."
+    },
+    {
+        "update_name": "watchOS 10.5",
+        "update_link": "/pl-pl/120902",
+        "description": "Apple Watch Series 4 i nowsze",
+        "update_date": "13 maja 2024 r."
+    },
+    {
+        "update_name": "tvOS 17.5",
+        "update_link": "/pl-pl/120901",
+        "description": "Apple TV HD i Apple TV 4K (wszystkie modele)",
+        "update_date": "13 maja 2024 r."
+    },
+    {
+        "update_name": "iTunes 12.13.2 dla systemu Windows",
+        "update_link": "/pl-pl/120897",
+        "description": "Windows 10 lub nowszy",
+        "update_date": "8 maja 2024 r."
+    },
+    {
+        "update_name": "visionOS 1.1.2To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "9 kwietnia 2024 r."
+    },
+    {
+        "update_name": "Safari 17.4.1",
+        "update_link": "/pl-pl/120888",
+        "description": "macOS Monterey i macOS Ventura",
+        "update_date": "25 marca 2024 r."
+    },
+    {
+        "update_name": "macOS Sonoma 14.4.1",
+        "update_link": "/pl-pl/120889",
+        "description": "macOS Sonoma",
+        "update_date": "25 marca 2024 r."
+    },
+    {
+        "update_name": "macOS Ventura 13.6.6",
+        "update_link": "/pl-pl/120891",
+        "description": "macOS Ventura",
+        "update_date": "25 marca 2024 r."
+    },
+    {
+        "update_name": "iOS 17.4.1 i iPadOS 17.4.1",
+        "update_link": "/pl-pl/120890",
+        "description": "iPhone XS i nowszy, iPad Pro 12,9 cala 2. generacji i nowszy, iPad Pro 10,5 cala, iPad Pro 11 cali 1. generacji i nowszy, iPad Air 3. generacji i nowszy, iPad 6. generacji i nowszy oraz iPad mini 5. generacji i nowszy",
+        "update_date": "21 marca 2024 r."
+    },
+    {
+        "update_name": "iOS 16.7.7 i iPadOS 16.7.7",
+        "update_link": "/pl-pl/120892",
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5. generacji, iPad Pro 9,7 cala i iPad Pro 12,9 cala 1. generacji",
+        "update_date": "21 marca 2024 r."
+    },
+    {
+        "update_name": "visionOS 1.1.1",
+        "update_link": "/pl-pl/120312",
+        "description": "Apple Vision Pro",
+        "update_date": "21 marca 2024 r."
+    },
+    {
+        "update_name": "GarageBand 10.4.11",
+        "update_link": "/pl-pl/120885",
+        "description": "macOS Ventura i macOS Sonoma",
+        "update_date": "12 marca 2024 r."
+    },
+    {
+        "update_name": "Safari 17.4",
+        "update_link": "/pl-pl/120894",
+        "description": "macOS Monterey i macOS Ventura",
+        "update_date": "7 marca 2024 r."
+    },
+    {
+        "update_name": "macOS Sonoma 14.4",
+        "update_link": "/pl-pl/120895",
+        "description": "macOS Sonoma",
+        "update_date": "7 marca 2024 r."
+    },
+    {
+        "update_name": "macOS Ventura 13.6.5",
+        "update_link": "/pl-pl/120886",
+        "description": "macOS Ventura",
+        "update_date": "7 marca 2024 r."
+    },
+    {
+        "update_name": "macOS Monterey 12.7.4",
+        "update_link": "/pl-pl/120884",
+        "description": "macOS Monterey",
+        "update_date": "7 marca 2024 r."
+    },
+    {
+        "update_name": "watchOS 10.4",
+        "update_link": "/pl-pl/120881",
+        "description": "Apple Watch Series 4 i nowsze",
+        "update_date": "7 marca 2024 r."
+    },
+    {
+        "update_name": "tvOS 17.4",
+        "update_link": "/pl-pl/120882",
+        "description": "Apple TV HD i Apple TV 4K (wszystkie modele)",
+        "update_date": "7 marca 2024 r."
+    },
+    {
+        "update_name": "visionOS 1.1",
+        "update_link": "/pl-pl/120883",
+        "description": "Apple Vision Pro",
+        "update_date": "7 marca 2024 r."
+    },
+    {
+        "update_name": "Xcode 15.3",
+        "update_link": "/pl-pl/120887",
+        "description": "macOS Sonoma 14 i nowsze",
+        "update_date": "5 marca 2024 r."
+    },
+    {
+        "update_name": "iOS 17.4 i iPadOS 17.4",
+        "update_link": "/pl-pl/120893",
+        "description": "iPhone XS i nowszy, iPad Pro 12,9 cala 2. generacji i nowszy, iPad Pro 10,5 cala, iPad Pro 11 cali 1. generacji i nowszy, iPad Air 3. generacji i nowszy, iPad 6. generacji i nowszy oraz iPad mini 5. generacji i nowszy",
+        "update_date": "5 marca 2024 r."
+    },
+    {
+        "update_name": "iOS 16.7.6 i iPadOS 16.7.6",
+        "update_link": "/pl-pl/120880",
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5. generacji, iPad Pro 9,7 cala i iPad Pro 12,9 cala 1. generacji",
+        "update_date": "5 marca 2024 r."
+    },
+    {
+        "update_name": "iOS 15.8.2 i iPadOS 15.8.2To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "iPhone 6s (wszystkie modele), iPhone 7 (wszystkie modele), iPhone SE (1. generacji), iPad Air 2, iPad mini (4. generacji) oraz iPod touch (7. generacji)",
+        "update_date": "5 marca 2024 r."
+    },
+    {
+        "update_name": "visionOS 1.0.3To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "12 lutego 2024 r."
+    },
+    {
+        "update_name": "Safari 17.3.1To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "macOS Monterey i macOS Ventura",
+        "update_date": "9 lutego 2024 r."
+    },
+    {
+        "update_name": "iOS 17.3.1 i iPadOS 17.3.1To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "iPhone XS i nowszy, iPad Pro 12,9 cala 2. generacji i nowszy, iPad Pro 10,5 cala, iPad Pro 11 cali 1. generacji i nowszy, iPad Air 3. generacji i nowszy, iPad 6. generacji i nowszy oraz iPad mini 5. generacji i nowszy",
+        "update_date": "8 lutego 2024 r."
+    },
+    {
+        "update_name": "macOS Sonoma 14.3.1To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "macOS Sonoma",
+        "update_date": "8 lutego 2024 r."
+    },
+    {
+        "update_name": "watchOS 10.3.1To uaktualnienie nie ma opublikowanych wpisów CVE.",
+        "update_link": null,
+        "description": "Apple Watch Series 4 i nowsze",
+        "update_date": "8 lutego 2024 r."
+    },
+    {
+        "update_name": "visionOS 1.0.2",
+        "update_link": "/pl-pl/118479",
+        "description": "Apple Vision Pro",
+        "update_date": "31 stycznia 2024 r."
+    },
+    {
+        "update_name": "Safari 17.3",
+        "update_link": "/pl-pl/120339",
+        "description": "macOS Monterey i macOS Ventura",
+        "update_date": "22 stycznia 2024 r."
+    },
+    {
+        "update_name": "iOS 17.3 i iPadOS 17.3",
+        "update_link": "/pl-pl/120304",
+        "description": "iPhone XS i nowszy, iPad Pro 12,9 cala 2. generacji i nowszy, iPad Pro 10,5 cala, iPad Pro 11 cali 1. generacji i nowszy, iPad Air 3. generacji i nowszy, iPad 6. generacji i nowszy oraz iPad mini 5. generacji i nowszy",
+        "update_date": "22 stycznia 2024 r."
+    },
+    {
+        "update_name": "iOS 16.7.5 i iPadOS 16.7.5",
+        "update_link": "/pl-pl/120310",
+        "description": "iPhone 8, iPhone 8 Plus, iPhone X, iPad 5. generacji, iPad Pro 9,7 cala i iPad Pro 12,9 cala 1. generacji",
+        "update_date": "22 stycznia 2024 r."
+    },
+    {
+        "update_name": "iOS 15.8.1 i iPadOS 15.8.1",
+        "update_link": "/pl-pl/120308",
+        "description": "iPhone 6s (wszystkie modele), iPhone 7 (wszystkie modele), iPhone SE (1. generacji), iPad Air 2, iPad mini (4. generacji) oraz iPod touch (7. generacji)",
+        "update_date": "22 stycznia 2024 r."
+    },
+    {
+        "update_name": "macOS Sonoma 14.3",
+        "update_link": "/pl-pl/120309",
+        "description": "macOS Sonoma",
+        "update_date": "22 stycznia 2024 r."
+    },
+    {
+        "update_name": "macOS Ventura 13.6.4",
+        "update_link": "/pl-pl/120307",
+        "description": "macOS Ventura",
+        "update_date": "22 stycznia 2024 r."
+    },
+    {
+        "update_name": "macOS Monterey 12.7.3",
+        "update_link": "/pl-pl/120305",
+        "description": "macOS Monterey",
+        "update_date": "22 stycznia 2024 r."
+    },
+    {
+        "update_name": "watchOS 10.3",
+        "update_link": "/pl-pl/120306",
+        "description": "Apple Watch Series 4 i nowsze",
+        "update_date": "22 stycznia 2024 r."
+    },
+    {
+        "update_name": "tvOS 17.3",
+        "update_link": "/pl-pl/120311",
+        "description": "Apple TV HD i Apple TV 4K (wszystkie modele)",
+        "update_date": "22 stycznia 2024 r."
+    },
+    {
+        "update_name": "Uaktualnienie oprogramowania sprzętowego Magic Keyboard 2.0.6",
+        "update_link": "/pl-pl/120303",
+        "description": "Magic Keyboard; Magic Keyboard (2021); Magic Keyboard z polem numerycznym; Magic Keyboard z Touch ID; oraz klawiatura Magic Keyboard z Touch ID i polem numerycznym",
+        "update_date": "09 stycznia 2024 r."
+    }
+]

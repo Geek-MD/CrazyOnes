@@ -1,0 +1,776 @@
+[
+    {
+        "update_name": "سفاري 18.3.1",
+        "update_link": "/ar-ae/122285",
+        "description": "macOS Ventura وmacOS Sonoma",
+        "update_date": "11 مارس 2025"
+    },
+    {
+        "update_name": "iOS 18.3.2 وiPadOS 18.3.2",
+        "update_link": "/ar-ae/122281",
+        "description": "iPhone XS والإصدارات الأحدث، وiPad Pro مقاس 13 بوصة، وiPad Pro مقاس 12.9 بوصة الجيل الثالث والإصدارات الأحدث، وiPad Pro مقاس 11 بوصة الجيل الأول والإصدارات الأحدث، وiPad Air الجيل الثالث والإصدارات الأحدث، وiPad الجيل السابع والإصدارات الأحدث، وiPad mini الجيل الخامس والإصدارات الأحدث",
+        "update_date": "11 مارس 2025"
+    },
+    {
+        "update_name": "macOS Sequoia 15.3.2",
+        "update_link": "/ar-ae/122283",
+        "description": "macOS Sequoia",
+        "update_date": "11 مارس 2025"
+    },
+    {
+        "update_name": "visionOS 2.3.2",
+        "update_link": "/ar-ae/122284",
+        "description": "Apple Vision Pro",
+        "update_date": "11 مارس 2025"
+    },
+    {
+        "update_name": "tvOS 18.3.1لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "Apple TV 4K (الجيل الثالث)",
+        "update_date": "11 مارس 2025"
+    },
+    {
+        "update_name": "أنظمة التشغيل iOS 18.3.1 وiPadOS 18.3.1",
+        "update_link": "/ar-ae/122174",
+        "description": "iPhone XS والإصدارات الأحدث، وiPad Pro مقاس 13 بوصة، وiPad Pro مقاس 12.9 بوصة الجيل الثالث والإصدارات الأحدث، وiPad Pro مقاس 11 بوصة الجيل الأول والإصدارات الأحدث، وiPad Air الجيل الثالث والإصدارات الأحدث، وiPad الجيل السابع والإصدارات الأحدث، وiPad mini الجيل الخامس والإصدارات الأحدث",
+        "update_date": "10 فبراير 2025"
+    },
+    {
+        "update_name": "نظام التشغيلiPadOS 17.7.5",
+        "update_link": "/ar-ae/122173",
+        "description": "iPad Pro مقاس 12.9 بوصة الجيل الثاني، وiPad Pro مقاس 10.5 بوصة، وiPad الجيل السادس",
+        "update_date": "10 فبراير 2025"
+    },
+    {
+        "update_name": "نظام التشغيل macOS Sequoia 15.3.1لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "macOS Sequoia",
+        "update_date": "10 فبراير 2025"
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.4لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "macOS Sonoma",
+        "update_date": "10 فبراير 2025"
+    },
+    {
+        "update_name": "macOS Ventura 13.7.4لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "macOS Ventura",
+        "update_date": "10 فبراير 2025"
+    },
+    {
+        "update_name": "نظام التشغيل watchOS 11.3.1لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "Apple Watch Series 6 والإصدارات الأحدث",
+        "update_date": "10 فبراير 2025"
+    },
+    {
+        "update_name": "نظام التشغيل visionOS 2.3.1لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "10 فبراير 2025"
+    },
+    {
+        "update_name": "GarageBand 10.4.12",
+        "update_link": "/ar-ae/121866",
+        "description": "macOS Sonoma 14.4 والإصدارات الأحدث",
+        "update_date": "30 يناير 2025"
+    },
+    {
+        "update_name": "visionOS 2.3",
+        "update_link": "/ar-ae/122073",
+        "description": "Apple Vision Pro",
+        "update_date": "27 يناير 2025"
+    },
+    {
+        "update_name": "iOS 18.3 وiPadOS 18.3",
+        "update_link": "/ar-ae/122066",
+        "description": "iPhone XS والإصدارات الأحدث، وiPad Pro مقاس 13 بوصة، وiPad Pro مقاس 12.9 بوصة الجيل الثالث والإصدارات الأحدث، وiPad Pro مقاس 11 بوصة الجيل الأول والإصدارات الأحدث، وiPad Air الجيل الثالث والإصدارات الأحدث، وiPad الجيل السابع والإصدارات الأحدث، وiPad mini الجيل الخامس والإصدارات الأحدث",
+        "update_date": "27 يناير 2025"
+    },
+    {
+        "update_name": "iPadOS 17.7.4",
+        "update_link": "/ar-ae/122067",
+        "description": "iPad Pro مقاس 12.9 بوصة الجيل الثاني، وiPad Pro مقاس 10.5 بوصة، وiPad الجيل السادس",
+        "update_date": "27 يناير 2025"
+    },
+    {
+        "update_name": "macOS Sequoia 15.3",
+        "update_link": "/ar-ae/122068",
+        "description": "macOS Sequoia",
+        "update_date": "27 يناير 2025"
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.3",
+        "update_link": "/ar-ae/122069",
+        "description": "macOS Sonoma",
+        "update_date": "27 يناير 2025"
+    },
+    {
+        "update_name": "macOS Ventura 13.7.3",
+        "update_link": "/ar-ae/122070",
+        "description": "macOS Ventura",
+        "update_date": "27 يناير 2025"
+    },
+    {
+        "update_name": "watchOS 11.3",
+        "update_link": "/ar-ae/122071",
+        "description": "Apple Watch Series 6 والإصدارات الأحدث",
+        "update_date": "27 يناير 2025"
+    },
+    {
+        "update_name": "tvOS 18.3",
+        "update_link": "/ar-ae/122072",
+        "description": "Apple TV HD وApple TV 4K (جميع الطرازات)",
+        "update_date": "27 يناير 2025"
+    },
+    {
+        "update_name": "سفاري 18.3",
+        "update_link": "/ar-ae/122074",
+        "description": "macOS Ventura وmacOS Sonoma",
+        "update_date": "27 يناير 2025"
+    },
+    {
+        "update_name": "tvOS 18.2.1لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "Apple TV HD وApple TV 4K (جميع الطرازات)",
+        "update_date": "16 يناير 2025"
+    },
+    {
+        "update_name": "iOS 18.2.1 وiPadOS 18.2.1لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "iPhone XS والإصدارات الأحدث، وiPad Pro مقاس 13 بوصة، وiPad Pro مقاس 12.9 بوصة الجيل الثالث والإصدارات الأحدث، وiPad Pro مقاس 11 بوصة الجيل الأول والإصدارات الأحدث، وiPad Air الجيل الثالث والإصدارات الأحدث، وiPad الجيل السابع والإصدارات الأحدث، وiPad mini الجيل الخامس والإصدارات الأحدث",
+        "update_date": "6 يناير 2025"
+    },
+    {
+        "update_name": "سفاري 18.2",
+        "update_link": "/ar-ae/121846",
+        "description": "macOS Ventura وmacOS Sonoma",
+        "update_date": "11 ديسمبر 2024"
+    },
+    {
+        "update_name": "iOS 18.2 وiPadOS 18.2",
+        "update_link": "/ar-ae/121837",
+        "description": "iPhone XS والإصدارات الأحدث، وiPad Pro مقاس 13 بوصة، وiPad Pro مقاس 12.9 بوصة الجيل الثالث والإصدارات الأحدث، وiPad Pro مقاس 11 بوصة الجيل الأول والإصدارات الأحدث، وiPad Air الجيل الثالث والإصدارات الأحدث، وiPad الجيل السابع والإصدارات الأحدث، وiPad mini الجيل الخامس والإصدارات الأحدث",
+        "update_date": "11 ديسمبر 2024"
+    },
+    {
+        "update_name": "iPadOS 17.7.3",
+        "update_link": "/ar-ae/121838",
+        "description": "iPad Pro مقاس 12.9 بوصة الجيل الثاني، وiPad Pro مقاس 10.5 بوصة، وiPad الجيل السادس",
+        "update_date": "11 ديسمبر 2024"
+    },
+    {
+        "update_name": "macOS Sequoia 15.2",
+        "update_link": "/ar-ae/121839",
+        "description": "macOS Sequoia",
+        "update_date": "11 ديسمبر 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.2",
+        "update_link": "/ar-ae/121840",
+        "description": "macOS Sonoma",
+        "update_date": "11 ديسمبر 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.7.2",
+        "update_link": "/ar-ae/121842",
+        "description": "macOS Ventura",
+        "update_date": "11 ديسمبر 2024"
+    },
+    {
+        "update_name": "watchOS 11.2",
+        "update_link": "/ar-ae/121843",
+        "description": "Apple Watch Series 6 والإصدارات الأحدث",
+        "update_date": "11 ديسمبر 2024"
+    },
+    {
+        "update_name": "tvOS 18.2",
+        "update_link": "/ar-ae/121844",
+        "description": "Apple TV HD وApple TV 4K (جميع الطرازات)",
+        "update_date": "11 ديسمبر 2024"
+    },
+    {
+        "update_name": "visionOS 2.2",
+        "update_link": "/ar-ae/121845",
+        "description": "Apple Vision Pro",
+        "update_date": "11 ديسمبر 2024"
+    },
+    {
+        "update_name": "سفاري 18.1.1",
+        "update_link": "/ar-ae/121756",
+        "description": "macOS Ventura وmacOS Sonoma",
+        "update_date": "19 نوفمبر 2024"
+    },
+    {
+        "update_name": "visionOS 2.1.1",
+        "update_link": "/ar-ae/121755",
+        "description": "Apple Vision Pro",
+        "update_date": "19 نوفمبر 2024"
+    },
+    {
+        "update_name": "iOS 18.1.1 وiPadOS 18.1.1",
+        "update_link": "/ar-ae/121752",
+        "description": "iPhone XS والإصدارات الأحدث، وiPad Pro مقاس 13 بوصة، وiPad Pro مقاس 12.9 بوصة الجيل الثالث والإصدارات الأحدث، وiPad Pro مقاس 11 بوصة الجيل الأول والإصدارات الأحدث، وiPad Air الجيل الثالث والإصدارات الأحدث، وiPad الجيل السابع والإصدارات الأحدث، وiPad mini الجيل الخامس والإصدارات الأحدث",
+        "update_date": "19 نوفمبر 2024"
+    },
+    {
+        "update_name": "iOS 17.7.2 وiPadOS 17.7.2",
+        "update_link": "/ar-ae/121754",
+        "description": "iPhone XS والإصدارات الأحدث، وiPad Pro مقاس 13 بوصة، وiPad Pro مقاس 12.9 بوصة الجيل الثاني والإصدارات الأحدث، وiPad Pro مقاس 10.5 بوصة، وiPad Pro مقاس 11 بوصة الجيل الأول والإصدارات الأحدث، وiPad Air الجيل الثالث والإصدارات الأحدث، وiPad الجيل السادس والإصدارات الأحدث، وiPad mini الجيل الخامس والإصدارات الأحدث",
+        "update_date": "19 نوفمبر 2024"
+    },
+    {
+        "update_name": "macOS Sequoia 15.1.1",
+        "update_link": "/ar-ae/121753",
+        "description": "macOS Sequoia",
+        "update_date": "19 نوفمبر 2024"
+    },
+    {
+        "update_name": "سفاري 18.1",
+        "update_link": "/ar-ae/121571",
+        "description": "macOS Ventura وmacOS Sonoma",
+        "update_date": "29 أكتوبر 2024"
+    },
+    {
+        "update_name": "iOS 18.1 وiPadOS 18.1",
+        "update_link": "/ar-ae/121563",
+        "description": "iPhone XS والإصدارات الأحدث، وiPad Pro مقاس 13 بوصة، وiPad Pro مقاس 12.9 بوصة الجيل الثالث والإصدارات الأحدث، وiPad Pro مقاس 11 بوصة الجيل الأول والإصدارات الأحدث، وiPad Air الجيل الثالث والإصدارات الأحدث، وiPad الجيل السابع والإصدارات الأحدث، وiPad mini الجيل الخامس والإصدارات الأحدث",
+        "update_date": "28 أكتوبر 2024"
+    },
+    {
+        "update_name": "iOS 17.7.1 وiPadOS 17.7.1",
+        "update_link": "/ar-ae/121567",
+        "description": "iPhone XS والإصدارات الأحدث، وiPad Pro مقاس 13 بوصة، وiPad Pro مقاس 12.9 بوصة الجيل الثاني والإصدارات الأحدث، وiPad Pro مقاس 10.5 بوصة، وiPad Pro مقاس 11 بوصة الجيل الأول والإصدارات الأحدث، وiPad Air الجيل الثالث والإصدارات الأحدث، وiPad الجيل السادس والإصدارات الأحدث، وiPad mini الجيل الخامس والإصدارات الأحدث",
+        "update_date": "28 أكتوبر 2024"
+    },
+    {
+        "update_name": "macOS Sequoia 15.1",
+        "update_link": "/ar-ae/121564",
+        "description": "macOS Sequoia",
+        "update_date": "28 أكتوبر 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.7.1",
+        "update_link": "/ar-ae/121570",
+        "description": "macOS Sonoma",
+        "update_date": "28 أكتوبر 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.7.1",
+        "update_link": "/ar-ae/121568",
+        "description": "macOS Ventura",
+        "update_date": "28 أكتوبر 2024"
+    },
+    {
+        "update_name": "watchOS 11.1",
+        "update_link": "/ar-ae/121565",
+        "description": "Apple Watch Series 6 والإصدارات الأحدث",
+        "update_date": "28 أكتوبر 2024"
+    },
+    {
+        "update_name": "tvOS 18.1",
+        "update_link": "/ar-ae/121569",
+        "description": "Apple TV HD وApple TV 4K (جميع الطرازات)",
+        "update_date": "28 أكتوبر 2024"
+    },
+    {
+        "update_name": "visionOS 2.1",
+        "update_link": "/ar-ae/121566",
+        "description": "Apple Vision Pro",
+        "update_date": "28 أكتوبر 2024"
+    },
+    {
+        "update_name": "Apple Music 1.5.0.152 لـ Windows",
+        "update_link": "/ar-ae/122043",
+        "description": "Windows 10 22H2 والإصدارات الأحدث لأجهزة Intel وWindows 11 24H2 والإصدارات الأحدث لأجهزة Arm",
+        "update_date": "03 أكتوبر 2024"
+    },
+    {
+        "update_name": "Apple TV 1.5.0.152 لـ Windows",
+        "update_link": "/ar-ae/121441",
+        "description": "Windows 10 22H2 والإصدارات الأحدث",
+        "update_date": "03 أكتوبر 2024"
+    },
+    {
+        "update_name": "iOS 18.0.1 وiPadOS 18.0.1",
+        "update_link": "/ar-ae/121373",
+        "description": "iPhone XS والإصدارات الأحدث، وiPad Pro مقاس 13 بوصة، وiPad Pro مقاس 12.9 بوصة الجيل الثالث والإصدارات الأحدث، وiPad Pro مقاس 11 بوصة الجيل الأول والإصدارات الأحدث، وiPad Air الجيل الثالث والإصدارات الأحدث، وiPad الجيل السابع والإصدارات الأحدث، وiPad mini الجيل الخامس والإصدارات الأحدث",
+        "update_date": "03 أكتوبر 2024"
+    },
+    {
+        "update_name": "macOS Sequoia 15.0.1لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "macOS Sequoia",
+        "update_date": "03 أكتوبر 2024"
+    },
+    {
+        "update_name": "watchOS 11.0.1لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "Apple Watch Series 6 والإصدارات الأحدث",
+        "update_date": "03 أكتوبر 2024"
+    },
+    {
+        "update_name": "visionOS 2.0.1لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "03 أكتوبر 2024"
+    },
+    {
+        "update_name": "سفاري 18.0.1لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "macOS Ventura وmacOS Sonoma",
+        "update_date": "03 أكتوبر 2024"
+    },
+    {
+        "update_name": "iOS 18 وiPadOS 18",
+        "update_link": "/ar-ae/121250",
+        "description": "iPhone XS والإصدارات الأحدث، وiPad Pro مقاس 13 بوصة، وiPad Pro مقاس 12.9 بوصة الجيل الثالث والإصدارات الأحدث، وiPad Pro مقاس 11 بوصة الجيل الأول والإصدارات الأحدث، وiPad Air الجيل الثالث والإصدارات الأحدث، وiPad الجيل السابع والإصدارات الأحدث، وiPad mini الجيل الخامس والإصدارات الأحدث",
+        "update_date": "16 سبتمبر 2024"
+    },
+    {
+        "update_name": "macOS Sequoia 15",
+        "update_link": "/ar-ae/121238",
+        "description": "Mac Studio (2022 والإصدارات الأحدث)، وiMac (2019 والإصدارات الأحدث)، وMac Pro (2019 والإصدارات الأحدث)، وMac mini (2018 والإصدارات الأحدث)، وMacBook Air (2020 والإصدارات الأحدث)، وMacBook Pro (2018 والإصدارات الأحدث)، وiMac Pro (2017 والإصدارات الأحدث)",
+        "update_date": "16 سبتمبر 2024"
+    },
+    {
+        "update_name": "tvOS 18",
+        "update_link": "/ar-ae/121248",
+        "description": "Apple TV HD وApple TV 4K (جميع الطرازات)",
+        "update_date": "16 سبتمبر 2024"
+    },
+    {
+        "update_name": "watchOS 11",
+        "update_link": "/ar-ae/121240",
+        "description": "Apple Watch Series 6 والإصدارات الأحدث",
+        "update_date": "16 سبتمبر 2024"
+    },
+    {
+        "update_name": "visionos 2",
+        "update_link": "/ar-ae/121249",
+        "description": "Apple Vision Pro",
+        "update_date": "16 سبتمبر 2024"
+    },
+    {
+        "update_name": "سفاري 18",
+        "update_link": "/ar-ae/121241",
+        "description": "macOS Ventura وmacOS Sonoma",
+        "update_date": "16 سبتمبر 2024"
+    },
+    {
+        "update_name": "Xcode 16",
+        "update_link": "/ar-ae/121239",
+        "description": "macOS Sonoma 14.5 والإصدارات الأحدث",
+        "update_date": "16 سبتمبر 2024"
+    },
+    {
+        "update_name": "iOS 17.7 وiPadOS 17.7",
+        "update_link": "/ar-ae/121246",
+        "description": "iPhone XS والإصدارات الأحدث، وiPad Pro مقاس 13 بوصة، وiPad Pro مقاس 12.9 بوصة الجيل الثاني والإصدارات الأحدث، وiPad Pro مقاس 10.5 بوصة، وiPad Pro مقاس 11 بوصة الجيل الأول والإصدارات الأحدث، وiPad Air الجيل الثالث والإصدارات الأحدث، وiPad الجيل السادس والإصدارات الأحدث، وiPad mini الجيل الخامس والإصدارات الأحدث",
+        "update_date": "16 سبتمبر 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.7‏",
+        "update_link": "/ar-ae/121247",
+        "description": "macOS Sonoma",
+        "update_date": "16 سبتمبر 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.7‏",
+        "update_link": "/ar-ae/121234",
+        "description": "macOS Ventura",
+        "update_date": "16 سبتمبر 2024"
+    },
+    {
+        "update_name": "iTunes 12.13.3 لـ Windows‏",
+        "update_link": "/ar-ae/121328",
+        "description": "Windows 10 والأحدث",
+        "update_date": "12 سبتمبر 2024"
+    },
+    {
+        "update_name": "watchOS 10.6.1لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "Apple Watch Series 4 والإصدارات الأحدث",
+        "update_date": "19 أغسطس 2024"
+    },
+    {
+        "update_name": "tvOS 17.6.1لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "Apple TV HD وApple TV 4K (جميع الطرازات)",
+        "update_date": "19 أغسطس 2024"
+    },
+    {
+        "update_name": "iOS 17.6.1 وiPadOS 17.6.1لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "iPhone XS والإصدارات الأحدث، وiPad Pro مقاس 13 بوصة، وiPad Pro مقاس 12.9 بوصة الجيل الثاني والإصدارات الأحدث، وiPad Pro مقاس 10.5 بوصة، وiPad Pro مقاس 11 بوصة الجيل الأول والإصدارات الأحدث، وiPad Air الجيل الثالث والإصدارات الأحدث، وiPad الجيل السادس والإصدارات الأحدث، وiPad mini الجيل الخامس والإصدارات الأحدث",
+        "update_date": "07 أغسطس 2024"
+    },
+    {
+        "update_name": "أنظمة iOS 16.7.10 وiPadOS 16.7.10لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "iPhone 8، وiPhone 8 Plus، وiPhone X، وiPad الجيل الخامس، وiPad Pro مقاس 9.7 بوصة، وiPad Pro مقاس 12.9 بوصة الجيل الأول",
+        "update_date": "07 أغسطس 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.6.1لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "macOS Sonoma",
+        "update_date": "07 أغسطس 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.9لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "macOS Ventura",
+        "update_date": "07 أغسطس 2024"
+    },
+    {
+        "update_name": "سفاري 17.6",
+        "update_link": "/ar-ae/120913",
+        "description": "macOS Monterey وmacOS Ventura",
+        "update_date": "29 يوليو 2024"
+    },
+    {
+        "update_name": "iOS 17.6 وiPadOS 17.6‏",
+        "update_link": "/ar-ae/120909",
+        "description": "iPhone XS والإصدارات الأحدث، وiPad Pro مقاس 13 بوصة، وiPad Pro مقاس 12.9 بوصة الجيل الثاني والإصدارات الأحدث، وiPad Pro مقاس 10.5 بوصة، وiPad Pro مقاس 11 بوصة الجيل الأول والإصدارات الأحدث، وiPad Air الجيل الثالث والإصدارات الأحدث، وiPad الجيل السادس والإصدارات الأحدث، وiPad mini الجيل الخامس والإصدارات الأحدث",
+        "update_date": "29 يوليو 2024"
+    },
+    {
+        "update_name": "iOS 16.7.9 وiPadOS 16.7.9",
+        "update_link": "/ar-ae/120908",
+        "description": "iPhone 8، وiPhone 8 Plus، وiPhone X، وiPad الجيل الخامس، وiPad Pro مقاس 9.7 بوصة، وiPad Pro مقاس 12.9 بوصة الجيل الأول",
+        "update_date": "29 يوليو 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.6‏",
+        "update_link": "/ar-ae/120911",
+        "description": "macOS Sonoma",
+        "update_date": "29 يوليو 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.8‏",
+        "update_link": "/ar-ae/120912",
+        "description": "macOS Ventura",
+        "update_date": "29 يوليو 2024"
+    },
+    {
+        "update_name": "macOS Monterey 12.7.6‏",
+        "update_link": "/ar-ae/120910",
+        "description": "macOS Monterey",
+        "update_date": "29 يوليو 2024"
+    },
+    {
+        "update_name": "watchOS 10.6‏",
+        "update_link": "/ar-ae/120916",
+        "description": "Apple Watch Series 4 والإصدارت الأحدث",
+        "update_date": "29 يوليو 2024"
+    },
+    {
+        "update_name": "tvOS 17.6‏",
+        "update_link": "/ar-ae/120914",
+        "description": "Apple TV HD وApple TV 4K (جميع الطرازات)",
+        "update_date": "29 يوليو 2024"
+    },
+    {
+        "update_name": "visionoS 1.3‏",
+        "update_link": "/ar-ae/120915",
+        "description": "Apple Vision Pro",
+        "update_date": "29 يوليو 2024"
+    },
+    {
+        "update_name": "iOS 15.8.3 وiPadOS 15.8.3لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "iPhone 6s (كل الطرازات)، وiPhone 7 (كل الطرازات)، وiPhone SE (الجيل الأول)، وiPad Air 2، وiPad mini (الجيل الرابع)، وiPod touch (الجيل السابع)",
+        "update_date": "29 يوليو 2024"
+    },
+    {
+        "update_name": "تحديث البرنامج الثابت AirPods 6A326‏ وتحديث البرنامج الثابت AirPods 6F8‏ وتحديث البرنامج الثابت Beats 6F8‏",
+        "update_link": "/ar-ae/120907",
+        "description": "AirPods (الجيل الثاني والإصدارات الأحدث)، وAirPods Pro (جميع الطرازات)، وAirPods Max، وPowerbeats Pro، وBeats Fit Pro",
+        "update_date": "25 يونيو 2024"
+    },
+    {
+        "update_name": "visionOS 1.2‏",
+        "update_link": "/ar-ae/120906",
+        "description": "Apple Vision Pro",
+        "update_date": "10 يونيو 2024"
+    },
+    {
+        "update_name": "tvOS 17.5.1لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "Apple TV HD وApple TV 4K (جميع الطرازات)",
+        "update_date": "21 مايو 2024"
+    },
+    {
+        "update_name": "iOS 17.5.1 وiPadOS 17.5.1لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "iPhone XS والإصدارات الأحدث، وiPad Pro مقاس 13 بوصة، وiPad Pro مقاس 12.9 بوصة الجيل الثاني والإصدارات الأحدث، وiPad Pro مقاس 10.5 بوصة، وiPad Pro مقاس 11 بوصة الجيل الأول والإصدارات الأحدث، وiPad Air الجيل الثالث والإصدارات الأحدث، وiPad الجيل السادس والإصدارات الأحدث، وiPad mini الجيل الخامس والإصدارات الأحدث",
+        "update_date": "20 مايو 2024"
+    },
+    {
+        "update_name": "سفاري 17.5",
+        "update_link": "/ar-ae/120896",
+        "description": "macOS Monterey وmacOS Ventura",
+        "update_date": "13 مايو 2024"
+    },
+    {
+        "update_name": "iOS 17.5 وiPadOS 17.5‏",
+        "update_link": "/ar-ae/120905",
+        "description": "iPhone XS والإصدارات الأحدث، وiPad Pro مقاس 13 بوصة، وiPad Pro مقاس 12.9 بوصة الجيل الثاني والإصدارات الأحدث، وiPad Pro مقاس 10.5 بوصة، وiPad Pro مقاس 11 بوصة الجيل الأول والإصدارات الأحدث، وiPad Air الجيل الثالث والإصدارات الأحدث، وiPad الجيل السادس والإصدارات الأحدث، وiPad mini الجيل الخامس والإصدارات الأحدث",
+        "update_date": "13 مايو 2024"
+    },
+    {
+        "update_name": "iOS 16.7.8 وiPadOS 16.7.8",
+        "update_link": "/ar-ae/120898",
+        "description": "iPhone 8، وiPhone 8 Plus، وiPhone X، وiPad الجيل الخامس، وiPad Pro مقاس 9.7 بوصة، وiPad Pro مقاس 12.9 بوصة الجيل الأول",
+        "update_date": "13 مايو 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.5‏",
+        "update_link": "/ar-ae/120903",
+        "description": "macOS Sonoma",
+        "update_date": "13 مايو 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.7‏",
+        "update_link": "/ar-ae/120900",
+        "description": "macOS Ventura",
+        "update_date": "13 مايو 2024"
+    },
+    {
+        "update_name": "macOS Monterey 12.7.5‏",
+        "update_link": "/ar-ae/120899",
+        "description": "macOS Monterey",
+        "update_date": "13 مايو 2024"
+    },
+    {
+        "update_name": "watchOS 10.5‏",
+        "update_link": "/ar-ae/120902",
+        "description": "Apple Watch Series 4 والإصدارت الأحدث",
+        "update_date": "13 مايو 2024"
+    },
+    {
+        "update_name": "tvOS 17.5‏",
+        "update_link": "/ar-ae/120901",
+        "description": "Apple TV HD وApple TV 4K (جميع الطرازات)",
+        "update_date": "13 مايو 2024"
+    },
+    {
+        "update_name": "iTunes 12.13.2 لـ Windows‏",
+        "update_link": "/ar-ae/120897",
+        "description": "Windows 10 والأحدث",
+        "update_date": "08 مايو 2024"
+    },
+    {
+        "update_name": "visionOS 1.1.2لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "09 أبريل 2024"
+    },
+    {
+        "update_name": "سفاري 17.4.1",
+        "update_link": "/ar-ae/120888",
+        "description": "macOS Monterey وmacOS Ventura",
+        "update_date": "25 مارس 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.4.1‏",
+        "update_link": "/ar-ae/120889",
+        "description": "macOS Sonoma",
+        "update_date": "25 مارس 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.6‏",
+        "update_link": "/ar-ae/120891",
+        "description": "macOS Ventura",
+        "update_date": "25 مارس 2024"
+    },
+    {
+        "update_name": "iOS 17.4.1 وiPadOS 17.4.1",
+        "update_link": "/ar-ae/120890",
+        "description": "iPhone XS والإصدارات الأحدث، وiPad Pro مقاس 12.9 بوصة الجيل الثاني والإصدارات الأحدث، وiPad Pro مقاس 10.5 بوصة، وiPad Pro مقاس 11 بوصة الجيل الأول والإصدارات الأحدث، وiPad Air الجيل الثالث والإصدارات الأحدث، وiPad الجيل السادس والإصدارات الأحدث، وiPad mini الجيل الخامس والإصدارات الأحدث",
+        "update_date": "21 مارس 2024"
+    },
+    {
+        "update_name": "iOS 16.7.7 وiPadOS 16.7.7",
+        "update_link": "/ar-ae/120892",
+        "description": "iPhone 8، وiPhone 8 Plus، وiPhone X، وiPad الجيل الخامس، وiPad Pro مقاس 9.7 بوصة، وiPad Pro مقاس 12.9 بوصة الجيل الأول",
+        "update_date": "21 مارس 2024"
+    },
+    {
+        "update_name": "visionos 1.1.1‏",
+        "update_link": "/ar-ae/120312",
+        "description": "Apple Vision Pro",
+        "update_date": "21 مارس 2024"
+    },
+    {
+        "update_name": "GarageBand 10.4.11‏",
+        "update_link": "/ar-ae/120885",
+        "description": "macOS Ventura وmacOS Sonoma",
+        "update_date": "12 مارس 2024"
+    },
+    {
+        "update_name": "سفاري 17.4",
+        "update_link": "/ar-ae/120894",
+        "description": "macOS Monterey وmacOS Ventura",
+        "update_date": "07 مارس 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.4‏",
+        "update_link": "/ar-ae/120895",
+        "description": "macOS Sonoma",
+        "update_date": "07 مارس 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.5‏",
+        "update_link": "/ar-ae/120886",
+        "description": "macOS Ventura",
+        "update_date": "07 مارس 2024"
+    },
+    {
+        "update_name": "macOS Monterey 12.7.4‏",
+        "update_link": "/ar-ae/120884",
+        "description": "macOS Monterey",
+        "update_date": "07 مارس 2024"
+    },
+    {
+        "update_name": "watchOS 10.4‏",
+        "update_link": "/ar-ae/120881",
+        "description": "Apple Watch Series 4 والإصدارت الأحدث",
+        "update_date": "07 مارس 2024"
+    },
+    {
+        "update_name": "tvOS 17.4‏",
+        "update_link": "/ar-ae/120882",
+        "description": "Apple TV HD وApple TV 4K (جميع الطرازات)",
+        "update_date": "07 مارس 2024"
+    },
+    {
+        "update_name": "visionoS 1.1‏",
+        "update_link": "/ar-ae/120883",
+        "description": "Apple Vision Pro",
+        "update_date": "07 مارس 2024"
+    },
+    {
+        "update_name": "Xcode 15.3‏",
+        "update_link": "/ar-ae/120887",
+        "description": "macOS Sonoma 14 والإصدارات الأحدث",
+        "update_date": "05 مارس 2024"
+    },
+    {
+        "update_name": "iOS 17.4 وiPadOS 17.4‏",
+        "update_link": "/ar-ae/120893",
+        "description": "iPhone XS والإصدارات الأحدث، وiPad Pro مقاس 12.9 بوصة الجيل الثاني والإصدارات الأحدث، وiPad Pro مقاس 10.5 بوصة، وiPad Pro مقاس 11 بوصة الجيل الأول والإصدارات الأحدث، وiPad Air الجيل الثالث والإصدارات الأحدث، وiPad الجيل السادس والإصدارات الأحدث، وiPad mini الجيل الخامس والإصدارات الأحدث",
+        "update_date": "05 مارس 2024"
+    },
+    {
+        "update_name": "iOS 16.7.6 وiPadOS 16.7.6",
+        "update_link": "/ar-ae/120880",
+        "description": "iPhone 8، وiPhone 8 Plus، وiPhone X، وiPad الجيل الخامس، وiPad Pro مقاس 9.7 بوصة، وiPad Pro مقاس 12.9 بوصة الجيل الأول",
+        "update_date": "05 مارس 2024"
+    },
+    {
+        "update_name": "iOS 15.8.2 وiPadOS 15.8.2لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "iPhone 6s (كل الطرازات)، وiPhone 7 (كل الطرازات)، وiPhone SE (الجيل الأول)، وiPad Air 2، وiPad mini (الجيل الرابع)، وiPod touch (الجيل السابع)",
+        "update_date": "05 مارس 2024"
+    },
+    {
+        "update_name": "visionOS 1.0.3لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "Apple Vision Pro",
+        "update_date": "12 فبراير 2024"
+    },
+    {
+        "update_name": "سفاري 17.3.1لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "macOS Monterey وmacOS Ventura",
+        "update_date": "09 فبراير 2024"
+    },
+    {
+        "update_name": "iOS 17.3.1 وiPadOS 17.3.1لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "iPhone XS والإصدارات الأحدث، وiPad Pro مقاس 12.9 بوصة الجيل الثاني والإصدارات الأحدث، وiPad Pro مقاس 10.5 بوصة، وiPad Pro مقاس 11 بوصة الجيل الأول والإصدارات الأحدث، وiPad Air الجيل الثالث والإصدارات الأحدث، وiPad الجيل السادس والإصدارات الأحدث، وiPad mini الجيل الخامس والإصدارات الأحدث",
+        "update_date": "08 فبراير 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.3.1لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "macOS Sonoma",
+        "update_date": "08 فبراير 2024"
+    },
+    {
+        "update_name": "watchOS 10.3.1لم يتم نشر إدخالات CVE لهذا التحديث.",
+        "update_link": null,
+        "description": "Apple Watch Series 4 والإصدارت الأحدث",
+        "update_date": "08 فبراير 2024"
+    },
+    {
+        "update_name": "visionos 1.0.2‏",
+        "update_link": "/ar-ae/118479",
+        "description": "Apple Vision Pro",
+        "update_date": "31 يناير 2024"
+    },
+    {
+        "update_name": "سفاري 17.3",
+        "update_link": "/ar-ae/120339",
+        "description": "macOS Monterey وmacOS Ventura",
+        "update_date": "22 يناير 2024"
+    },
+    {
+        "update_name": "iOS 17.3 وiPadOS 17.3‏",
+        "update_link": "/ar-ae/120304",
+        "description": "iPhone XS والإصدارات الأحدث، وiPad Pro مقاس 12.9 بوصة الجيل الثاني والإصدارات الأحدث، وiPad Pro مقاس 10.5 بوصة، وiPad Pro مقاس 11 بوصة الجيل الأول والإصدارات الأحدث، وiPad Air الجيل الثالث والإصدارات الأحدث، وiPad الجيل السادس والإصدارات الأحدث، وiPad mini الجيل الخامس والإصدارات الأحدث",
+        "update_date": "22 يناير 2024"
+    },
+    {
+        "update_name": "iOS 16.7.5 وiPadOS 16.7.5",
+        "update_link": "/ar-ae/120310",
+        "description": "iPhone 8، وiPhone 8 Plus، وiPhone X، وiPad الجيل الخامس، وiPad Pro مقاس 9.7 بوصة، وiPad Pro مقاس 12.9 بوصة الجيل الأول",
+        "update_date": "22 يناير 2024"
+    },
+    {
+        "update_name": "iOS 15.8.1 وiPadOS 15.8.1",
+        "update_link": "/ar-ae/120308",
+        "description": "iPhone 6s (كل الطرازات)، وiPhone 7 (كل الطرازات)، وiPhone SE (الجيل الأول)، وiPad Air 2، وiPad mini (الجيل الرابع)، وiPod touch (الجيل السابع)",
+        "update_date": "22 يناير 2024"
+    },
+    {
+        "update_name": "macOS Sonoma 14.3‏",
+        "update_link": "/ar-ae/120309",
+        "description": "macOS Sonoma",
+        "update_date": "22 يناير 2024"
+    },
+    {
+        "update_name": "macOS Ventura 13.6.4‏",
+        "update_link": "/ar-ae/120307",
+        "description": "macOS Ventura",
+        "update_date": "22 يناير 2024"
+    },
+    {
+        "update_name": "macOS Monterey 12.7.3‏",
+        "update_link": "/ar-ae/120305",
+        "description": "macOS Monterey",
+        "update_date": "22 يناير 2024"
+    },
+    {
+        "update_name": "watchOS 10.3‏",
+        "update_link": "/ar-ae/120306",
+        "description": "Apple Watch Series 4 والإصدارت الأحدث",
+        "update_date": "22 يناير 2024"
+    },
+    {
+        "update_name": "tvOS 17.3‏",
+        "update_link": "/ar-ae/120311",
+        "description": "Apple TV HD وApple TV 4K (جميع الطرازات)",
+        "update_date": "22 يناير 2024"
+    },
+    {
+        "update_name": "التحديث 2.0.6 للبرنامج الثابت للوحة مفاتيح ماجيك",
+        "update_link": "/ar-ae/120303",
+        "description": "لوحة مفاتيح ماجيك؛ ولوحة مفاتيح ماجيك (2021)؛ ولوحة مفاتيح ماجيك المزوَّدة بلوحة أرقام؛ ولوحة مفاتيح ماجيك المزوَّدة بتقنية بصمة الإصبع‏؛ ولوحة مفاتيح ماجيك المزوَّدة بتقنية بصمة الإصبع‏ ولوحة أرقام",
+        "update_date": "09 يناير 2024"
+    }
+]
