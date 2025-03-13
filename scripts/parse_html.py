@@ -2,31 +2,28 @@ import os
 import json
 from bs4 import BeautifulSoup
 
-# Directorios de trabajo
+# Directories
 HTML_DIR = "html"
 JSON_DIR = "json"
 
-# Asegurar que el directorio json existe
-os.makedirs(JSON_DIR, exist_ok=True)
-
 def parse_html(file_path):
-    """Parsea una tabla en un archivo HTML y devuelve su contenido en formato JSON."""
+    """Parses a table in an HTML file and returns its content in JSON format."""
     with open(file_path, "r", encoding="utf-8") as file:
         soup = BeautifulSoup(file, "lxml")
 
-    # Buscar la tabla dentro del contenedor con clase "table-wrapper gb-table"
+    # Find the table inside the container with class "table-wrapper gb-table"
     table = soup.select_one(".table-wrapper .gb-table")
     if not table:
-        print(f"No se encontró la tabla en {file_path}")
+        print(f"⚠️ No table found in {file_path}")
         return []
 
-    rows = table.find_all("tr")[1:]  # Omitir la primera fila (header)
-    
+    rows = table.find_all("tr")[1:]  # Ignore the first row (header)
+
     data = []
     for row in rows:
         cols = row.find_all("td")
         if len(cols) < 3:
-            continue  # Omitir filas sin suficientes columnas
+            continue  # Skip rows without enough columns
 
         update_name = cols[0].get_text(strip=True)
         update_link = cols[0].find("a")["href"] if cols[0].find("a") else None
@@ -43,7 +40,7 @@ def parse_html(file_path):
     return data
 
 def main():
-    """Procesa todos los archivos HTML y guarda su contenido en JSON."""
+    """Processes all HTML files and saves their content as JSON."""
     for filename in os.listdir(HTML_DIR):
         if filename.endswith(".html"):
             html_path = os.path.join(HTML_DIR, filename)
@@ -54,9 +51,9 @@ def main():
                 with open(json_path, "w", encoding="utf-8") as json_file:
                     json.dump(parsed_data, json_file, indent=4, ensure_ascii=False)
 
-                print(f"✅ Procesado: {filename} → {json_path}")
+                print(f"✅ Processed: {filename} → {json_path}")
             else:
-                print(f"⚠️ Sin datos: {filename}")
+                print(f"⚠️ No data found: {filename}")
 
 if __name__ == "__main__":
     main()
