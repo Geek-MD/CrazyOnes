@@ -16,8 +16,14 @@ jobs:
       - name: Generate SHA JSON file
         run: |
           mkdir -p json
-          jq -n 'reduce inputs as $file ({}; .[$file] = input)' \
-            <(ls json/*.json) <(git ls-files -s json/*.json | awk '{print $4, $2}' | jq -R 'split(" ") | { (.[0]): .[1] }') > json/json_sha.json
+          echo "{" > json/json_sha.json
+          first=true
+          for file in json/*.json; do
+            sha=$(git hash-object "$file")
+            [ "$first" = true ] && first=false || echo "," >> json/json_sha.json
+            echo "  \"$(basename "$file")\": \"$sha\"" >> json/json_sha.json
+          done
+          echo "}" >> json/json_sha.json
 
       - name: Commit and push changes
         run: |
