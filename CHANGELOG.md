@@ -5,6 +5,57 @@ All notable changes to the Crazy Ones - Apple Updates Bot project will be docume
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2024-12-19
+
+### Added
+- New Python module (`scripts/monitor_apple_updates.py`) to monitor and scrape Apple security updates
+- New utility module (`scripts/utils.py`) with shared functions to avoid code duplication
+- Static reference file `data/language_names.json` with language code to display name mappings
+- Language names in readable format (e.g., "en-us": "English/USA", "es-es": "Spanish/Spain")
+- Automatic monitoring of `data/language_urls.json` file for changes
+- Security updates table extraction from each language-specific page
+- Support for extracting three-column table data:
+  - Name: Update name with URL when available
+  - Target: Target platform/device
+  - Date: Release date of the update
+- Individual JSON file generation per language in `data/updates/` directory
+- Content change detection using SHA256 hashing to avoid re-processing unchanged pages
+- Tracking system (`data/updates_tracking.json`) to monitor URL and content changes
+- Smart processing logic:
+  - First run: processes all available language URLs
+  - Subsequent runs: only processes changed or new URLs
+- Comprehensive error handling for network requests and parsing
+- Progress reporting with visual indicators (✓, ⚠, ⊙, ✗, ➕, 💾)
+- Summary statistics for processed languages
+- Comprehensive test suite for monitoring module (`tests/test_monitor.py`)
+- Organized directory structure:
+  - `scripts/` for all Python scripts
+  - `tests/` for all test files
+  - `data/` for all generated JSON files and outputs
+- `DEMO.md` with complete usage examples and workflow documentation
+
+### Changed
+- Refactored User-Agent header logic into shared `get_user_agent_headers()` function
+- Updated `scripts/scrape_apple_updates.py` to use shared User-Agent function from `scripts/utils.py`
+- Updated `scripts/scrape_apple_updates.py` to generate language names JSON automatically
+- Moved all scripts to `scripts/` subdirectory for better code organization
+- Moved all test files to `tests/` subdirectory for cleaner structure
+- Updated all JSON file paths to use `data/` subdirectory
+- Updated imports to use proper Python package structure with relative imports
+- Updated `.gitignore` to reflect new directory structure
+
+### Features
+- Intelligent change detection for language URLs and page content
+- Automatic creation of output directory structure
+- Preservation of previously extracted data when pages haven't changed
+- Full type annotations with strict type checking support
+- Robust HTML parsing for Apple security updates table structure
+- URL resolution for relative links in update names
+- UTF-8 support for all language variants including Arabic, Hebrew, Japanese, Chinese, Korean, etc.
+- Timeout handling for network requests (30 seconds)
+- Clean separation of concerns with organized directory structure
+- Static language names reference file for easy lookup and maintenance
+
 ## [0.1.0] - 2024-12-19
 
 ### Added
@@ -39,4 +90,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Full type annotations for better code safety
 - Strict code quality checks with Ruff and mypy
 
+[0.5.0]: https://github.com/Geek-MD/CrazyOnes/releases/tag/v0.5.0
 [0.1.0]: https://github.com/Geek-MD/CrazyOnes/releases/tag/v0.1.0

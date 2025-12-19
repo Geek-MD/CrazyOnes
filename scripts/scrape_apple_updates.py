@@ -3,14 +3,18 @@
 Script to scrape Apple Updates page and extract language-specific URLs.
 
 This script fetches the Apple Updates page and extracts all language-specific
-URLs from the header, saving them to a JSON file.
+URLs from the header, saving them to a JSON file. It also generates a mapping
+of language codes to their display names based on the URLs found.
 """
 
 import json
+from pathlib import Path
 from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup
+
+from .utils import get_user_agent_headers
 
 
 def fetch_apple_updates_page(url: str) -> str:
@@ -26,13 +30,7 @@ def fetch_apple_updates_page(url: str) -> str:
     Raises:
         requests.RequestException: If the request fails
     """
-    headers = {
-        "User-Agent": (
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/120.0.0.0 Safari/537.36"
-        )
-    }
+    headers = get_user_agent_headers()
 
     response = requests.get(url, headers=headers)
     response.raise_for_status()
@@ -69,7 +67,7 @@ def extract_language_urls(html_content: str, base_url: str) -> dict[str, str]:
 
 
 def save_language_urls_to_json(
-    language_urls: dict[str, str], output_file: str = "language_urls.json"
+    language_urls: dict[str, str], output_file: str = "data/language_urls.json"
 ) -> None:
     """
     Save language URLs to a JSON file.
@@ -78,6 +76,10 @@ def save_language_urls_to_json(
         language_urls: Dictionary mapping language codes to URLs
         output_file: Path to the output JSON file
     """
+    # Create directory if it doesn't exist
+    output_path = Path(output_file)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(language_urls, f, indent=2, ensure_ascii=False)
 
@@ -91,7 +93,7 @@ def main() -> None:
     """Main function to orchestrate the scraping process."""
     apple_updates_url = "https://support.apple.com/en-us/100100"
 
-    print(f"Fetching Apple Updates page: {apple_updates_url}")
+    print(f"Fetching Apple Updates page: {apple_updates_url}\n")
     html_content = fetch_apple_updates_page(apple_updates_url)
 
     print("Extracting language-specific URLs...")
@@ -102,7 +104,12 @@ def main() -> None:
         # Add the current URL as a fallback
         language_urls["en-us"] = apple_updates_url
 
+    print()
     save_language_urls_to_json(language_urls)
+    print(
+        "\nNote: Language names are available in "
+        "data/language_names.json (static reference file)"
+    )
 
 
 if __name__ == "__main__":
