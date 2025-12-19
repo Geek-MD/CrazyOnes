@@ -18,7 +18,7 @@ import logging
 import re
 import signal
 import sys
-import time
+import threading
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -31,11 +31,21 @@ from scripts.scrape_apple_updates import (
     save_language_urls_to_json,
 )
 
+# Import monitor module at module level for efficiency
+from scripts.monitor_apple_updates import (
+    detect_changes,
+    load_language_urls,
+    load_tracking_data,
+    process_language_url,
+    save_tracking_data,
+)
+
 # Version from pyproject.toml
 __version__ = "0.6.0"
 
 # Global flag for graceful shutdown
 _shutdown_requested = False
+_shutdown_event = threading.Event()
 
 
 def signal_handler(signum: int, frame: object) -> None:
@@ -48,6 +58,7 @@ def signal_handler(signum: int, frame: object) -> None:
     """
     global _shutdown_requested
     _shutdown_requested = True
+    _shutdown_event.set()
     log_and_print("\n\nShutdown signal received. Finishing current cycle...")
 
 
@@ -415,15 +426,6 @@ def run_monitoring_cycle(apple_updates_url: str) -> None:
     log_and_print("")
     
     try:
-        # Import monitor module
-        from scripts.monitor_apple_updates import (
-            load_language_urls,
-            load_tracking_data,
-            save_tracking_data,
-            detect_changes,
-            process_language_url,
-        )
-        
         # Load language URLs
         try:
             language_urls = load_language_urls()
@@ -616,11 +618,8 @@ def main() -> None:
                     log_and_print(f"Waiting {interval} seconds until next cycle...")
                     log_and_print("")
 
-                    # Sleep in small intervals to respond quickly to shutdown signals
-                    for _ in range(interval):
-                        if _shutdown_requested:
-                            break
-                        time.sleep(1)
+                    # Use event.wait() for efficient sleeping that can be interrupted
+                    _shutdown_event.wait(timeout=interval)
 
             except Exception as e:
                 log_and_print(f"✗ Error in monitoring cycle: {e}")
@@ -628,10 +627,8 @@ def main() -> None:
                 if not _shutdown_requested:
                     log_and_print(f"Waiting {interval} seconds before retry...")
                     log_and_print("")
-                    for _ in range(interval):
-                        if _shutdown_requested:
-                            break
-                        time.sleep(1)
+                    # Use event.wait() for efficient sleeping that can be interrupted
+                    _shutdown_event.wait(timeout=interval)
 
         log_and_print("")
         log_and_print("=" * 60)

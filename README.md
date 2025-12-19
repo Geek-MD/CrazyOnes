@@ -44,13 +44,8 @@ The easiest way to run CrazyOnes is using Docker. This method is especially reco
    ```env
    TELEGRAM_BOT_TOKEN=123456789:ABCdefGHIjklMNOpqrsTUVwxyz-1234567890
    APPLE_UPDATES_URL=https://support.apple.com/en-us/100100
-   EXECUTION_MODE=daemon
    CHECK_INTERVAL=43200
    ```
-
-   **Execution modes:**
-   - `daemon` (default): Runs continuously with sleep intervals (simpler, default 12h = 2x daily)
-   - `cron`: Uses cron scheduler for precise timing (more resource efficient)
 
 4. Build and run the container:
    ```bash

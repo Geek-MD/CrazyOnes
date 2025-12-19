@@ -103,10 +103,6 @@ def save_language_urls_to_json(
         lang for lang in language_urls.keys() & existing_urls.keys()
         if language_urls[lang] != existing_urls[lang]
     }
-    unchanged_langs = {
-        lang for lang in language_urls.keys() & existing_urls.keys()
-        if language_urls[lang] == existing_urls[lang]
-    }
 
     # Write the new data
     with open(output_file, "w", encoding="utf-8") as f:
@@ -139,10 +135,13 @@ def save_language_urls_to_json(
                 print(f"    Old: {existing_urls[lang]}")
                 print(f"    New: {language_urls[lang]}")
         
-        if unchanged_langs and not added_langs and not removed_langs and not updated_langs:
+        if not added_langs and not removed_langs and not updated_langs:
             print("\n✓ No changes detected in language URLs")
-        elif unchanged_langs:
-            print(f"\n✓ {len(unchanged_langs)} language(s) unchanged")
+        else:
+            # Calculate unchanged only when logging
+            unchanged_count = len(language_urls) - len(added_langs) - len(updated_langs)
+            if unchanged_count > 0:
+                print(f"\n✓ {unchanged_count} language(s) unchanged")
 
 
 def main() -> None:
