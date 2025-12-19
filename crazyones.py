@@ -10,15 +10,19 @@ Usage:
     python crazyones.py -t <TOKEN> -u <URL>     # One-time with custom URL
     python crazyones.py -t <TOKEN> --daemon     # Run as daemon (checks 2x per day)
     python crazyones.py -t <TOKEN> --interval 3600  # Run every hour (custom)
+
+Note: Starting a new instance automatically stops any existing instance.
 """
 
 import argparse
 import json
 import logging
+import os
 import re
 import signal
 import sys
 import threading
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -43,8 +47,74 @@ from scripts.monitor_apple_updates import (
 # Version from pyproject.toml
 __version__ = "0.7.0"
 
+# PID file location
+PID_FILE = "/tmp/crazyones.pid"
+
 # Global event for graceful shutdown (thread-safe)
 _shutdown_event = threading.Event()
+
+
+def write_pid_file() -> None:
+    """Write the current process ID to the PID file."""
+    with open(PID_FILE, 'w') as f:
+        f.write(str(os.getpid()))
+
+
+def read_pid_file() -> int | None:
+    """Read PID from PID file. Returns None if file doesn't exist."""
+    try:
+        with open(PID_FILE, 'r') as f:
+            return int(f.read().strip())
+    except (FileNotFoundError, ValueError):
+        return None
+
+
+def remove_pid_file() -> None:
+    """Remove the PID file."""
+    try:
+        os.remove(PID_FILE)
+    except FileNotFoundError:
+        pass
+
+
+def is_process_running(pid: int) -> bool:
+    """Check if a process with given PID is running."""
+    try:
+        # Sending signal 0 doesn't kill the process, just checks if it exists
+        os.kill(pid, 0)
+        return True
+    except (OSError, ProcessLookupError):
+        return False
+
+
+def stop_running_daemon() -> bool:
+    """
+    Stop a running daemon process.
+    
+    Returns:
+        True if daemon was stopped, False if no daemon was running
+    """
+    pid = read_pid_file()
+    if pid is None:
+        print("No daemon PID file found.")
+        return False
+    
+    if not is_process_running(pid):
+        print(f"Daemon with PID {pid} is not running. Cleaning up PID file.")
+        remove_pid_file()
+        return False
+    
+    print(f"Stopping daemon process (PID: {pid})...")
+    try:
+        # Send SIGTERM for graceful shutdown
+        os.kill(pid, signal.SIGTERM)
+        print(f"SIGTERM sent to process {pid}. Daemon will stop gracefully.")
+        remove_pid_file()
+        return True
+    except (OSError, ProcessLookupError) as e:
+        print(f"Error stopping daemon: {e}")
+        remove_pid_file()
+        return False
 
 
 def signal_handler(signum: int, frame: object) -> None:
@@ -57,6 +127,8 @@ def signal_handler(signum: int, frame: object) -> None:
     """
     _shutdown_event.set()
     log_and_print("\n\nShutdown signal received. Finishing current cycle...")
+    # Clean up PID file on shutdown
+    remove_pid_file()
 
 
 def rotate_log_file(log_file: str = "crazyones.log", max_lines: int = 1000) -> None:
@@ -484,7 +556,10 @@ def run_monitoring_cycle(apple_updates_url: str) -> None:
 
 def main() -> None:
     """Main function to orchestrate the CrazyOnes workflow."""
-    # Set up logging first
+    # Parse command line arguments
+    args = parse_arguments()
+    
+    # Set up logging
     setup_logging()
 
     # Register signal handlers for graceful shutdown
@@ -496,15 +571,26 @@ def main() -> None:
     log_and_print("=" * 60)
     log_and_print("")
 
-    # Parse command line arguments
-    args = parse_arguments()
-
     # Determine daemon mode and interval
     daemon_mode = args.daemon or args.interval is not None
     interval = args.interval if args.interval else 43200  # Default 12 hours (2 times per day)
 
+    # Check if another instance is already running
+    existing_pid = read_pid_file()
+    if existing_pid and is_process_running(existing_pid):
+        log_and_print(f"⚠ Detected existing CrazyOnes process (PID: {existing_pid})")
+        log_and_print("Stopping existing process to start with new parameters...")
+        stop_running_daemon()
+        import time
+        time.sleep(1)  # Give the old process a moment to clean up
+        log_and_print("✓ Previous process stopped")
+        log_and_print("")
+
     if daemon_mode:
         log_and_print(f"Running in DAEMON mode with {interval} seconds interval")
+        # Write PID file for daemon mode
+        write_pid_file()
+        log_and_print(f"Daemon PID: {os.getpid()}")
         log_and_print("")
 
     # Validate Telegram bot token format
@@ -630,6 +716,9 @@ def main() -> None:
         log_and_print("Daemon stopped gracefully")
         log_and_print("=" * 60)
         log_and_print("")
+        
+        # Clean up PID file on normal exit
+        remove_pid_file()
 
     else:
         # Single execution mode

@@ -198,23 +198,45 @@ docker compose restart
 
 ##### Manual Execution Inside Container
 
-If you want to run a one-time execution with custom parameters inside the container:
+The application automatically detects and replaces any existing instance when you start a new one. This makes it simple to run with different parameters:
 
 ```bash
 # Access container shell
 docker compose exec crazyones sh
 
-# Stop the daemon (if running)
-kill -TERM $(ps aux | grep "python crazyones.py" | grep -v grep | awk '{print $1}')
+# Run with new parameters - automatically replaces existing instance
+python crazyones.py -t $TELEGRAM_BOT_TOKEN -u https://support.apple.com/es-es/100100 --daemon
 
-# Run one-time execution with custom parameters
-python crazyones.py -t $TELEGRAM_BOT_TOKEN -u https://support.apple.com/es-es/100100
+# Or run one-time execution with different URL
+python crazyones.py -t $TELEGRAM_BOT_TOKEN -u https://support.apple.com/fr-fr/100100
+
+# Or change check interval to 6 hours
+python crazyones.py -t $TELEGRAM_BOT_TOKEN --daemon --interval 21600
 
 # Exit the container
 exit
 ```
 
-**Note**: After manual execution, restart the container to resume daemon mode:
+**How it works:**
+- When you start crazyones, it automatically detects any existing instance
+- The existing instance is gracefully stopped (finishes current cycle)
+- The new instance starts with your specified parameters
+- No manual stopping required - just run with new parameters
+
+**Examples:**
+
+```bash
+# Switch from 12-hour to 6-hour checks
+docker compose exec crazyones python crazyones.py -t $TELEGRAM_BOT_TOKEN --daemon --interval 21600
+
+# Change to Spanish Apple Updates page
+docker compose exec crazyones python crazyones.py -t $TELEGRAM_BOT_TOKEN -u https://support.apple.com/es-es/100100 --daemon
+
+# Run a quick one-time check
+docker compose exec crazyones python crazyones.py -t $TELEGRAM_BOT_TOKEN
+```
+
+**Note**: After manual changes, restarting the container will revert to the original .env parameters:
 ```bash
 docker compose restart
 ```
