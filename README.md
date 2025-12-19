@@ -51,9 +51,20 @@ All configuration (token, URL) is automatically saved to `config.json` for persi
 
 ## Setup
 
-### Docker Setup (Recommended for Raspberry Pi 3B)
+### Docker Setup (Recommended)
 
-The easiest way to run CrazyOnes is using Docker. This method is especially recommended for Raspberry Pi 3B.
+The easiest way to run CrazyOnes is using Docker. **Multi-platform support** is included - works on Raspberry Pi (ARM), x86-64 PCs, and more.
+
+#### Supported Platforms
+
+The Docker images automatically work on:
+- 🥧 **Raspberry Pi 2B, 3B, 3B+, Zero 2 W, Zero W** (ARM 32-bit)
+- 🥧 **Raspberry Pi 4, 5, 400** (ARM 32/64-bit)
+- 💻 **x86-64 PCs** (Windows/WSL2, macOS Intel, Linux)
+
+Docker automatically selects the correct image for your hardware.
+
+**Note:** Raspberry Pi 1 and Zero (1st gen) are not supported due to ARMv6 architecture.
 
 #### Prerequisites
 

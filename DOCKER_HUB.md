@@ -121,7 +121,7 @@ When releasing a new version:
 VERSION="0.8.0"
 
 docker buildx build \
-  --platform linux/arm/v7,linux/amd64 \
+  --platform linux/arm/v7,linux/amd64,linux/arm64 \
   --tag geekmd/crazyones:${VERSION} \
   --tag geekmd/crazyones:0.8 \
   --tag geekmd/crazyones:latest \
@@ -135,6 +135,68 @@ docker buildx build \
 git tag -a v0.8.0 -m "Release version 0.8.0"
 git push origin v0.8.0
 ```
+
+## Multi-Platform Support
+
+The Docker images are built for multiple platforms to support various hardware:
+
+### Supported Architectures
+
+| Platform | Architecture | Devices | Notes |
+|----------|-------------|---------|-------|
+| **linux/arm/v7** | ARM 32-bit (ARMv7) | Raspberry Pi 2B, 3B, 3B+, Zero 2 W, Zero W | Primary target |
+| **linux/arm64** | ARM 64-bit (AArch64) | Raspberry Pi 4, 5, 400, 3B (64-bit OS) | Full support |
+| **linux/amd64** | x86-64 | PCs, servers, cloud | Dev/testing |
+
+**Note:** Raspberry Pi Zero W works with ARMv7 images despite being ARMv6 hardware (backward compatibility).
+
+### Compatibility Chart
+
+| Device | OS | Image Used | Status |
+|--------|-----|-----------|--------|
+| Raspberry Pi 1 (all models) | 32-bit | N/A | ⚠️ Not supported (ARMv6 only) |
+| Raspberry Pi Zero (1st gen) | 32-bit | N/A | ⚠️ Not supported (ARMv6 only) |
+| Raspberry Pi Zero W | 32-bit | linux/arm/v7 | ✅ Supported |
+| **Raspberry Pi 2B** | 32-bit | linux/arm/v7 | ✅ **Supported** |
+| Raspberry Pi 3B, 3B+ | 32-bit | linux/arm/v7 | ✅ Primary target |
+| Raspberry Pi 3B, 3B+ | 64-bit | linux/arm64 | ✅ Supported |
+| Raspberry Pi Zero 2 W | 32-bit | linux/arm/v7 | ✅ Supported |
+| Raspberry Pi Zero 2 W | 64-bit | linux/arm64 | ✅ Supported |
+| Raspberry Pi 4, 5, 400 | 32-bit | linux/arm/v7 | ✅ Supported |
+| Raspberry Pi 4, 5, 400 | 64-bit | linux/arm64 | ✅ Recommended |
+
+### How It Works
+
+Docker automatically selects the correct image for your platform:
+
+```bash
+# Docker pulls the right architecture automatically
+docker pull geekmd/crazyones:0.8.0
+```
+
+To verify which platform was pulled:
+```bash
+docker image inspect geekmd/crazyones:0.8.0 | grep Architecture
+```
+
+To see all available platforms:
+```bash
+docker manifest inspect geekmd/crazyones:0.8.0
+```
+
+### Platform-Specific Notes
+
+**Raspberry Pi 3B:**
+- Use 32-bit Raspberry Pi OS → gets `linux/arm/v7` image
+- Can use 64-bit OS → gets `linux/arm64` image
+
+**Raspberry Pi 4/5:**
+- 32-bit OS → `linux/arm/v7` image
+- 64-bit OS → `linux/arm64` image (recommended for better performance)
+
+**Development:**
+- x86-64 PC/Mac → `linux/amd64` image
+- Works on Windows (WSL2), macOS (Intel), Linux
 
 ## Using Published Images
 
