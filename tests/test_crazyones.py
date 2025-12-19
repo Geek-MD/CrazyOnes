@@ -7,7 +7,13 @@ import json
 import tempfile
 from pathlib import Path
 
-from crazyones import load_config, parse_arguments, rotate_log_file, save_config
+from crazyones import (
+    load_config,
+    parse_arguments,
+    rotate_log_file,
+    save_config,
+    validate_telegram_token,
+)
 
 
 def test_load_config():
@@ -264,6 +270,42 @@ def test_rotate_log_file_nonexistent():
     print("  ✓ Log rotation with nonexistent file works correctly")
 
 
+def test_validate_telegram_token():
+    """Test Telegram token validation."""
+    print("\nTesting Telegram token validation...")
+
+    # Valid tokens
+    valid_tokens = [
+        "123456789:ABCdefGHIjklMNOpqrsTUVwxyz-1234567890",
+        "1234567890:ABC-DEF_GHI123456789012345678901234",
+        "12345678:abcdefghijklmnopqrstuvwxyz123456789",
+    ]
+
+    for token in valid_tokens:
+        assert validate_telegram_token(token), f"Token should be valid: {token}"
+
+    # Invalid tokens
+    invalid_tokens = [
+        "invalid_token",  # No colon separator
+        "123:short",  # bot_id too short, auth_token too short
+        "1234567:ABCdefGHIjklMNOpqrsTUVwxyz-1234567890",  # bot_id too short
+        "12345678901:ABCdefGHIjklMNOpqrsTUVwxyz-1234567890",  # bot_id too long
+        "123456789:short",  # auth_token too short
+        "123456789:ABC def@#$%^&*()",  # invalid characters with spaces
+        "123456789:ABC@def",  # invalid character @
+        "",  # empty string
+        "123456789:",  # missing auth_token
+        ":ABCdefGHIjklMNOpqrsTUVwxyz-1234567890",  # missing bot_id
+    ]
+
+    for token in invalid_tokens:
+        assert not validate_telegram_token(
+            token
+        ), f"Token should be invalid: {token}"
+
+    print("  ✓ Telegram token validation works correctly")
+
+
 def main():
     """Run all tests."""
     print("=== Testing crazyones coordinator module ===\n")
@@ -275,6 +317,7 @@ def main():
     test_rotate_log_file()
     test_rotate_log_file_no_rotation_needed()
     test_rotate_log_file_nonexistent()
+    test_validate_telegram_token()
     test_parse_arguments_no_args()
     test_parse_arguments_with_token()
     test_parse_arguments_with_url()
