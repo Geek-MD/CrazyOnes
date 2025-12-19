@@ -36,7 +36,7 @@ fi
 log "Token validation passed."
 
 # Build command arguments
-CMD_ARGS="-t $TELEGRAM_BOT_TOKEN"
+CMD_ARGS="-t $TELEGRAM_BOT_TOKEN --daemon"
 
 # Add URL if provided
 if [ -n "$APPLE_UPDATES_URL" ]; then
@@ -44,6 +44,14 @@ if [ -n "$APPLE_UPDATES_URL" ]; then
     CMD_ARGS="$CMD_ARGS -u $APPLE_UPDATES_URL"
 else
     log "No Apple Updates URL provided, using default from config.json"
+fi
+
+# Add custom interval if provided
+if [ -n "$CHECK_INTERVAL" ]; then
+    log "Using custom check interval: $CHECK_INTERVAL seconds"
+    CMD_ARGS="$CMD_ARGS --interval $CHECK_INTERVAL"
+else
+    log "Using default check interval: 43200 seconds (12 hours, 2 times per day)"
 fi
 
 # Run the main application

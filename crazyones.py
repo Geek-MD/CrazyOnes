@@ -6,16 +6,19 @@ This is the main entry point for the CrazyOnes application. It orchestrates
 the execution of various scripts to scrape and monitor Apple security updates.
 
 Usage:
-    python crazyones.py -t <TOKEN>              # Uses URL from config.json
-    python crazyones.py -t <TOKEN> -u <URL>     # Uses specified URL
-    python crazyones.py --token <TOKEN> --url <URL>  # Long form
+    python crazyones.py -t <TOKEN>              # One-time execution
+    python crazyones.py -t <TOKEN> -u <URL>     # One-time with custom URL
+    python crazyones.py -t <TOKEN> --daemon     # Run as daemon (checks 2x per day)
+    python crazyones.py -t <TOKEN> --interval 3600  # Run every hour (custom)
 """
 
 import argparse
 import json
 import logging
 import re
+import signal
 import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -30,6 +33,22 @@ from scripts.scrape_apple_updates import (
 
 # Version from pyproject.toml
 __version__ = "0.6.0"
+
+# Global flag for graceful shutdown
+_shutdown_requested = False
+
+
+def signal_handler(signum: int, frame: object) -> None:
+    """
+    Handle shutdown signals gracefully.
+
+    Args:
+        signum: Signal number
+        frame: Current stack frame
+    """
+    global _shutdown_requested
+    _shutdown_requested = True
+    log_and_print("\n\nShutdown signal received. Finishing current cycle...")
 
 
 def rotate_log_file(log_file: str = "crazyones.log", max_lines: int = 1000) -> None:
@@ -280,6 +299,8 @@ Examples:
   %(prog)s -t YOUR_TOKEN
   %(prog)s --token YOUR_TOKEN --url https://support.apple.com/en-us/100100
   %(prog)s -t YOUR_TOKEN -u https://support.apple.com/es-es/100100
+  %(prog)s -t YOUR_TOKEN --daemon
+  %(prog)s -t YOUR_TOKEN --interval 21600  # Check every 6 hours
         """,
     )
 
@@ -308,6 +329,21 @@ Examples:
         type=str,
         help="Apple Updates URL to scrape (saves to config.json for future use)",
         metavar="URL",
+    )
+
+    parser.add_argument(
+        "-d",
+        "--daemon",
+        action="store_true",
+        help="Run as daemon (continuous monitoring with 12 hour interval, 2 times per day)",
+    )
+
+    parser.add_argument(
+        "-i",
+        "--interval",
+        type=int,
+        help="Monitoring interval in seconds (implies daemon mode, default: 43200 = 12 hours)",
+        metavar="SECONDS",
     )
 
     return parser.parse_args()
@@ -349,13 +385,45 @@ def scrape_apple_updates(url: str) -> None:
     except Exception as e:
         log_and_print(f"✗ Error during scraping: {e}")
         logging.exception("Full traceback:")
-        sys.exit(1)
+        raise
+
+
+def run_monitoring_cycle(apple_updates_url: str) -> None:
+    """
+    Run a complete monitoring cycle: scrape and monitor updates.
+
+    Args:
+        apple_updates_url: The Apple Updates URL to scrape
+    """
+    log_and_print("-" * 60)
+    log_and_print(f"Monitoring cycle started at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    log_and_print("-" * 60)
+    log_and_print("")
+
+    # Execute the scraping process
+    try:
+        scrape_apple_updates(apple_updates_url)
+    except Exception as e:
+        log_and_print(f"✗ Scraping failed: {e}")
+        return
+
+    log_and_print("")
+    log_and_print("-" * 60)
+    log_and_print("Monitoring cycle completed")
+    log_and_print("-" * 60)
+    log_and_print("")
 
 
 def main() -> None:
     """Main function to orchestrate the CrazyOnes workflow."""
+    global _shutdown_requested
+
     # Set up logging first
     setup_logging()
+
+    # Register signal handlers for graceful shutdown
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
 
     log_and_print("=" * 60)
     log_and_print("CrazyOnes - Apple Updates Monitoring System")
@@ -364,6 +432,14 @@ def main() -> None:
 
     # Parse command line arguments
     args = parse_arguments()
+
+    # Determine daemon mode and interval
+    daemon_mode = args.daemon or args.interval is not None
+    interval = args.interval if args.interval else 43200  # Default 12 hours (2 times per day)
+
+    if daemon_mode:
+        log_and_print(f"Running in DAEMON mode with {interval} seconds interval")
+        log_and_print("")
 
     # Validate Telegram bot token format
     if not validate_telegram_token(args.token):
@@ -387,17 +463,22 @@ def main() -> None:
         if (saved_token and
             saved_token != "YOUR_TELEGRAM_BOT_TOKEN_HERE" and
             saved_token != args.token):
-            # Ask user which token to use
-            use_new_token = ask_token_confirmation(args.token, saved_token)
-
-            if use_new_token:
-                log_and_print("\n✓ Using NEW token (provided as parameter)")
-                log_only("User chose to use new token", "INFO")
+            # In daemon mode, don't ask for confirmation, use provided token
+            if daemon_mode:
+                log_and_print("Token mismatch detected. Using provided token in daemon mode.")
                 token_to_use = args.token
             else:
-                log_and_print("\n✓ Using SAVED token (from config.json)")
-                log_only("User chose to use saved token", "INFO")
-                token_to_use = saved_token
+                # Ask user which token to use
+                use_new_token = ask_token_confirmation(args.token, saved_token)
+
+                if use_new_token:
+                    log_and_print("\n✓ Using NEW token (provided as parameter)")
+                    log_only("User chose to use new token", "INFO")
+                    token_to_use = args.token
+                else:
+                    log_and_print("\n✓ Using SAVED token (from config.json)")
+                    log_only("User chose to use saved token", "INFO")
+                    token_to_use = saved_token
         else:
             # No conflict, use provided token
             token_to_use = args.token
@@ -451,24 +532,61 @@ def main() -> None:
             sys.exit(1)
 
     log_and_print("")
-    log_and_print("-" * 60)
-    log_and_print("Step 1: Scraping Apple Updates")
-    log_and_print("-" * 60)
-    log_and_print("")
 
-    # Execute the scraping process
-    scrape_apple_updates(apple_updates_url)
+    # Main execution loop
+    if daemon_mode:
+        log_and_print("Starting daemon mode...")
+        log_and_print("Press Ctrl+C to stop gracefully")
+        log_and_print("")
 
-    log_and_print("")
-    log_and_print("=" * 60)
-    log_and_print("Workflow completed")
-    log_and_print("=" * 60)
-    log_and_print("")
-    log_and_print("Next steps:")
-    log_and_print("  - Language URLs saved to: data/language_urls.json")
-    log_and_print("  - Language names saved to: data/language_names.json")
-    log_and_print("  - You can now run: python -m scripts.monitor_apple_updates")
-    log_and_print("")
+        while not _shutdown_requested:
+            try:
+                run_monitoring_cycle(apple_updates_url)
+
+                if not _shutdown_requested:
+                    log_and_print(f"Waiting {interval} seconds until next cycle...")
+                    log_and_print("")
+
+                    # Sleep in small intervals to respond quickly to shutdown signals
+                    for _ in range(interval):
+                        if _shutdown_requested:
+                            break
+                        time.sleep(1)
+
+            except Exception as e:
+                log_and_print(f"✗ Error in monitoring cycle: {e}")
+                logging.exception("Full traceback:")
+                if not _shutdown_requested:
+                    log_and_print(f"Waiting {interval} seconds before retry...")
+                    log_and_print("")
+                    for _ in range(interval):
+                        if _shutdown_requested:
+                            break
+                        time.sleep(1)
+
+        log_and_print("")
+        log_and_print("=" * 60)
+        log_and_print("Daemon stopped gracefully")
+        log_and_print("=" * 60)
+        log_and_print("")
+
+    else:
+        # Single execution mode
+        log_and_print("Running in SINGLE execution mode")
+        log_and_print("")
+
+        run_monitoring_cycle(apple_updates_url)
+
+        log_and_print("")
+        log_and_print("=" * 60)
+        log_and_print("Workflow completed")
+        log_and_print("=" * 60)
+        log_and_print("")
+        log_and_print("Next steps:")
+        log_and_print("  - Language URLs saved to: data/language_urls.json")
+        log_and_print("  - Language names saved to: data/language_names.json")
+        log_and_print("  - You can now run: python -m scripts.monitor_apple_updates")
+        log_and_print("")
 
 
 if __name__ == "__main__":
