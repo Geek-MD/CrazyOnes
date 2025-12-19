@@ -35,8 +35,8 @@ data/updates_tracking.json
 # Log files
 crazyones.log
 
-# Static reference file (committed to repo)
-!data/language_names.json
+# Generated language names file (now dynamic, not static)
+data/language_names.json
 
 # IDE
 .vscode/

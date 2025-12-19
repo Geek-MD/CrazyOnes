@@ -8,6 +8,7 @@ languages that are actually available in Apple Updates.
 """
 
 import json
+import sys
 from pathlib import Path
 
 # Mapping of language-country codes to human-readable names
@@ -225,10 +226,10 @@ def main() -> None:
             "\nPlease run scrape_apple_updates.py first to generate "
             "data/language_urls.json"
         )
-        exit(1)
+        sys.exit(1)
     except Exception as e:
         print(f"Error: {e}")
-        exit(1)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
