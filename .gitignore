@@ -25,6 +25,7 @@ wheels/
 
 # Test files
 test_language_urls.json
+actual_test_language_urls.json
 
 # IDE
 .vscode/

@@ -8,13 +8,17 @@ from scrape_apple_updates import extract_language_urls, save_language_urls_to_js
 
 
 def test_with_mock_html():
-    """Test the extraction with a mock HTML page."""
+    """Test the extraction with a mock HTML page that matches Apple's actual structure."""
     
-    # Mock HTML that simulates Apple's page structure with language links
+    # Mock HTML that simulates Apple's actual page structure with link tags in head
     mock_html = """
     <!DOCTYPE html>
-    <html>
+    <html lang="en" prefix="og: http://ogp.me/ns#" dir="ltr">
     <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <title lang="en">Apple security releases - Apple Support</title>
+        <link rel="canonical" href="https://support.apple.com/en-us/100100"/>
+        
         <link rel="alternate" hreflang="en-us" href="https://support.apple.com/en-us/100100">
         <link rel="alternate" hreflang="es-es" href="https://support.apple.com/es-es/100100">
         <link rel="alternate" hreflang="fr-fr" href="https://support.apple.com/fr-fr/100100">
@@ -22,17 +26,21 @@ def test_with_mock_html():
         <link rel="alternate" hreflang="it-it" href="https://support.apple.com/it-it/100100">
         <link rel="alternate" hreflang="ja-jp" href="https://support.apple.com/ja-jp/100100">
         <link rel="alternate" hreflang="zh-cn" href="https://support.apple.com/zh-cn/100100">
+        <link rel="alternate" hreflang="pt-br" href="https://support.apple.com/pt-br/100100">
+        <link rel="alternate" hreflang="ko-kr" href="https://support.apple.com/ko-kr/100100">
+        <link rel="alternate" hreflang="nl-nl" href="https://support.apple.com/nl-nl/100100">
+        <link rel="alternate" hreflang="ru-ru" href="https://support.apple.com/ru-ru/100100">
+        <link rel="alternate" hreflang="ar-sa" href="https://support.apple.com/ar-sa/100100">
     </head>
     <body>
         <header>
             <nav>
-                <a href="/en-us/100100" hreflang="en-us">English (US)</a>
-                <a href="/es-es/100100" hreflang="es-es">Español</a>
-                <a href="/fr-fr/100100" hreflang="fr-fr">Français</a>
+                <h1>Apple Security Updates</h1>
             </nav>
         </header>
         <main>
-            <h1>Apple Security Updates</h1>
+            <h2>Apple security releases</h2>
+            <p>This document lists security updates for Apple software.</p>
         </main>
     </body>
     </html>
