@@ -5,6 +5,58 @@ All notable changes to the Crazy Ones - Apple Updates Bot project will be docume
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- Main coordinator script `crazyones.py` as the primary entry point for the application
+- Configuration file `config.json` to store default Apple Updates URL and Telegram bot token
+- Separate script `scripts/generate_language_names.py` to dynamically generate language names
+  - Generates human-readable names from language codes (e.g., "en-us" → "English/USA")
+  - Only includes languages that are actually available in Apple Updates
+  - Automatically detects and adds new languages when URLs are discovered
+  - Preserves existing entries when updating
+- Logging system with automatic rotation:
+  - All output logged to `crazyones.log`
+  - Automatic rotation to keep only 1000 most recent lines
+  - Timestamped log entries for tracking
+  - Both console and file output
+- Command-line argument support in `crazyones.py`:
+  - `-t, --token`: **Required** Telegram bot token parameter
+  - `-u, --url`: Optional URL argument (uses config.json if not provided)
+  - `-v, --version`: Shows current version (0.5.0)
+  - `-h, --help`: Shows help message (standard argparse feature)
+- Automatic configuration management:
+  - Token is saved to config.json when provided
+  - URL is saved to config.json when provided
+  - Config.json is automatically created/updated on each run
+- Comprehensive test suite for new functionality:
+  - `tests/test_generate_language_names.py` for language names generation
+  - `tests/test_crazyones.py` for coordinator script
+  - Tests for logging, rotation, token handling, and configuration
+- Type annotations and strict mypy type checking for all new code
+
+### Changed
+- Modified `scripts/scrape_apple_updates.py` to automatically call `generate_language_names.py` after scraping
+- Language names are now generated dynamically based on scraped URLs instead of being static
+- Config.json now stores both URL and Telegram bot token
+- Updated documentation (README.md) with:
+  - Quick start guide using main coordinator with required token
+  - Configuration instructions showing token storage
+  - Updated project structure showing new files
+  - Detailed usage examples for all scripts
+  - Logging behavior description
+- Updated CHANGELOG.md with complete feature list
+- Added `crazyones.log` to `.gitignore`
+
+### Technical Details
+- Language names generator is a separate script to save CPU cycles (can be run independently)
+- Main coordinator orchestrates the workflow: scrape → generate names → guide user
+- Config-driven approach allows easy customization and reuse of URL and token
+- Log rotation ensures log file doesn't grow indefinitely (keeps 1000 most recent lines)
+- Token is masked in console output for security (shows as *****)
+- Newest log entries always at the end (standard log file behavior)
+- Backward compatible with existing scripts and workflows
+
 ## [0.5.0] - 2024-12-19
 
 ### Added

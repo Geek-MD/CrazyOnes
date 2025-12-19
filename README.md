@@ -25,16 +25,22 @@ pip install -r requirements.txt
 
 ```
 CrazyOnes/
-├── scripts/           # Main Python scripts
-│   ├── scrape_apple_updates.py    # Scrapes language URLs
-│   ├── monitor_apple_updates.py   # Monitors and scrapes security updates
-│   └── utils.py                   # Shared utility functions
-├── tests/             # Test files
+├── crazyones.py        # Main coordinator script (entry point)
+├── config.json         # Configuration file with default Apple Updates URL
+├── scripts/            # Main Python scripts
+│   ├── scrape_apple_updates.py       # Scrapes language URLs
+│   ├── generate_language_names.py    # Generates language names dynamically
+│   ├── monitor_apple_updates.py      # Monitors and scrapes security updates
+│   └── utils.py                      # Shared utility functions
+├── tests/              # Test files
 │   ├── test_scraper.py
 │   ├── test_actual_html.py
-│   └── test_monitor.py
-├── data/              # Generated data (created automatically)
+│   ├── test_monitor.py
+│   ├── test_generate_language_names.py
+│   └── test_crazyones.py
+├── data/               # Generated data (created automatically)
 │   ├── language_urls.json         # Language-specific URLs
+│   ├── language_names.json        # Human-readable language names (dynamic)
 │   ├── updates_tracking.json      # Content tracking data
 │   └── updates/                   # Security updates per language
 │       ├── en-us.json
@@ -43,7 +49,54 @@ CrazyOnes/
 └── requirements.txt
 ```
 
-### Scraping Apple Updates
+## Usage
+
+### Quick Start with Main Coordinator
+
+The easiest way to use CrazyOnes is through the main coordinator script. You must provide a Telegram bot token:
+
+```bash
+# Basic usage with token (uses URL from config.json)
+python crazyones.py --token YOUR_BOT_TOKEN
+
+# With a specific URL
+python crazyones.py --token YOUR_BOT_TOKEN --url https://support.apple.com/es-es/100100
+
+# Short form
+python crazyones.py -t YOUR_BOT_TOKEN -u https://support.apple.com/fr-fr/100100
+
+# Show version
+python crazyones.py --version
+
+# Show help
+python crazyones.py --help
+```
+
+The coordinator script will:
+1. Save the token and URL to config.json for future use
+2. Scrape the Apple Updates page for language-specific URLs
+3. Automatically generate/update language names based on discovered URLs
+4. Log all activity to crazyones.log (automatically rotated to keep 1000 most recent lines)
+5. Guide you to the next steps
+
+### Configuration
+
+The `config.json` file stores your Telegram bot token and default Apple Updates URL:
+
+```json
+{
+  "apple_updates_url": "https://support.apple.com/en-us/100100",
+  "telegram_bot_token": "YOUR_TELEGRAM_BOT_TOKEN_HERE"
+}
+```
+
+This file is automatically created/updated when you run crazyones.py with the --token and --url parameters.
+
+### Individual Scripts
+
+You can also run individual scripts for more control:
+
+#### Scraping Apple Updates
 
 The `scrape_apple_updates.py` script fetches the Apple Updates page and extracts all language-specific URLs from the header:
 
@@ -54,18 +107,28 @@ python -m scripts.scrape_apple_updates
 This will:
 1. Fetch the Apple Updates page (https://support.apple.com/en-us/100100)
 2. Parse the HTML to find language-specific URLs
-3. Save them to `data/language_urls.json` in the format:
-   ```json
-   {
-     "en-us": "https://support.apple.com/en-us/100100",
-     "es-es": "https://support.apple.com/es-es/100100",
-     ...
-   }
-   ```
+3. Save them to `data/language_urls.json`
+4. Automatically generate/update `data/language_names.json` with human-readable names
 
 The script uses a proper User-Agent header to avoid being blocked by Apple's servers.
 
-### Monitoring and Scraping Security Updates
+#### Generating Language Names
+
+The `generate_language_names.py` script creates a dynamic mapping of language codes to human-readable names based on the scraped URLs:
+
+```bash
+python -m scripts.generate_language_names
+```
+
+This will:
+- Read `data/language_urls.json` to see which languages are available
+- Generate human-readable names for each language (e.g., "en-us" → "English/USA")
+- Update `data/language_names.json` with any new languages detected
+- Preserve existing entries, only adding new ones
+
+**Note**: This script is automatically called by `scrape_apple_updates.py`, so you typically don't need to run it manually. It's provided as a separate script to save CPU cycles when you only want to update language names.
+
+#### Monitoring and Scraping Security Updates
 
 The `monitor_apple_updates.py` script monitors changes in the `data/language_urls.json` file and scrapes the security updates table from each language-specific page:
 

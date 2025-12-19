@@ -32,8 +32,11 @@ data/language_urls.json
 data/updates/
 data/updates_tracking.json
 
-# Static reference file (committed to repo)
-!data/language_names.json
+# Log files
+crazyones.log
+
+# Generated language names file (now dynamic, not static)
+data/language_names.json
 
 # IDE
 .vscode/
