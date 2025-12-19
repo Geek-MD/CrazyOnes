@@ -343,8 +343,8 @@ def main() -> None:
     print("\n=== Summary ===")
     print(f"Processed: {len(languages_to_process)} languages")
     print(f"Successful: {successful_count} languages")
-    print("Updates saved to 'updates/' directory")
-    print("Tracking data saved to 'updates_tracking.json'")
+    print("Updates saved to 'data/updates/' directory")
+    print("Tracking data saved to 'data/updates_tracking.json'")
 
 
 if __name__ == "__main__":
