@@ -41,7 +41,7 @@ from scripts.monitor_apple_updates import (
 )
 
 # Version from pyproject.toml
-__version__ = "0.6.0"
+__version__ = "0.7.0"
 
 # Global event for graceful shutdown (thread-safe)
 _shutdown_event = threading.Event()
