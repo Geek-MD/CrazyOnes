@@ -1,5 +1,10 @@
 # Crazy Ones
 
+![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)
+![Code Style: Ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)
+![Type Checked: mypy](https://img.shields.io/badge/type%20checked-mypy-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+
 _Crazy ones_ is a service designed to automate notifications about software updates for Apple devices.
 
 It relies on two key components to perform its task. The first is a GitHub Actions workflow that scrapes the content of the Apple Updates website in the various languages in which it's available.
@@ -44,4 +49,25 @@ To test the scraper logic without making actual HTTP requests:
 
 ```bash
 python test_scraper.py
+```
+
+## Code Quality
+
+This project follows strict code quality standards:
+
+- **Linting**: [Ruff](https://docs.astral.sh/ruff/) for fast Python linting
+- **Type Checking**: [mypy](https://mypy-lang.org/) with strict mode enabled
+- **Formatting**: Ruff formatter for consistent code style
+
+To check code quality:
+
+```bash
+# Run linter
+ruff check *.py
+
+# Run type checker
+mypy scrape_apple_updates.py --strict
+
+# Auto-format code
+ruff format *.py
 ```

@@ -4,12 +4,13 @@ Test script with actual Apple HTML to verify complete extraction.
 """
 
 import json
+
 from scrape_apple_updates import extract_language_urls
 
 
 def test_with_actual_html():
     """Test with a subset of the actual Apple HTML structure you provided."""
-    
+
     # This is a realistic sample from the actual HTML with many language links
     actual_html_sample = """
     <!DOCTYPE html>
@@ -17,7 +18,7 @@ def test_with_actual_html():
     <head>
         <title lang="en">Apple security releases - Apple Support</title>
         <link rel="canonical" href="https://support.apple.com/en-us/100100"/>
-        
+
         <link rel="alternate" hreflang="ar-kw" href="https://support.apple.com/ar-kw/100100">
         <link rel="alternate" hreflang="en-il" href="https://support.apple.com/en-il/100100">
         <link rel="alternate" hreflang="en-ae" href="https://support.apple.com/en-ae/100100">
@@ -72,37 +73,37 @@ def test_with_actual_html():
     </body>
     </html>
     """
-    
+
     base_url = "https://support.apple.com/en-us/100100"
-    
+
     print("Testing with actual Apple HTML structure...")
     language_urls = extract_language_urls(actual_html_sample, base_url)
-    
+
     print(f"\nExtracted {len(language_urls)} language URLs from actual HTML structure")
-    
+
     # Display first 10 and last 10
     sorted_langs = sorted(language_urls.items())
     print("\nFirst 10 languages:")
     for lang, url in sorted_langs[:10]:
         print(f"  {lang}: {url}")
-    
+
     print(f"\n... ({len(sorted_langs) - 20} more) ...\n")
-    
+
     print("Last 10 languages:")
     for lang, url in sorted_langs[-10:]:
         print(f"  {lang}: {url}")
-    
+
     # Save to a different file
-    output_file = 'actual_test_language_urls.json'
-    with open(output_file, 'w', encoding='utf-8') as f:
+    output_file = "actual_test_language_urls.json"
+    with open(output_file, "w", encoding="utf-8") as f:
         json.dump(language_urls, f, indent=2, ensure_ascii=False)
-    
+
     print(f"\n✓ Successfully saved {len(language_urls)} language URLs to {output_file}")
-    
+
     return len(language_urls) > 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     success = test_with_actual_html()
     if success:
         print("\n✓ Test passed: Language URL extraction works with actual Apple HTML")
