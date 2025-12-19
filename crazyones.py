@@ -6,16 +6,23 @@ This is the main entry point for the CrazyOnes application. It orchestrates
 the execution of various scripts to scrape and monitor Apple security updates.
 
 Usage:
-    python crazyones.py -t <TOKEN>              # Uses URL from config.json
-    python crazyones.py -t <TOKEN> -u <URL>     # Uses specified URL
-    python crazyones.py --token <TOKEN> --url <URL>  # Long form
+    python crazyones.py -t <TOKEN>              # One-time execution
+    python crazyones.py -t <TOKEN> -u <URL>     # One-time with custom URL
+    python crazyones.py -t <TOKEN> --daemon     # Run as daemon (checks 2x per day)
+    python crazyones.py -t <TOKEN> --interval 3600  # Run every hour (custom)
+
+Note: Starting a new instance automatically stops any existing instance.
 """
 
 import argparse
 import json
 import logging
+import os
 import re
+import signal
 import sys
+import threading
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -28,8 +35,100 @@ from scripts.scrape_apple_updates import (
     save_language_urls_to_json,
 )
 
+# Import monitor module at module level for efficiency
+from scripts.monitor_apple_updates import (
+    detect_changes,
+    load_language_urls,
+    load_tracking_data,
+    process_language_url,
+    save_tracking_data,
+)
+
 # Version from pyproject.toml
-__version__ = "0.6.0"
+__version__ = "0.8.0"
+
+# PID file location
+PID_FILE = "/tmp/crazyones.pid"
+
+# Global event for graceful shutdown (thread-safe)
+_shutdown_event = threading.Event()
+
+
+def write_pid_file() -> None:
+    """Write the current process ID to the PID file."""
+    with open(PID_FILE, 'w') as f:
+        f.write(str(os.getpid()))
+
+
+def read_pid_file() -> int | None:
+    """Read PID from PID file. Returns None if file doesn't exist."""
+    try:
+        with open(PID_FILE, 'r') as f:
+            return int(f.read().strip())
+    except (FileNotFoundError, ValueError):
+        return None
+
+
+def remove_pid_file() -> None:
+    """Remove the PID file."""
+    try:
+        os.remove(PID_FILE)
+    except FileNotFoundError:
+        pass
+
+
+def is_process_running(pid: int) -> bool:
+    """Check if a process with given PID is running."""
+    try:
+        # Sending signal 0 doesn't kill the process, just checks if it exists
+        os.kill(pid, 0)
+        return True
+    except (OSError, ProcessLookupError):
+        return False
+
+
+def stop_running_daemon() -> bool:
+    """
+    Stop a running daemon process.
+    
+    Returns:
+        True if daemon was stopped, False if no daemon was running
+    """
+    pid = read_pid_file()
+    if pid is None:
+        print("No daemon PID file found.")
+        return False
+    
+    if not is_process_running(pid):
+        print(f"Daemon with PID {pid} is not running. Cleaning up PID file.")
+        remove_pid_file()
+        return False
+    
+    print(f"Stopping daemon process (PID: {pid})...")
+    try:
+        # Send SIGTERM for graceful shutdown
+        os.kill(pid, signal.SIGTERM)
+        print(f"SIGTERM sent to process {pid}. Daemon will stop gracefully.")
+        remove_pid_file()
+        return True
+    except (OSError, ProcessLookupError) as e:
+        print(f"Error stopping daemon: {e}")
+        remove_pid_file()
+        return False
+
+
+def signal_handler(signum: int, frame: object) -> None:
+    """
+    Handle shutdown signals gracefully.
+
+    Args:
+        signum: Signal number
+        frame: Current stack frame
+    """
+    _shutdown_event.set()
+    log_and_print("\n\nShutdown signal received. Finishing current cycle...")
+    # Clean up PID file on shutdown
+    remove_pid_file()
 
 
 def rotate_log_file(log_file: str = "crazyones.log", max_lines: int = 1000) -> None:
@@ -280,6 +379,9 @@ Examples:
   %(prog)s -t YOUR_TOKEN
   %(prog)s --token YOUR_TOKEN --url https://support.apple.com/en-us/100100
   %(prog)s -t YOUR_TOKEN -u https://support.apple.com/es-es/100100
+  %(prog)s -t YOUR_TOKEN --daemon
+  %(prog)s -t YOUR_TOKEN --interval 21600  # Check every 6 hours
+  %(prog)s --log  # Show last 100 lines of log
         """,
     )
 
@@ -292,13 +394,20 @@ Examples:
         version=f"%(prog)s {version}",
     )
 
-    # Add required token argument
+    # Add log viewing argument (doesn't require token)
+    parser.add_argument(
+        "--log",
+        action="store_true",
+        help="Show last 100 lines of log file and exit",
+    )
+
+    # Add token argument (not required if using --log)
     parser.add_argument(
         "-t",
         "--token",
         type=str,
-        required=True,
-        help="Telegram bot token (required)",
+        required=False,
+        help="Telegram bot token (required for execution, not needed for --log)",
         metavar="TOKEN",
     )
 
@@ -310,7 +419,58 @@ Examples:
         metavar="URL",
     )
 
+    parser.add_argument(
+        "-d",
+        "--daemon",
+        action="store_true",
+        help="Run as daemon (continuous monitoring with 12 hour interval, 2 times per day)",
+    )
+
+    parser.add_argument(
+        "-i",
+        "--interval",
+        type=int,
+        help="Monitoring interval in seconds (implies daemon mode, default: 43200 = 12 hours)",
+        metavar="SECONDS",
+    )
+
     return parser.parse_args()
+
+
+def show_log_tail(log_file: str = "crazyones.log", lines: int = 100) -> None:
+    """
+    Display the last N lines of the log file.
+
+    Args:
+        log_file: Path to the log file
+        lines: Number of lines to show (default: 100)
+    """
+    log_path = Path(log_file)
+    
+    if not log_path.exists():
+        print(f"Log file not found: {log_file}")
+        print("The log file will be created when crazyones runs for the first time.")
+        return
+    
+    try:
+        with open(log_path, 'r', encoding='utf-8') as f:
+            all_lines = f.readlines()
+            tail_lines = all_lines[-lines:] if len(all_lines) > lines else all_lines
+            
+            print("=" * 60)
+            print(f"Last {len(tail_lines)} lines of {log_file}")
+            print("=" * 60)
+            print()
+            
+            for line in tail_lines:
+                print(line, end='')
+            
+            print()
+            print("=" * 60)
+            print(f"Total lines in log: {len(all_lines)}")
+            print("=" * 60)
+    except Exception as e:
+        print(f"Error reading log file: {e}")
 
 
 def scrape_apple_updates(url: str) -> None:
@@ -349,21 +509,143 @@ def scrape_apple_updates(url: str) -> None:
     except Exception as e:
         log_and_print(f"✗ Error during scraping: {e}")
         logging.exception("Full traceback:")
-        sys.exit(1)
+        raise
+
+
+def run_monitoring_cycle(apple_updates_url: str) -> None:
+    """
+    Run a complete monitoring cycle: scrape and monitor updates.
+
+    Args:
+        apple_updates_url: The Apple Updates URL to scrape
+    """
+    log_and_print("-" * 60)
+    log_and_print(f"Monitoring cycle started at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    log_and_print("-" * 60)
+    log_and_print("")
+
+    # Step 1: Scrape language URLs from Apple Updates page
+    try:
+        log_and_print("Step 1: Scraping Apple Updates page for language URLs...")
+        scrape_apple_updates(apple_updates_url)
+    except Exception as e:
+        log_and_print(f"✗ Scraping failed: {e}")
+        logging.exception("Full traceback:")
+        return
+
+    # Step 2: Monitor and scrape security updates from each language URL
+    log_and_print("")
+    log_and_print("Step 2: Monitoring security updates from language URLs...")
+    log_and_print("")
+    
+    try:
+        # Load language URLs
+        try:
+            language_urls = load_language_urls()
+            log_and_print(f"Loaded {len(language_urls)} language URLs")
+        except FileNotFoundError as e:
+            log_and_print(f"✗ Error: {e}")
+            log_and_print("Language URLs file not found. Skipping security updates monitoring.")
+            return
+
+        # Load tracking data
+        tracking_data = load_tracking_data()
+
+        # Determine which languages need processing
+        if not tracking_data:
+            # First run - process all languages
+            log_and_print("First run detected - processing all language URLs")
+            log_and_print("")
+            languages_to_process = list(language_urls.keys())
+            force_update = True
+        else:
+            # Subsequent runs - check for changes
+            log_and_print("Checking for changes...")
+            log_and_print("")
+            languages_to_process = detect_changes(language_urls, tracking_data)
+            force_update = False
+
+            if not languages_to_process:
+                log_and_print("No URL changes detected. Checking content changes...")
+                log_and_print("")
+                # Still check content changes for existing URLs
+                languages_to_process = list(language_urls.keys())
+                force_update = False
+
+        # Process each language URL
+        successful_count = 0
+        for lang_code in languages_to_process:
+            url = language_urls[lang_code]
+            if process_language_url(lang_code, url, tracking_data, force_update):
+                successful_count += 1
+
+        # Save updated tracking data
+        save_tracking_data(tracking_data)
+
+        log_and_print("")
+        log_and_print("✓ Security updates monitoring completed")
+        log_and_print(f"  Processed: {len(languages_to_process)} language(s)")
+        log_and_print(f"  Successful: {successful_count} language(s)")
+
+    except Exception as e:
+        log_and_print(f"✗ Error monitoring security updates: {e}")
+        logging.exception("Full traceback:")
+
+    log_and_print("")
+    log_and_print("-" * 60)
+    log_and_print("Monitoring cycle completed")
+    log_and_print("-" * 60)
+    log_and_print("")
 
 
 def main() -> None:
     """Main function to orchestrate the CrazyOnes workflow."""
-    # Set up logging first
+    # Parse command line arguments
+    args = parse_arguments()
+    
+    # Handle --log command (doesn't require token or setup)
+    if args.log:
+        show_log_tail()
+        sys.exit(0)
+    
+    # Validate token is provided for normal execution
+    if not args.token:
+        print("Error: --token is required for execution")
+        print("Use --help for usage information or --log to view log file")
+        sys.exit(1)
+    
+    # Set up logging
     setup_logging()
+
+    # Register signal handlers for graceful shutdown
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
 
     log_and_print("=" * 60)
     log_and_print("CrazyOnes - Apple Updates Monitoring System")
     log_and_print("=" * 60)
     log_and_print("")
 
-    # Parse command line arguments
-    args = parse_arguments()
+    # Determine daemon mode and interval
+    daemon_mode = args.daemon or args.interval is not None
+    interval = args.interval if args.interval else 43200  # Default 12 hours (2 times per day)
+
+    # Check if another instance is already running
+    existing_pid = read_pid_file()
+    if existing_pid and is_process_running(existing_pid):
+        log_and_print(f"⚠ Detected existing CrazyOnes process (PID: {existing_pid})")
+        log_and_print("Stopping existing process to start with new parameters...")
+        stop_running_daemon()
+        time.sleep(1)  # Give the old process a moment to clean up
+        log_and_print("✓ Previous process stopped")
+        log_and_print("")
+
+    if daemon_mode:
+        log_and_print(f"Running in DAEMON mode with {interval} seconds interval")
+        # Write PID file for daemon mode
+        write_pid_file()
+        log_and_print(f"Daemon PID: {os.getpid()}")
+        log_and_print("")
 
     # Validate Telegram bot token format
     if not validate_telegram_token(args.token):
@@ -387,17 +669,22 @@ def main() -> None:
         if (saved_token and
             saved_token != "YOUR_TELEGRAM_BOT_TOKEN_HERE" and
             saved_token != args.token):
-            # Ask user which token to use
-            use_new_token = ask_token_confirmation(args.token, saved_token)
-
-            if use_new_token:
-                log_and_print("\n✓ Using NEW token (provided as parameter)")
-                log_only("User chose to use new token", "INFO")
+            # In daemon mode, don't ask for confirmation, use provided token
+            if daemon_mode:
+                log_and_print("Token mismatch detected. Using provided token in daemon mode.")
                 token_to_use = args.token
             else:
-                log_and_print("\n✓ Using SAVED token (from config.json)")
-                log_only("User chose to use saved token", "INFO")
-                token_to_use = saved_token
+                # Ask user which token to use
+                use_new_token = ask_token_confirmation(args.token, saved_token)
+
+                if use_new_token:
+                    log_and_print("\n✓ Using NEW token (provided as parameter)")
+                    log_only("User chose to use new token", "INFO")
+                    token_to_use = args.token
+                else:
+                    log_and_print("\n✓ Using SAVED token (from config.json)")
+                    log_only("User chose to use saved token", "INFO")
+                    token_to_use = saved_token
         else:
             # No conflict, use provided token
             token_to_use = args.token
@@ -451,24 +738,59 @@ def main() -> None:
             sys.exit(1)
 
     log_and_print("")
-    log_and_print("-" * 60)
-    log_and_print("Step 1: Scraping Apple Updates")
-    log_and_print("-" * 60)
-    log_and_print("")
 
-    # Execute the scraping process
-    scrape_apple_updates(apple_updates_url)
+    # Main execution loop
+    if daemon_mode:
+        log_and_print("Starting daemon mode...")
+        log_and_print("Press Ctrl+C to stop gracefully")
+        log_and_print("")
 
-    log_and_print("")
-    log_and_print("=" * 60)
-    log_and_print("Workflow completed")
-    log_and_print("=" * 60)
-    log_and_print("")
-    log_and_print("Next steps:")
-    log_and_print("  - Language URLs saved to: data/language_urls.json")
-    log_and_print("  - Language names saved to: data/language_names.json")
-    log_and_print("  - You can now run: python -m scripts.monitor_apple_updates")
-    log_and_print("")
+        while not _shutdown_event.is_set():
+            try:
+                run_monitoring_cycle(apple_updates_url)
+
+                if not _shutdown_event.is_set():
+                    log_and_print(f"Waiting {interval} seconds until next cycle...")
+                    log_and_print("")
+
+                    # Use event.wait() for efficient sleeping that can be interrupted
+                    _shutdown_event.wait(timeout=interval)
+
+            except Exception as e:
+                log_and_print(f"✗ Error in monitoring cycle: {e}")
+                logging.exception("Full traceback:")
+                if not _shutdown_event.is_set():
+                    log_and_print(f"Waiting {interval} seconds before retry...")
+                    log_and_print("")
+                    # Use event.wait() for efficient sleeping that can be interrupted
+                    _shutdown_event.wait(timeout=interval)
+
+        log_and_print("")
+        log_and_print("=" * 60)
+        log_and_print("Daemon stopped gracefully")
+        log_and_print("=" * 60)
+        log_and_print("")
+        
+        # Clean up PID file on normal exit
+        remove_pid_file()
+
+    else:
+        # Single execution mode
+        log_and_print("Running in SINGLE execution mode")
+        log_and_print("")
+
+        run_monitoring_cycle(apple_updates_url)
+
+        log_and_print("")
+        log_and_print("=" * 60)
+        log_and_print("Workflow completed")
+        log_and_print("=" * 60)
+        log_and_print("")
+        log_and_print("Next steps:")
+        log_and_print("  - Language URLs saved to: data/language_urls.json")
+        log_and_print("  - Language names saved to: data/language_names.json")
+        log_and_print("  - You can now run: python -m scripts.monitor_apple_updates")
+        log_and_print("")
 
 
 if __name__ == "__main__":

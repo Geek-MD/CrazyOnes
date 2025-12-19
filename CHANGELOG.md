@@ -7,6 +7,108 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2024-12-19
+
+### Added
+- **`--log` flag** to view last 100 lines of log file without requiring token
+  - Shows log tail with total line count
+  - Useful for quick status checks inside container
+  - Can be used alongside --help and --version without starting execution
+- **Automatic instance management** with PID file tracking
+  - Detects and stops existing instances automatically
+  - Graceful process replacement when starting with new parameters
+  - No manual stopping required - just run with new parameters
+  - Seamless experience inside Docker container
+- **Docker Hub publishing support**
+  - Added version labels to Dockerfile (0.8.0)
+  - Added image tag to compose.yml (geekmd/crazyones:0.8.0)
+  - Created DOCKER_HUB.md with manual publishing instructions
+  - GitHub Actions workflow for automated multi-platform builds
+  - Support for linux/arm/v7, linux/amd64, and linux/arm64
+
+### Changed
+- **Token parameter is now optional** for informational commands
+  - `--log`, `--version`, `-v`, `--help`, `-h` don't require `--token`
+  - These flags are self-contained and don't affect running processes
+- **Version bumped to 0.8.0** across all files
+  - crazyones.py, pyproject.toml, config.json updated
+  - Reflects significant new features added
+
+### Documentation
+- Added comprehensive container management guide in README
+- Created DOCKER_HUB.md with publishing workflow
+- Documented automatic instance replacement behavior
+- Added examples for running with different parameters inside container
+
+### Technical Details
+- PID file management functions for process tracking
+- `show_log_tail()` function for log viewing
+- Enhanced argument parsing with optional token requirement
+- GitHub Actions workflow with QEMU and Buildx for multi-platform support
+
+## [0.7.0] - 2024-12-19
+
+### Added
+- **Docker containerization support** for easy deployment on Raspberry Pi 3B
+  - Alpine Linux-based Dockerfile optimized for ARM architecture
+  - `compose.yml` for Docker Compose deployment
+  - `docker-entrypoint.sh` with comprehensive token validation
+  - `.env.example` file with all configuration options documented
+- **Daemon mode** for continuous monitoring (runs 2x per day by default)
+  - `--daemon` flag for continuous execution
+  - `--interval` flag for custom check intervals (default: 43200 seconds = 12 hours)
+  - Graceful shutdown with SIGINT/SIGTERM signal handlers
+  - Thread-safe shutdown mechanism using `threading.Event`
+  - Efficient waiting with `threading.Event.wait()` instead of sleep loops
+- **Integrated security updates monitoring** in main workflow
+  - Automatic execution of both scraping and monitoring in each cycle
+  - First run: parses all information from all language URLs
+  - Subsequent runs: only updates changed information
+  - Content hash tracking to detect changes
+- **Smart URL merging** in `scripts/scrape_apple_updates.py`
+  - Incremental updates: only add/remove/update changed URLs
+  - Clear change reporting (added, removed, updated, unchanged)
+  - First-time detection with full initial load
+  - Optimized performance with lazy calculations
+- **Comprehensive documentation**
+  - `DOCKER.md` with detailed Docker deployment guide
+  - Updated `README.md` with Docker quick start
+  - Instructions for Raspberry Pi 3B deployment
+  - Configuration examples and troubleshooting
+
+### Changed
+- **Token is now required** via command-line argument for security
+- **Telegram bot token validation** in both entrypoint script and Python code
+  - Format validation (bot_id:auth_token pattern)
+  - Placeholder detection with clear error messages
+  - Prevents container startup with invalid tokens
+- Token and URL are automatically saved to `config.json` when provided
+- Imports moved to module level for better performance
+- Optimized change detection calculations in scraping logic
+- Updated version to 0.7.0 across all files
+
+### Technical Details
+- Alpine Linux chosen for minimal footprint (~5MB base) and ARM support
+- Daemon mode uses threading.Event for efficient, interruptible waits
+- Thread-safe signal handling without race conditions
+- Volume mounts for persistent data (data/, logs, config)
+- Automatic restart policy with `unless-stopped`
+- Module-level imports prevent repeated overhead in daemon loop
+- Proper argument quoting in shell scripts to prevent injection
+- Zero security vulnerabilities (CodeQL verified)
+
+### Docker Configuration
+- **TELEGRAM_BOT_TOKEN**: Required, validated before startup
+- **APPLE_UPDATES_URL**: Optional, defaults to en-us version
+- **CHECK_INTERVAL**: Optional, defaults to 43200 seconds (12 hours)
+- Persistent volumes: `./data`, `./config.json`, `./crazyones.log`
+
+### Breaking Changes
+- Token parameter (`-t` / `--token`) is now required for all executions
+- Interactive token confirmation only in non-daemon mode
+
+## [0.6.0] - 2024-12-19
+
 ### Added
 - Main coordinator script `crazyones.py` as the primary entry point for the application
 - Configuration file `config.json` to store default Apple Updates URL and Telegram bot token
@@ -142,5 +244,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Full type annotations for better code safety
 - Strict code quality checks with Ruff and mypy
 
+[0.8.0]: https://github.com/Geek-MD/CrazyOnes/releases/tag/v0.8.0
+[0.7.0]: https://github.com/Geek-MD/CrazyOnes/releases/tag/v0.7.0
 [0.5.0]: https://github.com/Geek-MD/CrazyOnes/releases/tag/v0.5.0
 [0.1.0]: https://github.com/Geek-MD/CrazyOnes/releases/tag/v0.1.0

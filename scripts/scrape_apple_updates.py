@@ -71,8 +71,13 @@ def save_language_urls_to_json(
     language_urls: dict[str, str], output_file: str = "data/language_urls.json"
 ) -> None:
     """
-    Save language URLs to a JSON file.
-
+    Save language URLs to a JSON file, merging with existing data.
+    
+    This function intelligently merges the new URLs with existing ones:
+    - Adds new language URLs that weren't present before
+    - Updates URLs for languages that changed
+    - Removes language URLs that are no longer present
+    
     Args:
         language_urls: Dictionary mapping language codes to URLs
         output_file: Path to the output JSON file
@@ -81,13 +86,62 @@ def save_language_urls_to_json(
     output_path = Path(output_file)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
+    # Load existing data if file exists
+    existing_urls: dict[str, str] = {}
+    if output_path.exists():
+        try:
+            with open(output_file, encoding="utf-8") as f:
+                existing_urls = json.load(f)
+        except (json.JSONDecodeError, IOError):
+            print(f"Warning: Could not read existing {output_file}, will create new file")
+            existing_urls = {}
+
+    # Detect changes
+    added_langs = set(language_urls.keys()) - set(existing_urls.keys())
+    removed_langs = set(existing_urls.keys()) - set(language_urls.keys())
+    updated_langs = {
+        lang for lang in language_urls.keys() & existing_urls.keys()
+        if language_urls[lang] != existing_urls[lang]
+    }
+
+    # Write the new data
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(language_urls, f, indent=2, ensure_ascii=False)
 
-    print(f"Language URLs saved to {output_file}")
-    print(f"Found {len(language_urls)} language versions:")
-    for lang, url in sorted(language_urls.items()):
-        print(f"  {lang}: {url}")
+    # Report changes
+    if not existing_urls:
+        print(f"Language URLs saved to {output_file}")
+        print(f"First time: Found {len(language_urls)} language versions:")
+        for lang, url in sorted(language_urls.items()):
+            print(f"  {lang}: {url}")
+    else:
+        print(f"Language URLs updated in {output_file}")
+        print(f"Total languages: {len(language_urls)}")
+        
+        if added_langs:
+            print(f"\n✓ Added {len(added_langs)} new language(s):")
+            for lang in sorted(added_langs):
+                print(f"  + {lang}: {language_urls[lang]}")
+        
+        if removed_langs:
+            print(f"\n✗ Removed {len(removed_langs)} language(s):")
+            for lang in sorted(removed_langs):
+                print(f"  - {lang}: {existing_urls[lang]}")
+        
+        if updated_langs:
+            print(f"\n↻ Updated {len(updated_langs)} language URL(s):")
+            for lang in sorted(updated_langs):
+                print(f"  ↻ {lang}:")
+                print(f"    Old: {existing_urls[lang]}")
+                print(f"    New: {language_urls[lang]}")
+        
+        if not added_langs and not removed_langs and not updated_langs:
+            print("\n✓ No changes detected in language URLs")
+        else:
+            # Calculate unchanged only when logging
+            unchanged_count = len(language_urls) - len(added_langs) - len(updated_langs)
+            if unchanged_count > 0:
+                print(f"\n✓ {unchanged_count} language(s) unchanged")
 
 
 def main() -> None:
