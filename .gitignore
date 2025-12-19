@@ -32,6 +32,9 @@ data/language_urls.json
 data/updates/
 data/updates_tracking.json
 
+# Log files
+crazyones.log
+
 # Static reference file (committed to repo)
 !data/language_names.json
 
