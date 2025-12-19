@@ -5,11 +5,49 @@
 ![Type Checked: mypy](https://img.shields.io/badge/type%20checked-mypy-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-_Crazy ones_ is a service designed to automate notifications about software updates for Apple devices.
+_Crazy Ones_ is a Docker-based service designed to automate monitoring and notifications about Apple security updates.
 
-It relies on two key components to perform its task. The first is a GitHub Actions workflow that scrapes the content of the Apple Updates website in the various languages in which it's available.
+The system continuously monitors Apple's security updates page across all available languages, detecting new updates and tracking changes automatically. It runs as a daemon checking for updates twice daily (every 12 hours by default).
 
-The second is a Python script that monitors changes in the HTML files within this repository. Using a Telegram bot, it notifies users about new updates while ignoring those that have already been reported
+## Key Features
+
+- 🐳 **Docker-based deployment** optimized for Raspberry Pi 3B (ARM architecture)
+- 🔄 **Automatic monitoring** runs continuously in daemon mode (2x per day by default)
+- 🌍 **Multi-language support** - monitors all language versions of Apple Updates
+- 🔍 **Smart change detection** - only processes new or changed information
+- 📊 **Integrated workflow**:
+  1. Scrapes language URLs from Apple Updates page
+  2. Monitors security updates from each language URL
+  3. Tracks changes using SHA256 hashing
+  4. Saves data incrementally (smart merging)
+- 🔐 **Token validation** ensures Telegram bot token is properly configured
+- 💾 **Persistent data** with volume mounts for configuration and logs
+
+## How It Works
+
+CrazyOnes operates in a continuous monitoring cycle:
+
+1. **Initialization**: Validates Telegram bot token and loads configuration
+2. **Language URL Discovery**: 
+   - Scrapes Apple Updates page to find all available language versions
+   - Uses smart merging to detect added/removed/updated language URLs
+   - Saves to `data/language_urls.json`
+3. **Security Updates Monitoring**:
+   - Fetches security updates from each language-specific page
+   - Extracts update details (name, target device, release date)
+   - Computes content hashes to detect changes
+   - First run: processes all languages
+   - Subsequent runs: only processes changed content
+4. **Data Persistence**:
+   - Saves updates to individual JSON files per language (`data/updates/en-us.json`, etc.)
+   - Tracks processed URLs in `data/updates_tracking.json`
+   - Logs all activity to `crazyones.log`
+5. **Continuous Operation** (Daemon Mode):
+   - Waits for configured interval (default: 12 hours)
+   - Repeats the cycle
+   - Gracefully handles shutdown signals
+
+All configuration (token, URL) is automatically saved to `config.json` for persistence across restarts.
 
 ## Setup
 
@@ -62,12 +100,14 @@ The easiest way to run CrazyOnes is using Docker. This method is especially reco
 - **The token is required**: If you don't replace the placeholder token in the `.env` file, the container will exit with an error.
 - **Token validation**: The entrypoint script validates the token format before starting the application.
 - **Apple Updates URL is optional**: If not specified, it defaults to the English (US) version.
-- **Data persistence**: The `data/` directory and log files are mounted as volumes for persistence.
-- **Automatic monitoring**: The system automatically:
-  1. Scrapes language URLs from Apple Updates page (2x per day)
-  2. Monitors each language URL for security updates (2x per day)
-  3. Saves new/updated information incrementally (smart merging)
-  4. Tracks changes to avoid reprocessing unchanged data
+- **Check interval**: Default is 43200 seconds (12 hours), which means the system checks for updates **twice per day**.
+- **Data persistence**: The `data/` directory, log files, and `config.json` are mounted as volumes for persistence.
+- **Automatic integrated monitoring**: The system runs in daemon mode and automatically:
+  1. **Scrapes language URLs** from Apple Updates page
+  2. **Monitors each language URL** for security updates
+  3. **Saves new/updated information** incrementally (smart merging)
+  4. **Tracks changes** to avoid reprocessing unchanged data
+  5. **Repeats every 12 hours** (or custom interval set in CHECK_INTERVAL)
 
 #### Docker Commands
 
@@ -131,15 +171,57 @@ CrazyOnes/
 
 ## Usage
 
-### Quick Start with Main Coordinator
+### Docker Usage (Recommended)
 
-The easiest way to use CrazyOnes is through the main coordinator script. You must provide a Telegram bot token:
+The recommended way to run CrazyOnes is using Docker (see [Docker Setup](#docker-setup-recommended-for-raspberry-pi-3b) above). The container runs in daemon mode and automatically performs monitoring cycles every 12 hours.
+
+Once running, the system operates autonomously:
+- Monitors Apple security updates across all languages
+- Detects and processes only new or changed information
+- Logs all activity to `crazyones.log`
+- All data is persisted in mounted volumes
+
+### Manual Execution (Without Docker)
+
+For development or manual execution, you can run CrazyOnes directly with Python.
+
+#### Daemon Mode (Continuous Monitoring)
+
+Run CrazyOnes in daemon mode for continuous monitoring:
 
 ```bash
-# Basic usage with token (uses URL from config.json)
+# Run as daemon with default 12-hour interval (2x per day)
+python crazyones.py --token YOUR_BOT_TOKEN --daemon
+
+# Run as daemon with custom interval (e.g., every 6 hours)
+python crazyones.py --token YOUR_BOT_TOKEN --daemon --interval 21600
+
+# Run as daemon with custom URL
+python crazyones.py --token YOUR_BOT_TOKEN --url https://support.apple.com/es-es/100100 --daemon
+```
+
+In daemon mode, the system will:
+1. Scrape language URLs from Apple Updates page
+2. Monitor security updates from each language URL
+3. Save all changes to JSON files
+4. Wait for the specified interval
+5. Repeat the cycle indefinitely
+
+Press `Ctrl+C` to stop the daemon gracefully.
+
+#### One-Time Execution
+
+For a single monitoring cycle without daemon mode:
+
+#### One-Time Execution
+
+For a single monitoring cycle without daemon mode:
+
+```bash
+# Single execution with token (uses URL from config.json)
 python crazyones.py --token YOUR_BOT_TOKEN
 
-# With a specific URL
+# Single execution with specific URL
 python crazyones.py --token YOUR_BOT_TOKEN --url https://support.apple.com/es-es/100100
 
 # Short form
@@ -152,12 +234,16 @@ python crazyones.py --version
 python crazyones.py --help
 ```
 
-The coordinator script will:
-1. Save the token and URL to config.json for future use
-2. Scrape the Apple Updates page for language-specific URLs
-3. Automatically generate/update language names based on discovered URLs
-4. Log all activity to crazyones.log (automatically rotated to keep 1000 most recent lines)
-5. Guide you to the next steps
+The one-time execution will:
+1. Validate the Telegram bot token
+2. Save the token and URL to config.json for future use
+3. Scrape the Apple Updates page for language-specific URLs (with smart merging)
+4. Monitor security updates from each language URL
+5. Generate/update language names based on discovered URLs
+6. Log all activity to crazyones.log (automatically rotated to keep 1000 most recent lines)
+7. Exit after completing the cycle
+
+**Note**: For production use, especially on Raspberry Pi, it's recommended to use Docker with daemon mode instead of running individual scripts.
 
 ### Configuration
 
@@ -165,75 +251,41 @@ The `config.json` file stores your Telegram bot token and default Apple Updates 
 
 ```json
 {
+  "version": "0.7.0",
   "apple_updates_url": "https://support.apple.com/en-us/100100",
   "telegram_bot_token": "YOUR_TELEGRAM_BOT_TOKEN_HERE"
 }
 ```
 
-This file is automatically created/updated when you run crazyones.py with the --token and --url parameters.
+This file is automatically created/updated when you run crazyones.py with the `--token` and `--url` parameters.
 
-### Individual Scripts
+In Docker deployments, the configuration is managed through environment variables (`.env` file) and automatically saved to `config.json` for persistence.
 
-You can also run individual scripts for more control:
+### Advanced: Individual Scripts (Development Only)
+
+**Note**: The following individual scripts are now integrated into the main workflow when using `crazyones.py` with or without `--daemon`. These commands are primarily for development and testing purposes.
 
 #### Scraping Apple Updates
 
-The `scrape_apple_updates.py` script fetches the Apple Updates page and extracts all language-specific URLs from the header:
+The `scrape_apple_updates.py` script fetches the Apple Updates page and extracts all language-specific URLs:
 
 ```bash
 python -m scripts.scrape_apple_updates
 ```
 
-This will:
-1. Fetch the Apple Updates page (https://support.apple.com/en-us/100100)
-2. Parse the HTML to find language-specific URLs
-3. Save them to `data/language_urls.json`
-4. Automatically generate/update `data/language_names.json` with human-readable names
+This script is automatically executed as part of the monitoring cycle in `crazyones.py`.
 
-The script uses a proper User-Agent header to avoid being blocked by Apple's servers.
+#### Monitoring Security Updates
 
-#### Generating Language Names
-
-The `generate_language_names.py` script creates a dynamic mapping of language codes to human-readable names based on the scraped URLs:
-
-```bash
-python -m scripts.generate_language_names
-```
-
-This will:
-- Read `data/language_urls.json` to see which languages are available
-- Generate human-readable names for each language (e.g., "en-us" → "English/USA")
-- Update `data/language_names.json` with any new languages detected
-- Preserve existing entries, only adding new ones
-
-**Note**: This script is automatically called by `scrape_apple_updates.py`, so you typically don't need to run it manually. It's provided as a separate script to save CPU cycles when you only want to update language names.
-
-#### Monitoring and Scraping Security Updates
-
-The `monitor_apple_updates.py` script monitors changes in the `data/language_urls.json` file and scrapes the security updates table from each language-specific page:
+The `monitor_apple_updates.py` script monitors security updates from each language URL:
 
 ```bash
 python -m scripts.monitor_apple_updates
 ```
 
-This will:
-1. Load the language URLs from `data/language_urls.json`
-2. Detect changes in URLs or page content using SHA256 hashing
-3. For each language page, extract the security updates table with three columns:
-   - **Name**: Update name with URL when available
-   - **Target**: Target platform/device
-   - **Date**: Release date
-4. Save the extracted data to individual JSON files in the `data/updates/` directory (e.g., `data/updates/en-us.json`)
-5. Track processed URLs and content hashes in `data/updates_tracking.json` to avoid re-processing unchanged pages
+This script is also automatically executed as part of the monitoring cycle in `crazyones.py`.
 
-**First run behavior**: Processes all language URLs
-
-**Subsequent runs**: Only processes URLs that have changed or pages whose content has changed
-
-The monitoring system intelligently detects:
-- New language URLs added to `data/language_urls.json`
-- Modified URLs for existing languages
-- Content changes in the security updates tables
+**For production use, always use the integrated workflow via `crazyones.py` or Docker.**
 
 ### Testing
 
