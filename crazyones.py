@@ -43,8 +43,7 @@ from scripts.monitor_apple_updates import (
 # Version from pyproject.toml
 __version__ = "0.6.0"
 
-# Global flag for graceful shutdown
-_shutdown_requested = False
+# Global event for graceful shutdown (thread-safe)
 _shutdown_event = threading.Event()
 
 
@@ -56,8 +55,6 @@ def signal_handler(signum: int, frame: object) -> None:
         signum: Signal number
         frame: Current stack frame
     """
-    global _shutdown_requested
-    _shutdown_requested = True
     _shutdown_event.set()
     log_and_print("\n\nShutdown signal received. Finishing current cycle...")
 
@@ -487,8 +484,6 @@ def run_monitoring_cycle(apple_updates_url: str) -> None:
 
 def main() -> None:
     """Main function to orchestrate the CrazyOnes workflow."""
-    global _shutdown_requested
-
     # Set up logging first
     setup_logging()
 
@@ -610,11 +605,11 @@ def main() -> None:
         log_and_print("Press Ctrl+C to stop gracefully")
         log_and_print("")
 
-        while not _shutdown_requested:
+        while not _shutdown_event.is_set():
             try:
                 run_monitoring_cycle(apple_updates_url)
 
-                if not _shutdown_requested:
+                if not _shutdown_event.is_set():
                     log_and_print(f"Waiting {interval} seconds until next cycle...")
                     log_and_print("")
 
@@ -624,7 +619,7 @@ def main() -> None:
             except Exception as e:
                 log_and_print(f"✗ Error in monitoring cycle: {e}")
                 logging.exception("Full traceback:")
-                if not _shutdown_requested:
+                if not _shutdown_event.is_set():
                     log_and_print(f"Waiting {interval} seconds before retry...")
                     log_and_print("")
                     # Use event.wait() for efficient sleeping that can be interrupted

@@ -57,4 +57,4 @@ fi
 
 # Run the main application in daemon mode
 log "Starting CrazyOnes application..."
-exec python crazyones.py $CMD_ARGS
+exec python crazyones.py "$CMD_ARGS"
