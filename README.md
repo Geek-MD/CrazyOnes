@@ -125,6 +125,100 @@ docker compose restart
 docker compose up -d --build
 ```
 
+#### Advanced Container Management
+
+##### Accessing the Container Shell
+
+To access the running container's shell for debugging or manual operations:
+
+```bash
+# Access the container shell
+docker compose exec crazyones sh
+```
+
+Once inside the container, you can:
+- View logs: `cat /app/crazyones.log`
+- Check running processes: `ps aux`
+- View configuration: `cat /app/config.json`
+- Check data directory: `ls -la /app/data`
+
+##### Stopping the Daemon Process
+
+The daemon process inside the container responds to signals and will shutdown gracefully. You have several options:
+
+**Option 1: Stop the entire container** (recommended)
+```bash
+docker compose down
+```
+
+**Option 2: Restart the container** (applies new .env settings)
+```bash
+docker compose restart
+```
+
+**Option 3: Stop daemon from inside the container**
+
+If you're inside the container shell, you can stop the daemon process:
+```bash
+# Find the Python process
+ps aux | grep python
+
+# Send SIGTERM signal (graceful shutdown)
+kill -TERM <PID>
+
+# Or use SIGINT (Ctrl+C equivalent)
+kill -INT <PID>
+```
+
+The daemon will finish its current monitoring cycle before stopping.
+
+##### Running with Different Parameters
+
+To run the container with different parameters:
+
+1. **Update the .env file** with your new parameters:
+   ```bash
+   nano .env
+   # Change APPLE_UPDATES_URL, CHECK_INTERVAL, etc.
+   ```
+
+2. **Restart the container** to apply changes:
+   ```bash
+   docker compose restart
+   ```
+
+**Example**: Change check interval to 6 hours:
+```bash
+# Edit .env
+CHECK_INTERVAL=21600
+
+# Restart container
+docker compose restart
+```
+
+##### Manual Execution Inside Container
+
+If you want to run a one-time execution with custom parameters inside the container:
+
+```bash
+# Access container shell
+docker compose exec crazyones sh
+
+# Stop the daemon (if running)
+kill -TERM $(ps aux | grep "python crazyones.py" | grep -v grep | awk '{print $1}')
+
+# Run one-time execution with custom parameters
+python crazyones.py -t $TELEGRAM_BOT_TOKEN -u https://support.apple.com/es-es/100100
+
+# Exit the container
+exit
+```
+
+**Note**: After manual execution, restart the container to resume daemon mode:
+```bash
+docker compose restart
+```
+
 ### Manual Setup (Without Docker)
 
 If you prefer to run CrazyOnes without Docker:
