@@ -14,6 +14,7 @@ from urllib.parse import urljoin
 import requests
 from bs4 import BeautifulSoup
 
+from .generate_language_names import update_language_names
 from .utils import get_user_agent_headers
 
 
@@ -106,10 +107,10 @@ def main() -> None:
 
     print()
     save_language_urls_to_json(language_urls)
-    print(
-        "\nNote: Language names are available in "
-        "data/language_names.json (static reference file)"
-    )
+    
+    # Generate/update language names dynamically
+    print("\nUpdating language names...")
+    update_language_names()
 
 
 if __name__ == "__main__":
