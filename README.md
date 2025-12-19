@@ -53,31 +53,44 @@ CrazyOnes/
 
 ### Quick Start with Main Coordinator
 
-The easiest way to use CrazyOnes is through the main coordinator script:
+The easiest way to use CrazyOnes is through the main coordinator script. You must provide a Telegram bot token:
 
 ```bash
-# Use default URL from config.json
-python crazyones.py
+# Basic usage with token (uses URL from config.json)
+python crazyones.py --token YOUR_BOT_TOKEN
 
-# Use a specific URL
-python crazyones.py --url https://support.apple.com/es-es/100100
-python crazyones.py -u https://support.apple.com/fr-fr/100100
+# With a specific URL
+python crazyones.py --token YOUR_BOT_TOKEN --url https://support.apple.com/es-es/100100
+
+# Short form
+python crazyones.py -t YOUR_BOT_TOKEN -u https://support.apple.com/fr-fr/100100
+
+# Show version
+python crazyones.py --version
+
+# Show help
+python crazyones.py --help
 ```
 
 The coordinator script will:
-1. Scrape the Apple Updates page for language-specific URLs
-2. Automatically generate/update language names based on discovered URLs
-3. Guide you to the next steps
+1. Save the token and URL to config.json for future use
+2. Scrape the Apple Updates page for language-specific URLs
+3. Automatically generate/update language names based on discovered URLs
+4. Log all activity to crazyones.log (automatically rotated to keep 1000 most recent lines)
+5. Guide you to the next steps
 
 ### Configuration
 
-Create a `config.json` file in the project root with your default Apple Updates URL:
+The `config.json` file stores your Telegram bot token and default Apple Updates URL:
 
 ```json
 {
-  "apple_updates_url": "https://support.apple.com/en-us/100100"
+  "apple_updates_url": "https://support.apple.com/en-us/100100",
+  "telegram_bot_token": "YOUR_TELEGRAM_BOT_TOKEN_HERE"
 }
 ```
+
+This file is automatically created/updated when you run crazyones.py with the --token and --url parameters.
 
 ### Individual Scripts
 
