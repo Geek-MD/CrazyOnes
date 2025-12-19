@@ -137,10 +137,26 @@ docker compose exec crazyones sh
 ```
 
 Once inside the container, you can:
-- View logs: `cat /app/crazyones.log`
+- **View log tail**: `python crazyones.py --log` (shows last 100 lines)
+- View full log: `cat /app/crazyones.log`
 - Check running processes: `ps aux`
 - View configuration: `cat /app/config.json`
 - Check data directory: `ls -la /app/data`
+- Check version: `python crazyones.py --version`
+
+##### Quick Log Viewing
+
+View the last 100 lines of the log without entering the container:
+
+```bash
+# From outside the container
+docker compose exec crazyones python crazyones.py --log
+
+# Or view the mounted log file directly
+tail -100 crazyones.log
+```
+
+The `--log` flag is useful for quick status checks and doesn't require a token or affect running processes.
 
 ##### Stopping the Daemon Process
 

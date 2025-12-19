@@ -7,6 +7,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2024-12-19
+
+### Added
+- **`--log` flag** to view last 100 lines of log file without requiring token
+  - Shows log tail with total line count
+  - Useful for quick status checks inside container
+  - Can be used alongside --help and --version without starting execution
+- **Automatic instance management** with PID file tracking
+  - Detects and stops existing instances automatically
+  - Graceful process replacement when starting with new parameters
+  - No manual stopping required - just run with new parameters
+  - Seamless experience inside Docker container
+- **Docker Hub publishing support**
+  - Added version labels to Dockerfile (0.8.0)
+  - Added image tag to compose.yml (geekmd/crazyones:0.8.0)
+  - Created DOCKER_HUB.md with manual publishing instructions
+  - GitHub Actions workflow for automated multi-platform builds
+  - Support for linux/arm/v7, linux/amd64, and linux/arm64
+
+### Changed
+- **Token parameter is now optional** for informational commands
+  - `--log`, `--version`, `-v`, `--help`, `-h` don't require `--token`
+  - These flags are self-contained and don't affect running processes
+- **Version bumped to 0.8.0** across all files
+  - crazyones.py, pyproject.toml, config.json updated
+  - Reflects significant new features added
+
+### Documentation
+- Added comprehensive container management guide in README
+- Created DOCKER_HUB.md with publishing workflow
+- Documented automatic instance replacement behavior
+- Added examples for running with different parameters inside container
+
+### Technical Details
+- PID file management functions for process tracking
+- `show_log_tail()` function for log viewing
+- Enhanced argument parsing with optional token requirement
+- GitHub Actions workflow with QEMU and Buildx for multi-platform support
+
 ## [0.7.0] - 2024-12-19
 
 ### Added
@@ -205,6 +244,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Full type annotations for better code safety
 - Strict code quality checks with Ruff and mypy
 
+[0.8.0]: https://github.com/Geek-MD/CrazyOnes/releases/tag/v0.8.0
 [0.7.0]: https://github.com/Geek-MD/CrazyOnes/releases/tag/v0.7.0
 [0.5.0]: https://github.com/Geek-MD/CrazyOnes/releases/tag/v0.5.0
 [0.1.0]: https://github.com/Geek-MD/CrazyOnes/releases/tag/v0.1.0

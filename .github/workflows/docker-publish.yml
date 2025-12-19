@@ -1,0 +1,64 @@
+name: Build and Publish Docker Image
+
+on:
+  workflow_dispatch:  # Manual trigger only
+    inputs:
+      version:
+        description: 'Version tag (e.g., 0.8.0)'
+        required: true
+        type: string
+      latest:
+        description: 'Also tag as latest'
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - name: Prepare tags
+        id: tags
+        run: |
+          TAGS="geekmd/crazyones:${{ inputs.version }}"
+          if [ "${{ inputs.latest }}" == "true" ]; then
+            TAGS="${TAGS},geekmd/crazyones:latest"
+          fi
+          echo "tags=${TAGS}" >> $GITHUB_OUTPUT
+      
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/arm/v7,linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.tags.outputs.tags }}
+          labels: |
+            org.opencontainers.image.version=${{ inputs.version }}
+            org.opencontainers.image.created=${{ github.event.repository.updated_at }}
+            org.opencontainers.image.source=${{ github.event.repository.html_url }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      
+      - name: Update Docker Hub description
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: geekmd/crazyones
+          readme-filepath: ./DOCKER.md

@@ -2,6 +2,11 @@
 # Alpine is lightweight and includes all necessary build tools
 FROM python:3.10-alpine
 
+# Set version label
+LABEL version="0.8.0"
+LABEL description="CrazyOnes - Apple Updates monitoring for Raspberry Pi 3B"
+LABEL maintainer="Geek-MD"
+
 # Set working directory
 WORKDIR /app
 

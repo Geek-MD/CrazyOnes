@@ -45,7 +45,7 @@ from scripts.monitor_apple_updates import (
 )
 
 # Version from pyproject.toml
-__version__ = "0.7.0"
+__version__ = "0.8.0"
 
 # PID file location
 PID_FILE = "/tmp/crazyones.pid"
@@ -381,6 +381,7 @@ Examples:
   %(prog)s -t YOUR_TOKEN -u https://support.apple.com/es-es/100100
   %(prog)s -t YOUR_TOKEN --daemon
   %(prog)s -t YOUR_TOKEN --interval 21600  # Check every 6 hours
+  %(prog)s --log  # Show last 100 lines of log
         """,
     )
 
@@ -393,13 +394,20 @@ Examples:
         version=f"%(prog)s {version}",
     )
 
-    # Add required token argument
+    # Add log viewing argument (doesn't require token)
+    parser.add_argument(
+        "--log",
+        action="store_true",
+        help="Show last 100 lines of log file and exit",
+    )
+
+    # Add token argument (not required if using --log)
     parser.add_argument(
         "-t",
         "--token",
         type=str,
-        required=True,
-        help="Telegram bot token (required)",
+        required=False,
+        help="Telegram bot token (required for execution, not needed for --log)",
         metavar="TOKEN",
     )
 
@@ -427,6 +435,42 @@ Examples:
     )
 
     return parser.parse_args()
+
+
+def show_log_tail(log_file: str = "crazyones.log", lines: int = 100) -> None:
+    """
+    Display the last N lines of the log file.
+
+    Args:
+        log_file: Path to the log file
+        lines: Number of lines to show (default: 100)
+    """
+    log_path = Path(log_file)
+    
+    if not log_path.exists():
+        print(f"Log file not found: {log_file}")
+        print("The log file will be created when crazyones runs for the first time.")
+        return
+    
+    try:
+        with open(log_path, 'r', encoding='utf-8') as f:
+            all_lines = f.readlines()
+            tail_lines = all_lines[-lines:] if len(all_lines) > lines else all_lines
+            
+            print("=" * 60)
+            print(f"Last {len(tail_lines)} lines of {log_file}")
+            print("=" * 60)
+            print()
+            
+            for line in tail_lines:
+                print(line, end='')
+            
+            print()
+            print("=" * 60)
+            print(f"Total lines in log: {len(all_lines)}")
+            print("=" * 60)
+    except Exception as e:
+        print(f"Error reading log file: {e}")
 
 
 def scrape_apple_updates(url: str) -> None:
@@ -559,6 +603,17 @@ def main() -> None:
     # Parse command line arguments
     args = parse_arguments()
     
+    # Handle --log command (doesn't require token or setup)
+    if args.log:
+        show_log_tail()
+        sys.exit(0)
+    
+    # Validate token is provided for normal execution
+    if not args.token:
+        print("Error: --token is required for execution")
+        print("Use --help for usage information or --log to view log file")
+        sys.exit(1)
+    
     # Set up logging
     setup_logging()
 
@@ -581,7 +636,6 @@ def main() -> None:
         log_and_print(f"⚠ Detected existing CrazyOnes process (PID: {existing_pid})")
         log_and_print("Stopping existing process to start with new parameters...")
         stop_running_daemon()
-        import time
         time.sleep(1)  # Give the old process a moment to clean up
         log_and_print("✓ Previous process stopped")
         log_and_print("")
