@@ -28,7 +28,12 @@ tests/test_language_urls.json
 tests/actual_test_language_urls.json
 
 # Generated data files
-data/
+data/language_urls.json
+data/updates/
+data/updates_tracking.json
+
+# Static reference file (committed to repo)
+!data/language_names.json
 
 # IDE
 .vscode/
