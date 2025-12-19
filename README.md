@@ -21,18 +21,40 @@ Install the required Python dependencies:
 pip install -r requirements.txt
 ```
 
+### Project Structure
+
+```
+CrazyOnes/
+├── scripts/           # Main Python scripts
+│   ├── scrape_apple_updates.py    # Scrapes language URLs
+│   ├── monitor_apple_updates.py   # Monitors and scrapes security updates
+│   └── utils.py                   # Shared utility functions
+├── tests/             # Test files
+│   ├── test_scraper.py
+│   ├── test_actual_html.py
+│   └── test_monitor.py
+├── data/              # Generated data (created automatically)
+│   ├── language_urls.json         # Language-specific URLs
+│   ├── updates_tracking.json      # Content tracking data
+│   └── updates/                   # Security updates per language
+│       ├── en-us.json
+│       ├── es-es.json
+│       └── ...
+└── requirements.txt
+```
+
 ### Scraping Apple Updates
 
 The `scrape_apple_updates.py` script fetches the Apple Updates page and extracts all language-specific URLs from the header:
 
 ```bash
-python scrape_apple_updates.py
+python -m scripts.scrape_apple_updates
 ```
 
 This will:
 1. Fetch the Apple Updates page (https://support.apple.com/en-us/100100)
 2. Parse the HTML to find language-specific URLs
-3. Save them to `language_urls.json` in the format:
+3. Save them to `data/language_urls.json` in the format:
    ```json
    {
      "en-us": "https://support.apple.com/en-us/100100",
@@ -43,12 +65,46 @@ This will:
 
 The script uses a proper User-Agent header to avoid being blocked by Apple's servers.
 
+### Monitoring and Scraping Security Updates
+
+The `monitor_apple_updates.py` script monitors changes in the `data/language_urls.json` file and scrapes the security updates table from each language-specific page:
+
+```bash
+python -m scripts.monitor_apple_updates
+```
+
+This will:
+1. Load the language URLs from `data/language_urls.json`
+2. Detect changes in URLs or page content using SHA256 hashing
+3. For each language page, extract the security updates table with three columns:
+   - **Name**: Update name with URL when available
+   - **Target**: Target platform/device
+   - **Date**: Release date
+4. Save the extracted data to individual JSON files in the `data/updates/` directory (e.g., `data/updates/en-us.json`)
+5. Track processed URLs and content hashes in `data/updates_tracking.json` to avoid re-processing unchanged pages
+
+**First run behavior**: Processes all language URLs
+
+**Subsequent runs**: Only processes URLs that have changed or pages whose content has changed
+
+The monitoring system intelligently detects:
+- New language URLs added to `data/language_urls.json`
+- Modified URLs for existing languages
+- Content changes in the security updates tables
+
 ### Testing
 
 To test the scraper logic without making actual HTTP requests:
 
 ```bash
-python test_scraper.py
+# Test language URL extraction
+python -m tests.test_scraper
+
+# Test with actual Apple HTML structure
+python -m tests.test_actual_html
+
+# Test the monitoring and scraping module
+python -m tests.test_monitor
 ```
 
 ## Code Quality
@@ -63,11 +119,11 @@ To check code quality:
 
 ```bash
 # Run linter
-ruff check *.py
+ruff check scripts/*.py tests/*.py
 
 # Run type checker
-mypy scrape_apple_updates.py --strict
+mypy scripts/*.py --strict
 
 # Auto-format code
-ruff format *.py
+ruff format scripts/*.py tests/*.py
 ```

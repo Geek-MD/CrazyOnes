@@ -7,10 +7,13 @@ URLs from the header, saving them to a JSON file.
 """
 
 import json
+from pathlib import Path
 from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup
+
+from .utils import get_user_agent_headers
 
 
 def fetch_apple_updates_page(url: str) -> str:
@@ -26,13 +29,7 @@ def fetch_apple_updates_page(url: str) -> str:
     Raises:
         requests.RequestException: If the request fails
     """
-    headers = {
-        "User-Agent": (
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/120.0.0.0 Safari/537.36"
-        )
-    }
+    headers = get_user_agent_headers()
 
     response = requests.get(url, headers=headers)
     response.raise_for_status()
@@ -69,7 +66,7 @@ def extract_language_urls(html_content: str, base_url: str) -> dict[str, str]:
 
 
 def save_language_urls_to_json(
-    language_urls: dict[str, str], output_file: str = "language_urls.json"
+    language_urls: dict[str, str], output_file: str = "data/language_urls.json"
 ) -> None:
     """
     Save language URLs to a JSON file.
@@ -78,6 +75,10 @@ def save_language_urls_to_json(
         language_urls: Dictionary mapping language codes to URLs
         output_file: Path to the output JSON file
     """
+    # Create directory if it doesn't exist
+    output_path = Path(output_file)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(language_urls, f, indent=2, ensure_ascii=False)
 

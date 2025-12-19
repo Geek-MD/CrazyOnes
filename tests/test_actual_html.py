@@ -5,7 +5,7 @@ Test script with actual Apple HTML to verify complete extraction.
 
 import json
 
-from scrape_apple_updates import extract_language_urls
+from scripts.scrape_apple_updates import extract_language_urls
 
 
 def test_with_actual_html():
@@ -94,7 +94,7 @@ def test_with_actual_html():
         print(f"  {lang}: {url}")
 
     # Save to a different file
-    output_file = "actual_test_language_urls.json"
+    output_file = "tests/actual_test_language_urls.json"
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(language_urls, f, indent=2, ensure_ascii=False)
 

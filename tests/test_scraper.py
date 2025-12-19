@@ -5,7 +5,10 @@ Test script to verify the language URL extraction logic works correctly.
 
 import json
 
-from scrape_apple_updates import extract_language_urls, save_language_urls_to_json
+from scripts.scrape_apple_updates import (
+    extract_language_urls,
+    save_language_urls_to_json,
+)
 
 
 def test_with_mock_html():
@@ -58,10 +61,10 @@ def test_with_mock_html():
             print(f"  {lang}: {url}")
 
         # Save to JSON
-        save_language_urls_to_json(language_urls, "test_language_urls.json")
+        save_language_urls_to_json(language_urls, "tests/test_language_urls.json")
 
         # Verify JSON file was created
-        with open("test_language_urls.json", encoding="utf-8") as f:
+        with open("tests/test_language_urls.json", encoding="utf-8") as f:
             loaded_data = json.load(f)
             print(f"\nJSON file created successfully with {len(loaded_data)} entries")
 
