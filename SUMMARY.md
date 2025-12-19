@@ -10,7 +10,7 @@ Successfully implemented a complete monitoring and scraping system for Apple sec
 - Extracts all language-specific URLs from HTML headers
 - Generates `data/language_urls.json` with all available languages
 - **NEW:** Generates `data/language_names.json` with language code to display name mappings
-- Supports 70+ predefined language names in multiple scripts (Arabic, Hebrew, Japanese, Chinese, etc.)
+- Dynamic generation of names based only on languages found on Apple's page (format: "EN/US", "ES/ES")
 - Auto-detects new languages and adds them to the mapping
 
 ### 2. Security Updates Monitor (`scripts/monitor_apple_updates.py`)
@@ -57,15 +57,17 @@ CrazyOnes/
 ### Language Names Mapping
 ```json
 {
-  "ar-sa": "العربية/السعودية",
-  "de-de": "Deutsch/Deutschland",
-  "en-us": "English/USA",
-  "es-es": "Español/España",
-  "fr-fr": "Français/France",
-  "ja-jp": "日本語/日本",
-  "zh-cn": "简体中文/中国"
+  "ar-sa": "AR/SA",
+  "de-de": "DE/DE",
+  "en-us": "EN/US",
+  "es-es": "ES/ES",
+  "fr-fr": "FR/FR",
+  "ja-jp": "JA/JP",
+  "zh-cn": "ZH/CN"
 }
 ```
+
+Generated dynamically based only on languages found on Apple's page.
 
 ### Intelligent Monitoring
 - ✓ Detects new languages automatically

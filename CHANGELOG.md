@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New Python module (`scripts/monitor_apple_updates.py`) to monitor and scrape Apple security updates
 - New utility module (`scripts/utils.py`) with shared functions to avoid code duplication
 - Automatic language names generation in `data/language_names.json` with language code to display name mapping
-- Support for 70+ predefined language name mappings (e.g., "en-us": "English/USA", "es-es": "Español/España")
+- Dynamic generation of language names based only on URLs found on Apple's page (format: "EN/US", "ES/ES")
 - Automatic detection and addition of new languages to `data/language_names.json`
 - Automatic monitoring of `data/language_urls.json` file for changes
 - Security updates table extraction from each language-specific page
@@ -55,7 +55,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - UTF-8 support for all language variants including Arabic, Hebrew, Japanese, Chinese, Korean, etc.
 - Timeout handling for network requests (30 seconds)
 - Clean separation of concerns with organized directory structure
-- Language names persistence and incremental updates
+- Language names persistence and incremental updates based only on Apple's available languages
+- Economical approach: language names generated from actual URLs found on Apple's page
 
 ## [0.1.0] - 2024-12-19
 

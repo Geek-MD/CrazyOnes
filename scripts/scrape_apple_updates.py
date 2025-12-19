@@ -4,7 +4,7 @@ Script to scrape Apple Updates page and extract language-specific URLs.
 
 This script fetches the Apple Updates page and extracts all language-specific
 URLs from the header, saving them to a JSON file. It also generates a mapping
-of language codes to their display names.
+of language codes to their display names based on the URLs found.
 """
 
 import json
@@ -15,61 +15,6 @@ import requests
 from bs4 import BeautifulSoup
 
 from .utils import get_user_agent_headers
-
-# Language code to name mapping
-LANGUAGE_NAMES: dict[str, str] = {
-    "en-us": "English/USA",
-    "en-gb": "English/UK",
-    "en-ca": "English/Canada",
-    "en-au": "English/Australia",
-    "es-es": "Español/España",
-    "es-mx": "Español/México",
-    "es-co": "Español/Colombia",
-    "es-cl": "Español/Chile",
-    "es-us": "Español/USA",
-    "fr-fr": "Français/France",
-    "fr-ca": "Français/Canada",
-    "fr-sn": "Français/Sénégal",
-    "de-de": "Deutsch/Deutschland",
-    "it-it": "Italiano/Italia",
-    "ja-jp": "日本語/日本",
-    "ko-kr": "한국어/대한민국",
-    "zh-cn": "简体中文/中国",
-    "zh-tw": "繁體中文/台灣",
-    "zh-hk": "繁體中文/香港",
-    "pt-br": "Português/Brasil",
-    "pt-pt": "Português/Portugal",
-    "nl-nl": "Nederlands/Nederland",
-    "ru-ru": "Русский/Россия",
-    "pl-pl": "Polski/Polska",
-    "ar-sa": "العربية/السعودية",
-    "ar-ae": "العربية/الإمارات",
-    "ar-eg": "العربية/مصر",
-    "ar-kw": "العربية/الكويت",
-    "ar-bh": "العربية/البحرين",
-    "ar-jo": "العربية/الأردن",
-    "ar-qa": "العربية/قطر",
-    "he-il": "עברית/ישראל",
-    "tr-tr": "Türkçe/Türkiye",
-    "el-gr": "Ελληνικά/Ελλάδα",
-    "hu-hu": "Magyar/Magyarország",
-    "ro-ro": "Română/România",
-    "fi-fi": "Suomi/Suomi",
-    "no-no": "Norsk/Norge",
-    "th-th": "ไทย/ประเทศไทย",
-    "id-id": "Indonesia/Indonesia",
-    "en-il": "English/Israel",
-    "en-ae": "English/UAE",
-    "en-sa": "English/Saudi Arabia",
-    "en-hk": "English/Hong Kong",
-    "en-al": "English/Albania",
-    "en-is": "English/Iceland",
-    "en-am": "English/Armenia",
-    "en-az": "English/Azerbaijan",
-    "en-jo": "English/Jordan",
-    "en-bh": "English/Bahrain",
-    "en-bn": "English/Brunei",
-}
 
 
 def fetch_apple_updates_page(url: str) -> str:
@@ -186,8 +131,11 @@ def generate_language_names(language_codes: list[str]) -> dict[str, str]:
     """
     Generate language names mapping for given language codes.
 
+    Generates display names in the format "LANG/COUNTRY" (e.g., "EN/US", "ES/ES").
+    For existing languages in the JSON file, preserves their names.
+
     Args:
-        language_codes: List of language codes
+        language_codes: List of language codes found on Apple's page
 
     Returns:
         Dictionary mapping language codes to display names
@@ -201,14 +149,10 @@ def generate_language_names(language_codes: list[str]) -> dict[str, str]:
 
     for lang_code in language_codes:
         if lang_code in existing_names:
-            # Use existing name
+            # Preserve existing name
             language_names[lang_code] = existing_names[lang_code]
-        elif lang_code in LANGUAGE_NAMES:
-            # Use predefined name
-            language_names[lang_code] = LANGUAGE_NAMES[lang_code]
-            new_languages.append(lang_code)
         else:
-            # Generate a basic name from the language code
+            # Generate a name from the language code
             parts = lang_code.split("-")
             if len(parts) == 2:
                 lang, country = parts
