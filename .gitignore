@@ -35,6 +35,9 @@ data/updates_tracking.json
 # Log files
 crazyones.log
 
+# Environment variables
+.env
+
 # Generated language names file (now dynamic, not static)
 data/language_names.json
 

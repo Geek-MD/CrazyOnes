@@ -13,7 +13,77 @@ The second is a Python script that monitors changes in the HTML files within thi
 
 ## Setup
 
-### Requirements
+### Docker Setup (Recommended for Raspberry Pi 3B)
+
+The easiest way to run CrazyOnes is using Docker. This method is especially recommended for Raspberry Pi 3B.
+
+#### Prerequisites
+
+- Docker and Docker Compose installed on your system
+- A Telegram bot token (get one from [@BotFather](https://t.me/botfather))
+
+#### Quick Start
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Geek-MD/CrazyOnes.git
+   cd CrazyOnes
+   ```
+
+2. Create your `.env` file from the example:
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Edit the `.env` file and replace `YOUR_TELEGRAM_BOT_TOKEN_HERE` with your actual Telegram bot token:
+   ```bash
+   nano .env  # or use your preferred editor
+   ```
+
+   The `.env` file should look like:
+   ```env
+   TELEGRAM_BOT_TOKEN=123456789:ABCdefGHIjklMNOpqrsTUVwxyz-1234567890
+   APPLE_UPDATES_URL=https://support.apple.com/en-us/100100
+   ```
+
+4. Build and run the container:
+   ```bash
+   docker compose up -d
+   ```
+
+5. Check the logs:
+   ```bash
+   docker compose logs -f
+   ```
+
+#### Important Notes
+
+- **The token is required**: If you don't replace the placeholder token in the `.env` file, the container will exit with an error.
+- **Token validation**: The entrypoint script validates the token format before starting the application.
+- **Apple Updates URL is optional**: If not specified, it defaults to the English (US) version.
+- **Data persistence**: The `data/` directory and log files are mounted as volumes for persistence.
+
+#### Docker Commands
+
+```bash
+# Stop the container
+docker compose down
+
+# View logs
+docker compose logs -f crazyones
+
+# Restart the container
+docker compose restart
+
+# Rebuild the image after changes
+docker compose up -d --build
+```
+
+### Manual Setup (Without Docker)
+
+If you prefer to run CrazyOnes without Docker:
+
+#### Requirements
 
 Install the required Python dependencies:
 
@@ -27,6 +97,10 @@ pip install -r requirements.txt
 CrazyOnes/
 ├── crazyones.py        # Main coordinator script (entry point)
 ├── config.json         # Configuration file with default Apple Updates URL
+├── Dockerfile          # Docker image definition
+├── compose.yml         # Docker Compose configuration
+├── docker-entrypoint.sh # Container entrypoint script
+├── .env.example        # Example environment variables file
 ├── scripts/            # Main Python scripts
 │   ├── scrape_apple_updates.py       # Scrapes language URLs
 │   ├── generate_language_names.py    # Generates language names dynamically
