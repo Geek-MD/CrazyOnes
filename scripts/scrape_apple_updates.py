@@ -107,7 +107,7 @@ def main() -> None:
 
     print()
     save_language_urls_to_json(language_urls)
-    
+
     # Generate/update language names dynamically
     print("\nUpdating language names...")
     update_language_names()

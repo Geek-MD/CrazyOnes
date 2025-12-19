@@ -10,7 +10,6 @@ languages that are actually available in Apple Updates.
 import json
 from pathlib import Path
 
-
 # Mapping of language-country codes to human-readable names
 LANGUAGE_NAME_MAP = {
     "ar-ae": "Arabic/UAE",
@@ -95,7 +94,8 @@ def load_language_urls(file_path: str = "data/language_urls.json") -> dict[str, 
         raise FileNotFoundError(f"Language URLs file not found: {file_path}")
 
     with open(path, encoding="utf-8") as f:
-        return json.load(f)
+        data: dict[str, str] = json.load(f)
+        return data
 
 
 def generate_language_name(lang_code: str) -> str:

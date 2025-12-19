@@ -16,13 +16,14 @@ import json
 import sys
 from pathlib import Path
 
+from scripts.generate_language_names import update_language_names
+
 # Import the main functions from our scripts
 from scripts.scrape_apple_updates import (
     extract_language_urls,
     fetch_apple_updates_page,
     save_language_urls_to_json,
 )
-from scripts.generate_language_names import update_language_names
 
 
 def load_config(config_file: str = "config.json") -> dict[str, str]:
@@ -48,7 +49,7 @@ def load_config(config_file: str = "config.json") -> dict[str, str]:
         )
 
     with open(config_path, encoding="utf-8") as f:
-        config = json.load(f)
+        config: dict[str, str] = json.load(f)
 
     # Validate required fields
     if "apple_updates_url" not in config:

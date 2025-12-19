@@ -5,6 +5,39 @@ All notable changes to the Crazy Ones - Apple Updates Bot project will be docume
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- Main coordinator script `crazyones.py` as the primary entry point for the application
+- Configuration file `config.json` to store default Apple Updates URL
+- Separate script `scripts/generate_language_names.py` to dynamically generate language names
+  - Generates human-readable names from language codes (e.g., "en-us" → "English/USA")
+  - Only includes languages that are actually available in Apple Updates
+  - Automatically detects and adds new languages when URLs are discovered
+  - Preserves existing entries when updating
+- Command-line argument support in `crazyones.py`:
+  - `-u, --url`: Optional URL argument to override config.json
+  - No arguments: Uses URL from config.json (https://support.apple.com/en-us/100100)
+- Comprehensive test suite for new functionality:
+  - `tests/test_generate_language_names.py` for language names generation
+  - `tests/test_crazyones.py` for coordinator script
+- Type annotations and strict mypy type checking for all new code
+
+### Changed
+- Modified `scripts/scrape_apple_updates.py` to automatically call `generate_language_names.py` after scraping
+- Language names are now generated dynamically based on scraped URLs instead of being static
+- Updated documentation (README.md) with:
+  - Quick start guide using main coordinator
+  - Configuration instructions
+  - Updated project structure showing new files
+  - Detailed usage examples for all scripts
+
+### Technical Details
+- Language names generator is a separate script to save CPU cycles (can be run independently)
+- Main coordinator orchestrates the workflow: scrape → generate names → guide user
+- Config-driven approach allows easy customization of default URL
+- Backward compatible with existing scripts and workflows
+
 ## [0.5.0] - 2024-12-19
 
 ### Added
