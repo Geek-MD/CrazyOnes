@@ -35,25 +35,64 @@ fi
 
 log "Token validation passed."
 
-# Build command arguments
-CMD_ARGS="-t $TELEGRAM_BOT_TOKEN --daemon"
+# Determine execution mode (daemon or cron)
+EXECUTION_MODE=${EXECUTION_MODE:-daemon}
 
-# Add URL if provided
-if [ -n "$APPLE_UPDATES_URL" ]; then
-    log "Using Apple Updates URL: $APPLE_UPDATES_URL"
-    CMD_ARGS="$CMD_ARGS -u $APPLE_UPDATES_URL"
+if [ "$EXECUTION_MODE" = "cron" ]; then
+    log "Running in CRON mode"
+    
+    # Parse cron schedule (default: twice daily at 00:00 and 12:00)
+    CRON_SCHEDULE=${CRON_SCHEDULE:-"0 0,12 * * *"}
+    log "Cron schedule: $CRON_SCHEDULE"
+    
+    # Build command arguments
+    CMD_ARGS="-t $TELEGRAM_BOT_TOKEN"
+    
+    # Add URL if provided
+    if [ -n "$APPLE_UPDATES_URL" ]; then
+        log "Using Apple Updates URL: $APPLE_UPDATES_URL"
+        CMD_ARGS="$CMD_ARGS -u $APPLE_UPDATES_URL"
+    fi
+    
+    # Create cron job
+    CRON_CMD="cd /app && /usr/local/bin/python crazyones.py $CMD_ARGS >> /app/crazyones.log 2>&1"
+    echo "$CRON_SCHEDULE $CRON_CMD" > /etc/crontabs/root
+    
+    log "Cron job configured:"
+    log "  Schedule: $CRON_SCHEDULE"
+    log "  Command: $CRON_CMD"
+    
+    # Run first execution immediately
+    log "Running initial check..."
+    /usr/local/bin/python crazyones.py $CMD_ARGS
+    
+    log "Starting cron daemon..."
+    # Start crond in foreground
+    exec crond -f -l 2
+    
 else
-    log "No Apple Updates URL provided, using default from config.json"
+    log "Running in DAEMON mode"
+    
+    # Build command arguments for daemon mode
+    CMD_ARGS="-t $TELEGRAM_BOT_TOKEN --daemon"
+    
+    # Add URL if provided
+    if [ -n "$APPLE_UPDATES_URL" ]; then
+        log "Using Apple Updates URL: $APPLE_UPDATES_URL"
+        CMD_ARGS="$CMD_ARGS -u $APPLE_UPDATES_URL"
+    else
+        log "No Apple Updates URL provided, using default from config.json"
+    fi
+    
+    # Add custom interval if provided
+    if [ -n "$CHECK_INTERVAL" ]; then
+        log "Using custom check interval: $CHECK_INTERVAL seconds"
+        CMD_ARGS="$CMD_ARGS --interval $CHECK_INTERVAL"
+    else
+        log "Using default check interval: 43200 seconds (12 hours, 2 times per day)"
+    fi
+    
+    # Run the main application in daemon mode
+    log "Starting CrazyOnes application..."
+    exec python crazyones.py $CMD_ARGS
 fi
-
-# Add custom interval if provided
-if [ -n "$CHECK_INTERVAL" ]; then
-    log "Using custom check interval: $CHECK_INTERVAL seconds"
-    CMD_ARGS="$CMD_ARGS --interval $CHECK_INTERVAL"
-else
-    log "Using default check interval: 43200 seconds (12 hours, 2 times per day)"
-fi
-
-# Run the main application
-log "Starting CrazyOnes application..."
-exec python crazyones.py $CMD_ARGS

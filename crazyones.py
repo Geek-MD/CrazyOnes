@@ -400,12 +400,81 @@ def run_monitoring_cycle(apple_updates_url: str) -> None:
     log_and_print("-" * 60)
     log_and_print("")
 
-    # Execute the scraping process
+    # Step 1: Scrape language URLs from Apple Updates page
     try:
+        log_and_print("Step 1: Scraping Apple Updates page for language URLs...")
         scrape_apple_updates(apple_updates_url)
     except Exception as e:
         log_and_print(f"✗ Scraping failed: {e}")
+        logging.exception("Full traceback:")
         return
+
+    # Step 2: Monitor and scrape security updates from each language URL
+    log_and_print("")
+    log_and_print("Step 2: Monitoring security updates from language URLs...")
+    log_and_print("")
+    
+    try:
+        # Import monitor module
+        from scripts.monitor_apple_updates import (
+            load_language_urls,
+            load_tracking_data,
+            save_tracking_data,
+            detect_changes,
+            process_language_url,
+        )
+        
+        # Load language URLs
+        try:
+            language_urls = load_language_urls()
+            log_and_print(f"Loaded {len(language_urls)} language URLs")
+        except FileNotFoundError as e:
+            log_and_print(f"✗ Error: {e}")
+            log_and_print("Language URLs file not found. Skipping security updates monitoring.")
+            return
+
+        # Load tracking data
+        tracking_data = load_tracking_data()
+
+        # Determine which languages need processing
+        if not tracking_data:
+            # First run - process all languages
+            log_and_print("First run detected - processing all language URLs")
+            log_and_print("")
+            languages_to_process = list(language_urls.keys())
+            force_update = True
+        else:
+            # Subsequent runs - check for changes
+            log_and_print("Checking for changes...")
+            log_and_print("")
+            languages_to_process = detect_changes(language_urls, tracking_data)
+            force_update = False
+
+            if not languages_to_process:
+                log_and_print("No URL changes detected. Checking content changes...")
+                log_and_print("")
+                # Still check content changes for existing URLs
+                languages_to_process = list(language_urls.keys())
+                force_update = False
+
+        # Process each language URL
+        successful_count = 0
+        for lang_code in languages_to_process:
+            url = language_urls[lang_code]
+            if process_language_url(lang_code, url, tracking_data, force_update):
+                successful_count += 1
+
+        # Save updated tracking data
+        save_tracking_data(tracking_data)
+
+        log_and_print("")
+        log_and_print("✓ Security updates monitoring completed")
+        log_and_print(f"  Processed: {len(languages_to_process)} language(s)")
+        log_and_print(f"  Successful: {successful_count} language(s)")
+
+    except Exception as e:
+        log_and_print(f"✗ Error monitoring security updates: {e}")
+        logging.exception("Full traceback:")
 
     log_and_print("")
     log_and_print("-" * 60)

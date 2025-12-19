@@ -5,10 +5,11 @@ FROM python:3.10-alpine
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies required for Python packages
+# Install system dependencies required for Python packages and cron
 # - gcc, musl-dev, linux-headers: Required for building Python packages
 # - libffi-dev: Required for some cryptography packages
 # - libxml2-dev, libxslt-dev: Required for lxml
+# - dcron: Lightweight cron daemon for Alpine
 RUN apk update && \
     apk add --no-cache \
     gcc \
@@ -17,6 +18,7 @@ RUN apk update && \
     libffi-dev \
     libxml2-dev \
     libxslt-dev \
+    dcron \
     && rm -rf /var/cache/apk/*
 
 # Copy requirements first for better caching
