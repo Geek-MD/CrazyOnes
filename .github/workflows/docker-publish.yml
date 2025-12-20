@@ -1,10 +1,10 @@
 name: Build and Publish Docker Image
 
 on:
-  workflow_dispatch:  # Manual trigger only
+  workflow_dispatch:
     inputs:
       version:
-        description: 'Version tag (e.g., 0.8.0)'
+        description: 'Version tag (e.g., 0.9.0)'
         required: true
         type: string
       latest:
@@ -12,61 +12,55 @@ on:
         required: true
         type: boolean
         default: false
-      dockerhub_username:
-        description: 'Docker Hub username (optional - uses secret if not provided)'
-        required: false
-        type: string
-      dockerhub_token:
-        description: 'Docker Hub token/password (optional - WARNING: visible in logs, use secrets for better security)'
-        required: false
-        type: string
 
 jobs:
   docker:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ inputs.dockerhub_username || secrets.DOCKERHUB_USERNAME }}
-          password: ${{ inputs.dockerhub_token || secrets.DOCKERHUB_TOKEN }}
-      
-      - name: Prepare tags
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Prepare Docker tags
         id: tags
         run: |
-          TAGS="geekmd/crazyones:${{ inputs.version }}"
-          if [ "${{ inputs.latest }}" == "true" ]; then
-            TAGS="${TAGS},geekmd/crazyones:latest"
+          TAGS="edisonmontes/crazyones:${{ inputs.version }}"
+          if [ "${{ inputs.latest }}" = "true" ]; then
+            TAGS="${TAGS},edisonmontes/crazyones:latest"
           fi
           echo "tags=${TAGS}" >> $GITHUB_OUTPUT
-      
-      - name: Build and push
+
+      - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
-          platforms: linux/arm/v7,linux/amd64,linux/arm64
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           tags: ${{ steps.tags.outputs.tags }}
           labels: |
+            org.opencontainers.image.title=CrazyOnes
             org.opencontainers.image.version=${{ inputs.version }}
-            org.opencontainers.image.created=${{ github.event.repository.updated_at }}
             org.opencontainers.image.source=${{ github.event.repository.html_url }}
+            org.opencontainers.image.created=${{ github.run_started_at }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      
+
       - name: Update Docker Hub description
         uses: peter-evans/dockerhub-description@v4
         with:
-          username: ${{ inputs.dockerhub_username || secrets.DOCKERHUB_USERNAME }}
-          password: ${{ inputs.dockerhub_token || secrets.DOCKERHUB_TOKEN }}
-          repository: geekmd/crazyones
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: edisonmontes/crazyones
           readme-filepath: ./DOCKER.md
