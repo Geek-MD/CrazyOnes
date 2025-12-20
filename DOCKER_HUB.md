@@ -5,13 +5,19 @@ This guide explains how to build and publish CrazyOnes Docker images to Docker H
 ## Prerequisites
 
 1. **Docker Hub Account**: Create a free account at [hub.docker.com](https://hub.docker.com)
-2. **GitHub Repository Secrets**: Required for automated builds
-   - `DOCKERHUB_USERNAME`: Your Docker Hub username
-   - `DOCKERHUB_TOKEN`: Docker Hub access token (create at hub.docker.com → Account Settings → Security)
+2. **Authentication Options**: Choose one of the following:
+   - **Option A - GitHub Repository Secrets** (Recommended for repeated use):
+     - `DOCKERHUB_USERNAME`: Your Docker Hub username
+     - `DOCKERHUB_TOKEN`: Docker Hub access token (create at hub.docker.com → Account Settings → Security)
+   - **Option B - Manual Input** (When running the workflow):
+     - Provide Docker Hub username and token/password directly in the workflow inputs
+     - Useful for one-time publishing or when you don't want to store secrets
 
 ## Automated Publishing (GitHub Actions)
 
-### Setup GitHub Secrets
+### Setup GitHub Secrets (Optional)
+
+This step is optional but recommended for regular use. If you don't set up secrets, you can provide credentials manually each time you run the workflow.
 
 1. Go to your repository on GitHub
 2. Navigate to **Settings** → **Secrets and variables** → **Actions**
@@ -19,6 +25,11 @@ This guide explains how to build and publish CrazyOnes Docker images to Docker H
 4. Add the following secrets:
    - Name: `DOCKERHUB_USERNAME`, Value: your Docker Hub username
    - Name: `DOCKERHUB_TOKEN`, Value: your Docker Hub access token
+
+**Benefits of using secrets:**
+- No need to enter credentials every time you publish
+- More secure than typing credentials in the UI
+- Can be shared across multiple workflows
 
 ### Publishing Process
 
@@ -32,7 +43,15 @@ The workflow is configured for **manual execution only** via GitHub Actions.
 4. Fill in the required information:
    - **Version tag**: Enter the version (e.g., `0.8.0`)
    - **Also tag as latest**: Check if this should be the latest version
+   - **Docker Hub username** (optional): Your Docker Hub username - leave empty to use repository secret
+   - **Docker Hub token/password** (optional): Your Docker Hub access token or password - leave empty to use repository secret
 5. Click **"Run workflow"** to start the build
+
+**Note about credentials**:
+- If you leave the Docker Hub username and token fields empty, the workflow will use the repository secrets (`DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`)
+- If you provide credentials in the input fields, those will be used instead of the secrets
+- **Security warning**: Credentials entered as workflow inputs are visible in the workflow run details. For better security, use repository secrets (Option A above)
+- **Google login is not supported** - Docker Hub CLI authentication only supports username/password or access tokens
 
 #### What the Workflow Does:
 
@@ -47,15 +66,23 @@ The workflow is configured for **manual execution only** via GitHub Actions.
 6. ✅ Pushes to Docker Hub with specified tags
 7. ✅ Updates Docker Hub repository description
 
-#### Example:
+#### Examples:
 
-If you run the workflow with:
+**Example 1 - Using repository secrets:**
 - Version: `0.8.0`
 - Latest: `true` ✓
+- Docker Hub username: (leave empty)
+- Docker Hub token: (leave empty)
 
-The following images will be published:
-- `geekmd/crazyones:0.8.0`
-- `geekmd/crazyones:latest`
+**Example 2 - Using manual credentials:**
+- Version: `0.8.1`
+- Latest: `false`
+- Docker Hub username: `yourusername`
+- Docker Hub token: `your_access_token_or_password`
+
+Both examples will publish the images to Docker Hub:
+- `geekmd/crazyones:0.8.0` or `geekmd/crazyones:0.8.1`
+- `geekmd/crazyones:latest` (only if "Also tag as latest" is checked)
 
 ## Manual Publishing Process (Alternative)
 
