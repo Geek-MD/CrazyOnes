@@ -15,6 +15,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import (
     Application,
     CallbackQueryHandler,
+    ChatMemberHandler,
     CommandHandler,
     ContextTypes,
 )
@@ -51,6 +52,15 @@ TRANSLATIONS = {
             "📱 *Here are the {count} most recent Apple Updates:*\n"
         ),
         "new_updates_header": "🔔 *New Apple Updates*\n",
+        "stop_confirmation": (
+            "✅ *Subscription stopped*\n\n"
+            "You will no longer receive Apple Updates notifications.\n"
+            "Send /start anytime to subscribe again."
+        ),
+        "not_subscribed": (
+            "ℹ️ You are not currently subscribed to notifications.\n"
+            "Send /start to subscribe."
+        ),
     },
     "es": {
         "welcome": (
@@ -77,6 +87,15 @@ TRANSLATIONS = {
             "Apple:*\n"
         ),
         "new_updates_header": "🔔 *Nuevas actualizaciones de Apple*\n",
+        "stop_confirmation": (
+            "✅ *Suscripción detenida*\n\n"
+            "Ya no recibirás notificaciones de Actualizaciones de Apple.\n"
+            "Envía /start en cualquier momento para suscribirte de nuevo."
+        ),
+        "not_subscribed": (
+            "ℹ️ No estás suscrito actualmente a las notificaciones.\n"
+            "Envía /start para suscribirte."
+        ),
     },
 }
 
@@ -270,6 +289,78 @@ async def language_selection_callback(
         await send_recent_updates(update, context, chat_id, language_code)
 
 
+async def stop_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Handle /stop command. Remove user subscription.
+
+    Args:
+        update: Telegram update object
+        context: Callback context
+    """
+    if not update.effective_chat or not update.message:
+        return
+
+    chat_id = str(update.effective_chat.id)
+
+    # Load subscriptions
+    subscriptions = load_subscriptions()
+
+    # Check if user is subscribed
+    if chat_id not in subscriptions:
+        # Get language from subscription or default to English
+        message = get_translation("en", "not_subscribed")
+        await update.message.reply_text(message, parse_mode="Markdown")
+        return
+
+    # Get user's language before removing subscription
+    language_code = subscriptions[chat_id].get("language_code", "en")
+
+    # Remove subscription
+    del subscriptions[chat_id]
+    save_subscriptions(subscriptions)
+
+    # Send confirmation in user's language
+    confirmation_message = get_translation(language_code, "stop_confirmation")
+    await update.message.reply_text(confirmation_message, parse_mode="Markdown")
+
+    logger.info(f"Subscription stopped for chat {chat_id}")
+
+
+async def chat_member_status_handler(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
+    """
+    Handle bot being added/removed from chats.
+
+    Automatically removes subscription when bot is removed from a chat.
+
+    Args:
+        update: Telegram update object
+        context: Callback context
+    """
+    if not update.my_chat_member:
+        return
+
+    chat_id = str(update.my_chat_member.chat.id)
+    old_status = update.my_chat_member.old_chat_member.status
+    new_status = update.my_chat_member.new_chat_member.status
+
+    # Bot was removed from chat (kicked or left)
+    if old_status in ["member", "administrator"] and new_status in [
+        "left",
+        "kicked",
+    ]:
+        subscriptions = load_subscriptions()
+
+        if chat_id in subscriptions:
+            # Remove subscription
+            del subscriptions[chat_id]
+            save_subscriptions(subscriptions)
+            logger.info(
+                f"Bot removed from chat {chat_id}, subscription deleted"
+            )
+
+
 async def send_recent_updates(
     update: Update,
     context: ContextTypes.DEFAULT_TYPE,
@@ -414,9 +505,15 @@ def create_application(token: str) -> Application:  # type: ignore[type-arg]
 
     # Add command handlers
     application.add_handler(CommandHandler("start", start_command))
+    application.add_handler(CommandHandler("stop", stop_command))
 
     # Add callback query handler for language selection
     application.add_handler(CallbackQueryHandler(language_selection_callback))
+
+    # Add chat member handler to detect bot removal
+    application.add_handler(
+        ChatMemberHandler(chat_member_status_handler, ChatMemberHandler.MY_CHAT_MEMBER)
+    )
 
     return application
 

@@ -363,6 +363,12 @@ In daemon mode, the system will:
 - First-time subscribers receive the 10 most recent updates
 - Subsequently, only new updates are sent
 - Notifications are formatted in the user's selected language (English or Spanish)
+- Users can unsubscribe anytime by sending `/stop`
+- Automatically unsubscribes when bot is removed from channels/groups
+
+**Bot Commands:**
+- `/start` - Subscribe to Apple Updates notifications and select language
+- `/stop` - Unsubscribe and stop receiving notifications
 
 Press `Ctrl+C` to stop the daemon gracefully.
 
