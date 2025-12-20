@@ -424,7 +424,12 @@ def create_application(token: str) -> Application:  # type: ignore[type-arg]
 async def send_new_updates_to_subscribers() -> None:
     """
     Check for new updates and send them to subscribers.
-    This function should be called periodically by the main monitoring loop.
+
+    NOTE: This function is a placeholder for future implementation.
+    Currently, notifications are triggered by the monitoring cycle in
+    crazyones.py when new updates are detected. This function will be
+    used to implement periodic checks for new updates independent of
+    the monitoring cycle.
     """
     subscriptions = load_subscriptions()
 
@@ -464,26 +469,3 @@ async def send_new_updates_to_subscribers() -> None:
             f"Would send updates to chat {chat_id} for "
             f"language {language_code}"
         )
-
-
-async def start_bot(token: str) -> None:
-    """
-    Start the Telegram bot.
-
-    Args:
-        token: Telegram bot token
-    """
-    application = create_application(token)
-
-    logger.info("Starting Telegram bot...")
-    await application.initialize()
-    await application.start()
-
-    if application.updater:
-        await application.updater.start_polling()
-        logger.info("Bot is running. Press Ctrl+C to stop.")
-        # Keep the bot running
-        await application.updater.stop()
-
-    await application.stop()
-    await application.shutdown()
