@@ -60,13 +60,14 @@ If not specified, the application uses the default English (US) URL or the URL s
 
 1. **Docker Compose** reads variables from `.env` file
 2. **Entrypoint script** (`docker-entrypoint.sh`) validates the token and passes both variables as command-line arguments to `crazyones.py`
-3. **crazyones.py** receives the arguments and **saves them to `config.json`** for persistence
-4. On subsequent runs, if no new values are provided, the application uses values from `config.json`
+3. **crazyones.py** receives the arguments and **saves them to `config.json`** inside the container for persistence
+4. On subsequent runs, if no new values are provided via environment variables, the application uses values from the internal `config.json`
 
 This means:
-- Configuration is persistent across container restarts
+- Configuration persists across container restarts (as long as the container is not removed)
 - You can update the token/URL by modifying `.env` and restarting the container
-- The `config.json` file is mounted as a volume, preserving your settings
+- The `config.json` is stored inside the container and will be reset if you remove and recreate the container
+- For permanent configuration persistence across container recreations, always use the `.env` file
 
 ## Setup Instructions
 
@@ -184,9 +185,8 @@ The following directories and files are mounted as volumes for persistence:
 
 - `./data:/app/data` - Scraped data and language information
 - `./crazyones.log:/app/crazyones.log` - Application logs
-- `./config.json:/app/config.json` - Configuration file
 
-This means your data survives container restarts and updates.
+**Note about config.json**: The configuration file is stored inside the container and persists across restarts. However, if you remove and recreate the container, you'll need to ensure your `.env` file contains the correct values, as they will be used to regenerate the configuration. For this reason, always maintain your `.env` file with the correct token and URL settings.
 
 ## Troubleshooting
 
@@ -216,6 +216,23 @@ Verify your token:
 - Has 8-10 digits before the colon
 - Has at least 35 characters after the colon
 - Contains only alphanumeric characters, hyphens, and underscores
+
+### Container Fails to Start with Mount Error
+
+If you see an error like:
+
+```
+failed to create task for container: ... not a directory: Are you trying to mount a directory onto a file (or vice-versa)?
+```
+
+This typically means you're using an older version of `compose.yml` that tried to mount `config.json` as a volume. The solution:
+
+1. Update your `compose.yml` from the repository to the latest version
+2. Remove any `config.json` volume mount line
+3. Ensure your `.env` file has the correct configuration
+4. Start the container with `docker compose up -d`
+
+The configuration will be managed internally by the container through environment variables.
 
 ### Build Fails on Raspberry Pi
 
