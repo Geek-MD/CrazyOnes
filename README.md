@@ -336,19 +336,39 @@ Run CrazyOnes in daemon mode for continuous monitoring:
 # Run as daemon with default 12-hour interval (2x per day)
 python crazyones.py --token YOUR_BOT_TOKEN --daemon
 
+# Run as daemon with Telegram bot enabled
+python crazyones.py --token YOUR_BOT_TOKEN --daemon --bot
+
 # Run as daemon with custom interval (e.g., every 6 hours)
 python crazyones.py --token YOUR_BOT_TOKEN --daemon --interval 21600
 
 # Run as daemon with custom URL
 python crazyones.py --token YOUR_BOT_TOKEN --url https://support.apple.com/es-es/100100 --daemon
+
+# Run with bot and custom interval
+python crazyones.py --token YOUR_BOT_TOKEN --daemon --bot --interval 21600
 ```
 
 In daemon mode, the system will:
 1. Scrape language URLs from Apple Updates page
 2. Monitor security updates from each language URL
 3. Save all changes to JSON files
-4. Wait for the specified interval
-5. Repeat the cycle indefinitely
+4. Send notifications to Telegram subscribers (if --bot is enabled)
+5. Wait for the specified interval
+6. Repeat the cycle indefinitely
+
+**Telegram Bot Features:**
+- Users can subscribe by sending `/start` to the bot
+- Select their preferred Apple Updates language
+- First-time subscribers receive the 10 most recent updates
+- Subsequently, only new updates are sent
+- Notifications are formatted in the user's selected language (English or Spanish)
+- Users can unsubscribe anytime by sending `/stop`
+- Automatically unsubscribes when bot is removed from channels/groups
+
+**Bot Commands:**
+- `/start` - Subscribe to Apple Updates notifications and select language
+- `/stop` - Unsubscribe and stop receiving notifications
 
 Press `Ctrl+C` to stop the daemon gracefully.
 

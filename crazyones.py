@@ -15,6 +15,7 @@ Note: Starting a new instance automatically stops any existing instance.
 """
 
 import argparse
+import asyncio
 import json
 import logging
 import os
@@ -28,13 +29,6 @@ from pathlib import Path
 
 from scripts.generate_language_names import update_language_names
 
-# Import the main functions from our scripts
-from scripts.scrape_apple_updates import (
-    extract_language_urls,
-    fetch_apple_updates_page,
-    save_language_urls_to_json,
-)
-
 # Import monitor module at module level for efficiency
 from scripts.monitor_apple_updates import (
     detect_changes,
@@ -44,8 +38,15 @@ from scripts.monitor_apple_updates import (
     save_tracking_data,
 )
 
+# Import the main functions from our scripts
+from scripts.scrape_apple_updates import (
+    extract_language_urls,
+    fetch_apple_updates_page,
+    save_language_urls_to_json,
+)
+
 # Version from pyproject.toml
-__version__ = "0.8.0"
+__version__ = "0.9.0"
 
 # PID file location
 PID_FILE = "/tmp/crazyones.pid"
@@ -63,7 +64,7 @@ def write_pid_file() -> None:
 def read_pid_file() -> int | None:
     """Read PID from PID file. Returns None if file doesn't exist."""
     try:
-        with open(PID_FILE, 'r') as f:
+        with open(PID_FILE) as f:
             return int(f.read().strip())
     except (FileNotFoundError, ValueError):
         return None
@@ -90,7 +91,7 @@ def is_process_running(pid: int) -> bool:
 def stop_running_daemon() -> bool:
     """
     Stop a running daemon process.
-    
+
     Returns:
         True if daemon was stopped, False if no daemon was running
     """
@@ -98,12 +99,12 @@ def stop_running_daemon() -> bool:
     if pid is None:
         print("No daemon PID file found.")
         return False
-    
+
     if not is_process_running(pid):
         print(f"Daemon with PID {pid} is not running. Cleaning up PID file.")
         remove_pid_file()
         return False
-    
+
     print(f"Stopping daemon process (PID: {pid})...")
     try:
         # Send SIGTERM for graceful shutdown
@@ -423,15 +424,28 @@ Examples:
         "-d",
         "--daemon",
         action="store_true",
-        help="Run as daemon (continuous monitoring with 12 hour interval, 2 times per day)",
+        help=(
+            "Run as daemon (continuous monitoring with 12 hour interval, "
+            "2 times per day)"
+        ),
     )
 
     parser.add_argument(
         "-i",
         "--interval",
         type=int,
-        help="Monitoring interval in seconds (implies daemon mode, default: 43200 = 12 hours)",
+        help=(
+            "Monitoring interval in seconds (implies daemon mode, "
+            "default: 43200 = 12 hours)"
+        ),
         metavar="SECONDS",
+    )
+
+    parser.add_argument(
+        "-b",
+        "--bot",
+        action="store_true",
+        help="Start Telegram bot (requires daemon mode)",
     )
 
     return parser.parse_args()
@@ -446,25 +460,25 @@ def show_log_tail(log_file: str = "crazyones.log", lines: int = 100) -> None:
         lines: Number of lines to show (default: 100)
     """
     log_path = Path(log_file)
-    
+
     if not log_path.exists():
         print(f"Log file not found: {log_file}")
         print("The log file will be created when crazyones runs for the first time.")
         return
-    
+
     try:
-        with open(log_path, 'r', encoding='utf-8') as f:
+        with open(log_path, encoding='utf-8') as f:
             all_lines = f.readlines()
             tail_lines = all_lines[-lines:] if len(all_lines) > lines else all_lines
-            
+
             print("=" * 60)
             print(f"Last {len(tail_lines)} lines of {log_file}")
             print("=" * 60)
             print()
-            
+
             for line in tail_lines:
                 print(line, end='')
-            
+
             print()
             print("=" * 60)
             print(f"Total lines in log: {len(all_lines)}")
@@ -520,7 +534,8 @@ def run_monitoring_cycle(apple_updates_url: str) -> None:
         apple_updates_url: The Apple Updates URL to scrape
     """
     log_and_print("-" * 60)
-    log_and_print(f"Monitoring cycle started at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    log_and_print(f"Monitoring cycle started at {timestamp}")
     log_and_print("-" * 60)
     log_and_print("")
 
@@ -537,7 +552,7 @@ def run_monitoring_cycle(apple_updates_url: str) -> None:
     log_and_print("")
     log_and_print("Step 2: Monitoring security updates from language URLs...")
     log_and_print("")
-    
+
     try:
         # Load language URLs
         try:
@@ -545,7 +560,10 @@ def run_monitoring_cycle(apple_updates_url: str) -> None:
             log_and_print(f"Loaded {len(language_urls)} language URLs")
         except FileNotFoundError as e:
             log_and_print(f"✗ Error: {e}")
-            log_and_print("Language URLs file not found. Skipping security updates monitoring.")
+            log_and_print(
+                "Language URLs file not found. "
+                "Skipping security updates monitoring."
+            )
             return
 
         # Load tracking data
@@ -602,18 +620,18 @@ def main() -> None:
     """Main function to orchestrate the CrazyOnes workflow."""
     # Parse command line arguments
     args = parse_arguments()
-    
+
     # Handle --log command (doesn't require token or setup)
     if args.log:
         show_log_tail()
         sys.exit(0)
-    
+
     # Validate token is provided for normal execution
     if not args.token:
         print("Error: --token is required for execution")
         print("Use --help for usage information or --log to view log file")
         sys.exit(1)
-    
+
     # Set up logging
     setup_logging()
 
@@ -628,7 +646,15 @@ def main() -> None:
 
     # Determine daemon mode and interval
     daemon_mode = args.daemon or args.interval is not None
-    interval = args.interval if args.interval else 43200  # Default 12 hours (2 times per day)
+    # Default 12 hours (2 times per day)
+    interval = args.interval if args.interval else 43200
+    bot_mode = args.bot
+
+    # Validate bot mode
+    if bot_mode and not daemon_mode:
+        log_and_print("Error: --bot requires --daemon mode")
+        log_and_print("Use --help for usage information")
+        sys.exit(1)
 
     # Check if another instance is already running
     existing_pid = read_pid_file()
@@ -671,7 +697,10 @@ def main() -> None:
             saved_token != args.token):
             # In daemon mode, don't ask for confirmation, use provided token
             if daemon_mode:
-                log_and_print("Token mismatch detected. Using provided token in daemon mode.")
+                log_and_print(
+                    "Token mismatch detected. "
+                    "Using provided token in daemon mode."
+                )
                 token_to_use = args.token
             else:
                 # Ask user which token to use
@@ -739,6 +768,53 @@ def main() -> None:
 
     log_and_print("")
 
+    # Start Telegram bot if requested
+    bot_application = None
+    bot_thread = None
+    if bot_mode:
+        log_and_print("Starting Telegram bot...")
+        from scripts.telegram_bot import create_application
+
+        bot_application = create_application(token_to_use)
+
+        # Run bot in a separate thread with its own event loop
+        def run_bot_in_thread() -> None:
+            """Run bot in a separate thread with its own async event loop."""
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+
+            async def start_bot_async() -> None:
+                try:
+                    await bot_application.initialize()
+                    await bot_application.start()
+                    if bot_application.updater:
+                        await bot_application.updater.start_polling()
+                        log_and_print("✓ Telegram bot started successfully")
+                        log_and_print("")
+
+                        # Keep bot running until shutdown
+                        while not _shutdown_event.is_set():
+                            await asyncio.sleep(1)
+
+                        # Cleanup
+                        await bot_application.updater.stop()
+                    await bot_application.stop()
+                    await bot_application.shutdown()
+                except Exception as e:
+                    log_and_print(f"✗ Error in bot thread: {e}")
+                    logging.exception("Full traceback:")
+
+            try:
+                loop.run_until_complete(start_bot_async())
+            finally:
+                loop.close()
+
+        bot_thread = threading.Thread(target=run_bot_in_thread, daemon=True)
+        bot_thread.start()
+
+        # Give bot a moment to start
+        time.sleep(2)
+
     # Main execution loop
     if daemon_mode:
         log_and_print("Starting daemon mode...")
@@ -770,7 +846,7 @@ def main() -> None:
         log_and_print("Daemon stopped gracefully")
         log_and_print("=" * 60)
         log_and_print("")
-        
+
         # Clean up PID file on normal exit
         remove_pid_file()
 
