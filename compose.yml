@@ -1,7 +1,7 @@
 services:
   crazyones:
     build: .
-    image: geekmd/crazyones:0.8.0
+    image: edisonmontes/crazyones:latest
     container_name: crazyones
     environment:
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
