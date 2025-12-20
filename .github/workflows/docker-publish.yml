@@ -3,10 +3,6 @@ name: Build and Publish Docker Image
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: 'Version tag (e.g., 0.9.0)'
-        required: true
-        type: string
       latest:
         description: 'Also tag as latest'
         required: true
@@ -20,6 +16,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Extract version from config.json
+        id: version
+        run: |
+          VERSION=$(jq -r '.version' config.json)
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Extracted version: ${VERSION}"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -36,7 +39,7 @@ jobs:
       - name: Prepare Docker tags
         id: tags
         run: |
-          TAGS="edisonmontes/crazyones:${{ inputs.version }}"
+          TAGS="edisonmontes/crazyones:${{ steps.version.outputs.version }}"
           if [ "${{ inputs.latest }}" = "true" ]; then
             TAGS="${TAGS},edisonmontes/crazyones:latest"
           fi
@@ -51,7 +54,7 @@ jobs:
           tags: ${{ steps.tags.outputs.tags }}
           labels: |
             org.opencontainers.image.title=CrazyOnes
-            org.opencontainers.image.version=${{ inputs.version }}
+            org.opencontainers.image.version=${{ steps.version.outputs.version }}
             org.opencontainers.image.source=${{ github.event.repository.html_url }}
             org.opencontainers.image.created=${{ github.run_started_at }}
           cache-from: type=gha

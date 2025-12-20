@@ -37,52 +37,35 @@ The workflow is configured for **manual execution only** via GitHub Actions.
 
 #### Steps to Publish:
 
-1. **Go to Actions tab** in your GitHub repository
-2. Click on **"Build and Publish Docker Image"** workflow
-3. Click **"Run workflow"** button
-4. Fill in the required information:
-   - **Version tag**: Enter the version (e.g., `0.8.0`)
+1. **Update version in config.json**: Before publishing, ensure the `version` field in `config.json` is updated to the desired version (e.g., `0.9.0`)
+2. **Go to Actions tab** in your GitHub repository
+3. Click on **"Build and Publish Docker Image"** workflow
+4. Click **"Run workflow"** button
+5. Select the options:
    - **Also tag as latest**: Check if this should be the latest version
-   - **Docker Hub username** (optional): Your Docker Hub username - leave empty to use repository secret
-   - **Docker Hub token/password** (optional): Your Docker Hub access token or password - leave empty to use repository secret
-5. Click **"Run workflow"** to start the build
+6. Click **"Run workflow"** to start the build
 
-**Note about credentials**:
-- If you leave the Docker Hub username and token fields empty, the workflow will use the repository secrets (`DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`)
-- If you provide credentials in the input fields, those will be used instead of the secrets
-- **Security warning**: Credentials entered as workflow inputs are visible in the workflow run details. For better security, use repository secrets (Option A above)
-- **Google login is not supported** - Docker Hub CLI authentication only supports username/password or access tokens
+**Note**: The version is automatically extracted from `config.json`, so you don't need to enter it manually. This ensures consistency across all version references in the project.
 
 #### What the Workflow Does:
 
 1. ✅ Checks out the repository code
-2. ✅ Sets up QEMU for multi-platform builds
-3. ✅ Sets up Docker Buildx
-4. ✅ Logs into Docker Hub using your credentials
-5. ✅ Builds images for:
+2. ✅ Extracts version from `config.json`
+3. ✅ Sets up QEMU for multi-platform builds
+4. ✅ Sets up Docker Buildx
+5. ✅ Logs into Docker Hub using repository secrets
+6. ✅ Builds images for:
    - `linux/arm/v7` (Raspberry Pi 3B - primary target)
    - `linux/amd64` (x86-64 systems)
    - `linux/arm64` (Raspberry Pi 4, 5)
-6. ✅ Pushes to Docker Hub with specified tags
-7. ✅ Updates Docker Hub repository description
+7. ✅ Pushes to Docker Hub with version tag and optionally `latest`
+8. ✅ Updates Docker Hub repository description
 
-#### Examples:
+#### Example:
 
-**Example 1 - Using repository secrets:**
-- Version: `0.8.0`
-- Latest: `true` ✓
-- Docker Hub username: (leave empty)
-- Docker Hub token: (leave empty)
-
-**Example 2 - Using manual credentials:**
-- Version: `0.8.1`
-- Latest: `false`
-- Docker Hub username: `yourusername`
-- Docker Hub token: `your_access_token_or_password`
-
-Both examples will publish the images to Docker Hub:
-- `geekmd/crazyones:0.8.0` or `geekmd/crazyones:0.8.1`
-- `geekmd/crazyones:latest` (only if "Also tag as latest" is checked)
+If `config.json` has `"version": "0.9.0"` and you check "Also tag as latest", the workflow will publish:
+- `edisonmontes/crazyones:0.9.0`
+- `edisonmontes/crazyones:latest`
 
 ## Manual Publishing Process (Alternative)
 
@@ -139,7 +122,7 @@ When releasing a new version:
    - `pyproject.toml` (`version`)
    - `config.json` (`version`)
    - `Dockerfile` (`LABEL version`)
-   - `compose.yml` (`image` tag)
+   - `compose.yml` (`image` tag - if self-building)
 
 2. **Build and push** with version tags:
 
@@ -246,7 +229,6 @@ services:
     volumes:
       - ./data:/app/data
       - ./crazyones.log:/app/crazyones.log
-      - ./config.json:/app/config.json
     restart: unless-stopped
 ```
 
@@ -267,7 +249,6 @@ docker run -d \
   -e CHECK_INTERVAL=43200 \
   -v $(pwd)/data:/app/data \
   -v $(pwd)/crazyones.log:/app/crazyones.log \
-  -v $(pwd)/config.json:/app/config.json \
   geekmd/crazyones:0.8.0
 ```
 
