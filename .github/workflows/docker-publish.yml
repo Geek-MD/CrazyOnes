@@ -17,7 +17,7 @@ on:
         required: false
         type: string
       dockerhub_token:
-        description: 'Docker Hub token/password (optional - uses secret if not provided)'
+        description: 'Docker Hub token/password (optional - WARNING: visible in logs, use secrets for better security)'
         required: false
         type: string
 

@@ -50,6 +50,7 @@ The workflow is configured for **manual execution only** via GitHub Actions.
 **Note about credentials**:
 - If you leave the Docker Hub username and token fields empty, the workflow will use the repository secrets (`DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`)
 - If you provide credentials in the input fields, those will be used instead of the secrets
+- **Security warning**: Credentials entered as workflow inputs are visible in the workflow run details. For better security, use repository secrets (Option A above)
 - **Google login is not supported** - Docker Hub CLI authentication only supports username/password or access tokens
 
 #### What the Workflow Does:
