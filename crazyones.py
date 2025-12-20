@@ -769,28 +769,51 @@ def main() -> None:
     log_and_print("")
 
     # Start Telegram bot if requested
-    bot_task = None
+    bot_application = None
+    bot_thread = None
     if bot_mode:
         log_and_print("Starting Telegram bot...")
         from scripts.telegram_bot import create_application
+
         bot_application = create_application(token_to_use)
 
-        # Run bot initialization in async context
-        async def init_and_start_bot() -> None:
-            await bot_application.initialize()
-            await bot_application.start()
-            if bot_application.updater:
-                await bot_application.updater.start_polling()
-                log_and_print("✓ Telegram bot started successfully")
-                log_and_print("")
+        # Run bot in a separate thread with its own event loop
+        def run_bot_in_thread() -> None:
+            """Run bot in a separate thread with its own async event loop."""
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
 
-        # Start bot in the event loop
-        try:
-            asyncio.run(init_and_start_bot())
-        except Exception as e:
-            log_and_print(f"✗ Error starting Telegram bot: {e}")
-            logging.exception("Full traceback:")
-            sys.exit(1)
+            async def start_bot_async() -> None:
+                try:
+                    await bot_application.initialize()
+                    await bot_application.start()
+                    if bot_application.updater:
+                        await bot_application.updater.start_polling()
+                        log_and_print("✓ Telegram bot started successfully")
+                        log_and_print("")
+
+                        # Keep bot running until shutdown
+                        while not _shutdown_event.is_set():
+                            await asyncio.sleep(1)
+
+                        # Cleanup
+                        await bot_application.updater.stop()
+                    await bot_application.stop()
+                    await bot_application.shutdown()
+                except Exception as e:
+                    log_and_print(f"✗ Error in bot thread: {e}")
+                    logging.exception("Full traceback:")
+
+            try:
+                loop.run_until_complete(start_bot_async())
+            finally:
+                loop.close()
+
+        bot_thread = threading.Thread(target=run_bot_in_thread, daemon=True)
+        bot_thread.start()
+
+        # Give bot a moment to start
+        time.sleep(2)
 
     # Main execution loop
     if daemon_mode:
