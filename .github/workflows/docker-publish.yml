@@ -20,9 +20,30 @@ jobs:
       - name: Extract version from config.json
         id: version
         run: |
+          # Check if config.json exists
+          if [ ! -f "config.json" ]; then
+            echo "ERROR: config.json not found!"
+            exit 1
+          fi
+          
+          # Extract version using jq (pre-installed on ubuntu-latest)
           VERSION=$(jq -r '.version' config.json)
+          
+          # Validate that version was extracted and is not empty
+          if [ -z "$VERSION" ] || [ "$VERSION" = "null" ]; then
+            echo "ERROR: Unable to extract version from config.json!"
+            echo "Please ensure config.json contains a valid 'version' field."
+            exit 1
+          fi
+          
+          # Validate version format (basic semver check)
+          if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "WARNING: Version '$VERSION' does not follow semver format (X.Y.Z)"
+            echo "Proceeding anyway..."
+          fi
+          
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          echo "Extracted version: ${VERSION}"
+          echo "✓ Extracted version: ${VERSION}"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
