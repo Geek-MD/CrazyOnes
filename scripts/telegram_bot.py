@@ -26,6 +26,82 @@ SUBSCRIPTIONS_FILE = "data/subscriptions.json"
 
 logger = logging.getLogger(__name__)
 
+# Translations for different languages
+TRANSLATIONS = {
+    "en": {
+        "welcome": (
+            "🍎 *Welcome to Apple Updates Bot!*\n\n"
+            "I'm a bot that notifies about Apple software updates.\n\n"
+            "Please select the language of Apple Updates you want to "
+            "monitor:"
+        ),
+        "no_languages": (
+            "⚠️ Sorry, no languages are available at the moment. "
+            "Please try again later."
+        ),
+        "language_selected": (
+            "✅ *Language selected: {display_name}*\n\n"
+            "You will now receive Apple Updates in this language."
+        ),
+        "no_updates": (
+            "ℹ️ No updates available yet for this language. "
+            "You'll be notified when new updates are published."
+        ),
+        "recent_updates_header": (
+            "📱 *Here are the {count} most recent Apple Updates:*\n"
+        ),
+        "new_updates_header": "🔔 *New Apple Updates*\n",
+    },
+    "es": {
+        "welcome": (
+            "🍎 *¡Bienvenido al Bot de Actualizaciones de Apple!*\n\n"
+            "Soy un bot que notifica sobre actualizaciones de software "
+            "de Apple.\n\n"
+            "Por favor selecciona el idioma de Apple Updates que quieres "
+            "monitorizar:"
+        ),
+        "no_languages": (
+            "⚠️ Lo siento, no hay idiomas disponibles en este momento. "
+            "Por favor, inténtalo más tarde."
+        ),
+        "language_selected": (
+            "✅ *Idioma seleccionado: {display_name}*\n\n"
+            "Ahora recibirás las Actualizaciones de Apple en este idioma."
+        ),
+        "no_updates": (
+            "ℹ️ Aún no hay actualizaciones disponibles para este idioma. "
+            "Se te notificará cuando se publiquen nuevas actualizaciones."
+        ),
+        "recent_updates_header": (
+            "📱 *Estas son las {count} actualizaciones más recientes de "
+            "Apple:*\n"
+        ),
+        "new_updates_header": "🔔 *Nuevas actualizaciones de Apple*\n",
+    },
+}
+
+
+def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
+    """
+    Get translated text for a given language code and key.
+
+    Args:
+        lang_code: Language code (e.g., 'en-us', 'es-es')
+        key: Translation key
+        **kwargs: Format arguments for the translation string
+
+    Returns:
+        Translated and formatted string
+    """
+    # Extract base language (e.g., 'en' from 'en-us')
+    base_lang = lang_code.split("-")[0] if "-" in lang_code else lang_code
+
+    # Default to English if translation not found
+    translations = TRANSLATIONS.get(base_lang, TRANSLATIONS["en"])
+    text = translations.get(key, TRANSLATIONS["en"].get(key, ""))
+
+    return text.format(**kwargs) if kwargs else text
+
 
 def load_subscriptions() -> dict[str, dict[str, Any]]:
     """
@@ -104,20 +180,15 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     if not update.effective_chat or not update.message:
         return
 
-    # Welcome message in English
-    welcome_message = (
-        "🍎 *Welcome to Apple Updates Bot!*\n\n"
-        "I'm a bot that notifies about Apple software updates.\n\n"
-        "Please select the language of Apple Updates you want to monitor:"
-    )
+    # Welcome message in English (bot interface is in English)
+    welcome_message = get_translation("en", "welcome")
 
     # Load available languages
     language_urls = load_language_urls()
 
     if not language_urls:
         await update.message.reply_text(
-            "⚠️ Sorry, no languages are available at the moment. "
-            "Please try again later."
+            get_translation("en", "no_languages")
         )
         return
 
@@ -184,10 +255,9 @@ async def language_selection_callback(
         language_code, language_code.upper().replace("-", "/")
     )
 
-    # Send confirmation message
-    confirmation_message = (
-        f"✅ *Language selected: {display_name}*\n\n"
-        f"You will now receive Apple Updates in this language."
+    # Send confirmation message in the selected language
+    confirmation_message = get_translation(
+        language_code, "language_selected", display_name=display_name
     )
 
     await query.edit_message_text(
@@ -219,10 +289,7 @@ async def send_recent_updates(
     updates = load_updates_for_language(language_code)
 
     if not updates:
-        message = (
-            "ℹ️ No updates available yet for this language. "
-            "You'll be notified when new updates are published."
-        )
+        message = get_translation(language_code, "no_updates")
         await context.bot.send_message(
             chat_id=int(chat_id),
             text=message
@@ -240,33 +307,64 @@ async def send_recent_updates(
         save_subscriptions(subscriptions)
 
     # Send header message
-    header = (
-        f"📱 *Here are the {len(recent_updates)} most recent Apple Updates:*\n"
-    )
-    await context.bot.send_message(
-        chat_id=int(chat_id),
-        text=header,
-        parse_mode="Markdown"
+    header = get_translation(
+        language_code, "recent_updates_header", count=len(recent_updates)
     )
 
-    # Send each update as a separate message
-    for idx, update_item in enumerate(recent_updates, 1):
-        message = format_update_message(update_item, idx)
+    # Format updates based on language
+    base_lang = language_code.split("-")[0] if "-" in language_code else language_code
+
+    if base_lang == "es":
+        # Spanish format: one update per line (date - name - target)
+        message = header
+        for update_item in recent_updates:
+            date = update_item.get("date", "N/A")
+            name = update_item.get("name", "Unknown")
+            target = update_item.get("target", "N/A")
+            url = update_item.get("url")
+
+            if url:
+                # Name as link
+                update_line = f"{date} - [{name}]({url}) - {target}\n"
+            else:
+                update_line = f"{date} - {name} - {target}\n"
+
+            message += update_line
+
         await context.bot.send_message(
             chat_id=int(chat_id),
             text=message,
             parse_mode="Markdown",
             disable_web_page_preview=True
         )
+    else:
+        # English format: detailed format with emojis (one message per update)
+        await context.bot.send_message(
+            chat_id=int(chat_id),
+            text=header,
+            parse_mode="Markdown"
+        )
+
+        for idx, update_item in enumerate(recent_updates, 1):
+            message = format_update_message(update_item, idx, language_code)
+            await context.bot.send_message(
+                chat_id=int(chat_id),
+                text=message,
+                parse_mode="Markdown",
+                disable_web_page_preview=True
+            )
 
 
-def format_update_message(update_item: dict[str, Any], number: int = 0) -> str:
+def format_update_message(
+    update_item: dict[str, Any], number: int = 0, language_code: str = "en"
+) -> str:
     """
     Format an update item into a Telegram message.
 
     Args:
         update_item: Update dictionary with name, target, date, and optional url
         number: Optional number prefix for the update
+        language_code: Language code for formatting
 
     Returns:
         Formatted message string
@@ -276,17 +374,27 @@ def format_update_message(update_item: dict[str, Any], number: int = 0) -> str:
     date = update_item.get("date", "N/A")
     url = update_item.get("url")
 
-    # Build the message
-    if number > 0:
-        message = f"*{number}. {name}*\n"
+    # Get base language
+    base_lang = language_code.split("-")[0] if "-" in language_code else language_code
+
+    if base_lang == "es":
+        # Spanish format: date - name - target (inline)
+        if url:
+            message = f"{date} - [{name}]({url}) - {target}"
+        else:
+            message = f"{date} - {name} - {target}"
     else:
-        message = f"*{name}*\n"
+        # English format: detailed with emojis
+        if number > 0:
+            message = f"*{number}. {name}*\n"
+        else:
+            message = f"*{name}*\n"
 
-    message += f"📱 Target: {target}\n"
-    message += f"📅 Date: {date}\n"
+        message += f"📱 Target: {target}\n"
+        message += f"📅 Date: {date}\n"
 
-    if url:
-        message += f"🔗 [More info]({url})"
+        if url:
+            message += f"🔗 [More info]({url})"
 
     return message
 
@@ -370,12 +478,12 @@ async def start_bot(token: str) -> None:
     logger.info("Starting Telegram bot...")
     await application.initialize()
     await application.start()
-    
+
     if application.updater:
         await application.updater.start_polling()
         logger.info("Bot is running. Press Ctrl+C to stop.")
         # Keep the bot running
         await application.updater.stop()
-    
+
     await application.stop()
     await application.shutdown()
