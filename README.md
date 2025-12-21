@@ -112,7 +112,7 @@ Docker automatically selects the correct image for your hardware.
 - **Token validation**: The entrypoint script validates the token format before starting the application.
 - **Apple Updates URL is optional**: If not specified, it defaults to the English (US) version.
 - **Check interval**: Default is 43200 seconds (12 hours), which means the system checks for updates **twice per day**.
-- **Data persistence**: The `data/` directory, log files, and `config.json` are mounted as volumes for persistence.
+- **Data persistence**: The `data/` directory and log files are mounted as volumes for persistence. The `config.json` is stored inside the container.
 - **Automatic integrated monitoring**: The system runs in daemon mode and automatically:
   1. **Scrapes language URLs** from Apple Updates page
   2. **Monitors each language URL** for security updates
@@ -422,7 +422,7 @@ The `config.json` file stores your Telegram bot token and default Apple Updates 
 
 This file is automatically created/updated when you run crazyones.py with the `--token` and `--url` parameters.
 
-In Docker deployments, the configuration is managed through environment variables (`.env` file) and automatically saved to `config.json` for persistence.
+In Docker deployments, the configuration is managed through environment variables (`.env` file) and automatically saved to `config.json` inside the container. The configuration persists across container restarts but will be reset if you remove and recreate the container, so always maintain your `.env` file with the correct settings.
 
 ### Advanced: Individual Scripts (Development Only)
 
