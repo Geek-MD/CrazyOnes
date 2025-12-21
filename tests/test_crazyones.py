@@ -8,6 +8,7 @@ import tempfile
 from pathlib import Path
 
 from crazyones import (
+    generate_systemd_service_content,
     load_config,
     parse_arguments,
     rotate_log_file,
@@ -52,7 +53,7 @@ def test_load_config_missing_file():
 
 def test_parse_arguments_no_args():
     """Test parsing arguments when no arguments are provided."""
-    print("\nTesting argument parsing with missing token...")
+    print("\nTesting argument parsing with no arguments...")
 
     import sys
 
@@ -60,16 +61,15 @@ def test_parse_arguments_no_args():
     original_argv = sys.argv
 
     try:
-        # Simulate no arguments (should fail due to required token)
+        # Simulate no arguments (should succeed now, as config wizard will run)
         sys.argv = ["crazyones.py"]
-        try:
-            parse_arguments()
-            raise AssertionError("Should fail when token is missing")
-        except SystemExit:
-            # Expected behavior - argparse exits when required arg is missing
-            pass
+        args = parse_arguments()
+        
+        # With no arguments, token should be None and config should be False
+        assert args.token is None, "Token should be None when no arguments provided"
+        assert args.config is False, "Config should be False when no arguments provided"
 
-        print("  ✓ Argument parsing correctly requires token")
+        print("  ✓ Argument parsing with no arguments works correctly")
     finally:
         # Restore original argv
         sys.argv = original_argv
@@ -306,6 +306,56 @@ def test_validate_telegram_token():
     print("  ✓ Telegram token validation works correctly")
 
 
+def test_parse_arguments_with_config():
+    """Test parsing arguments with --config flag."""
+    print("\nTesting argument parsing with --config flag...")
+
+    import sys
+
+    # Save original argv
+    original_argv = sys.argv
+
+    try:
+        # Simulate --config argument
+        sys.argv = ["crazyones.py", "--config"]
+        args = parse_arguments()
+
+        assert args.config is True, "config flag should be True"
+        assert args.token is None, "Token should be None when using --config"
+
+        print("  ✓ Argument parsing with --config works correctly")
+    finally:
+        # Restore original argv
+        sys.argv = original_argv
+
+
+def test_generate_systemd_service_content():
+    """Test systemd service file content generation."""
+    print("\nTesting systemd service file generation...")
+
+    content = generate_systemd_service_content(
+        python_path="/usr/bin/python3",
+        script_path="/home/user/crazyones.py",
+        work_dir="/home/user",
+        user="testuser",
+    )
+
+    # Check that the content contains expected sections
+    assert "[Unit]" in content, "Service file should have [Unit] section"
+    assert "[Service]" in content, "Service file should have [Service] section"
+    assert "[Install]" in content, "Service file should have [Install] section"
+    
+    # Check specific content
+    assert "Description=CrazyOnes" in content
+    assert "ExecStart=/usr/bin/python3 /home/user/crazyones.py --daemon --interval 43200" in content
+    assert "User=testuser" in content
+    assert "WorkingDirectory=/home/user" in content
+    assert "Restart=always" in content
+    assert "WantedBy=multi-user.target" in content
+
+    print("  ✓ Systemd service file generation works correctly")
+
+
 def main():
     """Run all tests."""
     print("=== Testing crazyones coordinator module ===\n")
@@ -322,6 +372,8 @@ def main():
     test_parse_arguments_with_token()
     test_parse_arguments_with_url()
     test_parse_arguments_with_short_url()
+    test_parse_arguments_with_config()
+    test_generate_systemd_service_content()
 
     print("\n=== All tests passed ===")
 
