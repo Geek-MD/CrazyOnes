@@ -537,6 +537,9 @@ def install_systemd_service() -> bool:
             tmp_service_path = Path(tmp_service_path_str)
             
             try:
+                # Explicitly set secure permissions on the file descriptor
+                os.fchmod(tmp_fd, 0o600)
+                
                 # Write to the file descriptor with secure permissions
                 with os.fdopen(tmp_fd, "w", encoding="utf-8") as f:
                     f.write(service_content)
@@ -569,7 +572,8 @@ def install_systemd_service() -> bool:
                 # Clean up temporary file
                 try:
                     tmp_service_path.unlink()
-                except Exception:
+                except (FileNotFoundError, PermissionError, OSError):
+                    # Silently ignore cleanup errors
                     pass
 
         else:
@@ -587,6 +591,8 @@ def install_systemd_service() -> bool:
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
         except subprocess.TimeoutExpired:
             print("✗ Error: systemctl daemon-reload timed out")
+            print("   This may indicate system overload or systemd issues.")
+            print("   Try running manually: sudo systemctl daemon-reload")
             return False
 
         if result.returncode != 0:
@@ -602,6 +608,7 @@ def install_systemd_service() -> bool:
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
         except subprocess.TimeoutExpired:
             print("✗ Error: systemctl enable timed out")
+            print(f"   Try running manually: sudo systemctl enable {service_name}")
             return False
 
         if result.returncode != 0:
@@ -617,6 +624,7 @@ def install_systemd_service() -> bool:
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
         except subprocess.TimeoutExpired:
             print("✗ Error: systemctl start timed out")
+            print(f"   Try running manually: sudo systemctl start {service_name}")
             return False
 
         if result.returncode != 0:
