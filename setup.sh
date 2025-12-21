@@ -124,7 +124,7 @@ if [ "$USE_VENV" = true ]; then
     echo ""
     
     echo "Installing dependencies..."
-    pip install -r requirements.txt
+    python -m pip install -r requirements.txt
     echo ""
     echo "✓ Dependencies installed in virtual environment"
     echo ""
@@ -150,7 +150,7 @@ else
     
     # Try with user install first (no sudo)
     echo "Attempting user installation (no sudo required)..."
-    if pip3 install --user -r requirements.txt || python3 -m pip install --user -r requirements.txt; then
+    if python3 -m pip install --user -r requirements.txt || pip3 install --user -r requirements.txt; then
         echo ""
         echo "✓ Dependencies installed (user install)"
     else
@@ -158,7 +158,7 @@ else
         echo "⚠ User install failed. Trying with sudo..."
         echo "You may be prompted for your password."
         echo ""
-        if sudo pip3 install -r requirements.txt || sudo python3 -m pip install -r requirements.txt; then
+        if sudo python3 -m pip install -r requirements.txt || sudo pip3 install -r requirements.txt; then
             echo ""
             echo "✓ Dependencies installed (system-wide)"
         else
@@ -203,6 +203,10 @@ if [ "$run_config" = "y" ] || [ "$run_config" = "Y" ]; then
 else
     echo ""
     echo "You can run the configuration wizard later with:"
-    echo "  python crazyones.py --config"
+    if [ "$USE_VENV" = true ]; then
+        echo "  python crazyones.py --config"
+    else
+        echo "  python3 crazyones.py --config"
+    fi
     echo ""
 fi
