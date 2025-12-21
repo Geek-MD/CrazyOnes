@@ -351,6 +351,319 @@ def save_config(config: dict[str, str], config_file: str = "config.json") -> Non
         f.write("\n")  # Add newline at end of file
 
 
+def prompt_for_token() -> str:
+    """
+    Prompt user for Telegram bot token through TUI.
+
+    Returns:
+        Valid Telegram bot token
+
+    Raises:
+        KeyboardInterrupt: If user cancels the operation
+    """
+    print("\n" + "=" * 60)
+    print("CrazyOnes Configuration")
+    print("=" * 60)
+    print("\nThis configuration wizard will help you set up CrazyOnes")
+    print("to run as a systemd service on your device.")
+    print()
+
+    while True:
+        try:
+            print("Please enter your Telegram bot token.")
+            print("You can get one from @BotFather on Telegram.")
+            print()
+            token = input("Telegram Bot Token: ").strip()
+
+            if not token:
+                print("\n✗ Error: Token cannot be empty.")
+                print()
+                continue
+
+            if validate_telegram_token(token):
+                print("\n✓ Token format is valid!")
+                return token
+            else:
+                print("\n✗ Error: Invalid token format.")
+                print("Expected format: <bot_id>:<auth_token>")
+                print("  - bot_id: 8-10 digits")
+                print("  - auth_token: 35+ alphanumeric characters")
+                print("Example: 123456789:ABCdefGHIjklMNOpqrsTUVwxyz-1234567890")
+                print()
+
+        except (EOFError, KeyboardInterrupt):
+            print("\n\nConfiguration cancelled by user.")
+            raise
+
+
+def prompt_for_url() -> str:
+    """
+    Prompt user for Apple Updates URL (optional).
+
+    Returns:
+        Apple Updates URL (default if not provided)
+    """
+    default_url = "https://support.apple.com/en-us/100100"
+
+    print()
+    print("Please enter the Apple Updates URL to monitor.")
+    print(f"Press Enter to use the default: {default_url}")
+    print()
+
+    try:
+        url = input("Apple Updates URL [default]: ").strip()
+
+        if not url:
+            print(f"\n✓ Using default URL: {default_url}")
+            return default_url
+
+        print(f"\n✓ Using URL: {url}")
+        return url
+
+    except (EOFError, KeyboardInterrupt):
+        print("\n\nConfiguration cancelled by user.")
+        raise
+
+
+def generate_systemd_service_content(
+    python_path: str,
+    script_path: str,
+    work_dir: str,
+    user: str,
+) -> str:
+    """
+    Generate systemd service file content.
+
+    Args:
+        python_path: Path to Python interpreter
+        script_path: Path to crazyones.py script
+        work_dir: Working directory for the service
+        user: User to run the service as
+
+    Returns:
+        Systemd service file content
+    """
+    service_content = f"""[Unit]
+Description=CrazyOnes - Apple Updates Monitoring Service
+After=network.target
+
+[Service]
+Type=simple
+User={user}
+WorkingDirectory={work_dir}
+ExecStart={python_path} {script_path} --daemon --interval 43200
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=crazyones
+
+[Install]
+WantedBy=multi-user.target
+"""
+    return service_content
+
+
+def install_systemd_service() -> bool:
+    """
+    Generate and install systemd service file.
+
+    Returns:
+        True if successful, False otherwise
+    """
+    try:
+        import getpass
+        import shutil
+        import subprocess
+
+        # Get current user
+        current_user = getpass.getuser()
+
+        # Get Python interpreter path
+        python_path = sys.executable
+
+        # Get script path
+        script_path = Path(__file__).resolve()
+
+        # Get working directory (where the script is located)
+        work_dir = script_path.parent
+
+        print()
+        print("=" * 60)
+        print("Systemd Service Installation")
+        print("=" * 60)
+        print()
+        print(f"Python interpreter: {python_path}")
+        print(f"Script location:    {script_path}")
+        print(f"Working directory:  {work_dir}")
+        print(f"Service user:       {current_user}")
+        print()
+
+        # Generate service content
+        service_content = generate_systemd_service_content(
+            python_path=python_path,
+            script_path=str(script_path),
+            work_dir=str(work_dir),
+            user=current_user,
+        )
+
+        # Service file path
+        service_name = "crazyones.service"
+        service_path = Path(f"/etc/systemd/system/{service_name}")
+
+        print("This will create a systemd service that:")
+        print("  - Runs in daemon mode with 12-hour intervals")
+        print("  - Starts automatically on system boot")
+        print("  - Restarts automatically if it crashes")
+        print()
+        print("⚠ Note: This requires sudo/root privileges.")
+        print()
+
+        # Check if running as root
+        if os.geteuid() != 0:
+            print("Attempting to install service with sudo...")
+            print("You may be prompted for your password.")
+            print()
+
+            # Write service content to temporary file
+            tmp_service_path = Path("/tmp") / service_name
+            with open(tmp_service_path, "w", encoding="utf-8") as f:
+                f.write(service_content)
+
+            # Copy service file with sudo
+            result = subprocess.run(
+                ["sudo", "cp", str(tmp_service_path), str(service_path)],
+                capture_output=True,
+                text=True,
+            )
+
+            if result.returncode != 0:
+                print(f"✗ Error copying service file: {result.stderr}")
+                return False
+
+            # Set proper permissions
+            subprocess.run(
+                ["sudo", "chmod", "644", str(service_path)],
+                capture_output=True,
+                text=True,
+            )
+
+        else:
+            # Running as root, write directly
+            with open(service_path, "w", encoding="utf-8") as f:
+                f.write(service_content)
+            os.chmod(service_path, 0o644)
+
+        print(f"✓ Service file created: {service_path}")
+
+        # Reload systemd daemon
+        print("Reloading systemd daemon...")
+        cmd = ["sudo", "systemctl", "daemon-reload"] if os.geteuid() != 0 else ["systemctl", "daemon-reload"]
+        result = subprocess.run(cmd, capture_output=True, text=True)
+
+        if result.returncode != 0:
+            print(f"✗ Error reloading systemd: {result.stderr}")
+            return False
+
+        print("✓ Systemd daemon reloaded")
+
+        # Enable service
+        print("Enabling service to start on boot...")
+        cmd = ["sudo", "systemctl", "enable", service_name] if os.geteuid() != 0 else ["systemctl", "enable", service_name]
+        result = subprocess.run(cmd, capture_output=True, text=True)
+
+        if result.returncode != 0:
+            print(f"✗ Error enabling service: {result.stderr}")
+            return False
+
+        print("✓ Service enabled")
+
+        # Start service
+        print("Starting service...")
+        cmd = ["sudo", "systemctl", "start", service_name] if os.geteuid() != 0 else ["systemctl", "start", service_name]
+        result = subprocess.run(cmd, capture_output=True, text=True)
+
+        if result.returncode != 0:
+            print(f"✗ Error starting service: {result.stderr}")
+            return False
+
+        print("✓ Service started")
+
+        print()
+        print("=" * 60)
+        print("Service Installation Complete!")
+        print("=" * 60)
+        print()
+        print("Useful commands:")
+        print(f"  sudo systemctl status {service_name}   # Check service status")
+        print(f"  sudo systemctl stop {service_name}     # Stop the service")
+        print(f"  sudo systemctl restart {service_name}  # Restart the service")
+        print(f"  sudo journalctl -u {service_name} -f   # View service logs")
+        print()
+
+        return True
+
+    except Exception as e:
+        print(f"\n✗ Error installing systemd service: {e}")
+        return False
+
+
+def run_configuration_routine() -> bool:
+    """
+    Run the complete configuration routine.
+
+    Returns:
+        True if configuration completed successfully, False otherwise
+    """
+    try:
+        # Step 1: Prompt for token
+        token = prompt_for_token()
+
+        # Step 2: Prompt for URL
+        url = prompt_for_url()
+
+        # Step 3: Save configuration
+        print()
+        print("Saving configuration...")
+
+        config = {
+            "version": __version__,
+            "telegram_bot_token": token,
+            "apple_updates_url": url,
+        }
+
+        save_config(config)
+        print("✓ Configuration saved to config.json")
+
+        # Step 4: Install systemd service
+        success = install_systemd_service()
+
+        if success:
+            print()
+            print("=" * 60)
+            print("Configuration completed successfully!")
+            print("=" * 60)
+            print()
+            return True
+        else:
+            print()
+            print("=" * 60)
+            print("Configuration completed with warnings")
+            print("=" * 60)
+            print()
+            print("The token and URL have been saved to config.json,")
+            print("but the systemd service could not be installed.")
+            print("You can still run CrazyOnes manually with:")
+            print("  python crazyones.py --daemon")
+            print()
+            return False
+
+    except (KeyboardInterrupt, EOFError):
+        print()
+        print("Configuration cancelled.")
+        return False
+
+
 def get_version() -> str:
     """
     Get version from config.json or use default.
@@ -377,6 +690,8 @@ def parse_arguments() -> argparse.Namespace:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
+  %(prog)s                 # Run configuration wizard
+  %(prog)s --config        # Run configuration wizard
   %(prog)s -t YOUR_TOKEN
   %(prog)s --token YOUR_TOKEN --url https://support.apple.com/en-us/100100
   %(prog)s -t YOUR_TOKEN -u https://support.apple.com/es-es/100100
@@ -446,6 +761,12 @@ Examples:
         "--bot",
         action="store_true",
         help="Start Telegram bot (requires daemon mode)",
+    )
+
+    parser.add_argument(
+        "--config",
+        action="store_true",
+        help="Run configuration routine to set up Telegram bot token and systemd service",
     )
 
     return parser.parse_args()
@@ -626,10 +947,16 @@ def main() -> None:
         show_log_tail()
         sys.exit(0)
 
+    # Handle --config or no arguments (configuration routine)
+    if args.config or (not args.token and len(sys.argv) == 1):
+        success = run_configuration_routine()
+        sys.exit(0 if success else 1)
+
     # Validate token is provided for normal execution
     if not args.token:
         print("Error: --token is required for execution")
-        print("Use --help for usage information or --log to view log file")
+        print("Use --help for usage information, --log to view log file,")
+        print("or run without arguments to start the configuration wizard")
         sys.exit(1)
 
     # Set up logging
