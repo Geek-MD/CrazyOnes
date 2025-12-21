@@ -4,6 +4,9 @@
 
 set -e  # Exit on error
 
+# Handle Ctrl+C gracefully
+trap 'echo ""; echo "Setup cancelled by user."; exit 130' INT
+
 echo "=========================================="
 echo "CrazyOnes Setup Script"
 echo "=========================================="
@@ -11,7 +14,7 @@ echo ""
 
 # Check if Python 3.10+ is installed
 echo "Checking Python version..."
-if ! command -v python3 &> /dev/null; then
+if ! command -v python3 >/dev/null 2>&1; then
     echo "✗ Error: python3 is not installed"
     echo ""
     echo "Please install Python 3.10 or higher first:"
@@ -38,7 +41,7 @@ echo ""
 
 # Check if pip is installed
 echo "Checking pip..."
-if ! command -v pip3 &> /dev/null && ! python3 -m pip --version &> /dev/null; then
+if ! command -v pip3 >/dev/null 2>&1 && ! python3 -m pip --version >/dev/null 2>&1; then
     echo "✗ Error: pip is not installed"
     echo ""
     echo "Please install pip first:"
@@ -58,12 +61,16 @@ echo "=========================================="
 echo ""
 echo "You can install CrazyOnes dependencies in two ways:"
 echo ""
-echo "  1. System-wide installation (simpler, requires sudo)"
+echo "  1. System-wide installation (simpler, may require sudo)"
 echo "  2. Virtual environment (recommended for development)"
 echo ""
 
 while true; do
-    read -p "Choose installation method (1 or 2): " choice
+    read -r -p "Choose installation method (1 or 2): " choice || {
+        echo ""
+        echo "Setup cancelled."
+        exit 130
+    }
     case $choice in
         1)
             USE_VENV=false
@@ -91,7 +98,11 @@ if [ "$USE_VENV" = true ]; then
     # Create virtual environment
     if [ -d "venv" ]; then
         echo "⚠ Warning: venv directory already exists"
-        read -p "Remove existing venv and create a new one? (y/n): " confirm
+        read -r -p "Remove existing venv and create a new one? (y/n): " confirm || {
+            echo ""
+            echo "Setup cancelled."
+            exit 130
+        }
         if [ "$confirm" = "y" ] || [ "$confirm" = "Y" ]; then
             rm -rf venv
             echo "✓ Removed existing venv"
@@ -138,19 +149,22 @@ else
     echo "Installing dependencies system-wide..."
     
     # Try with user install first (no sudo)
-    if pip3 install --user -r requirements.txt 2>/dev/null || python3 -m pip install --user -r requirements.txt 2>/dev/null; then
+    echo "Attempting user installation (no sudo required)..."
+    if pip3 install --user -r requirements.txt || python3 -m pip install --user -r requirements.txt; then
         echo ""
         echo "✓ Dependencies installed (user install)"
     else
         echo ""
-        echo "User install failed. Trying with sudo..."
+        echo "⚠ User install failed. Trying with sudo..."
         echo "You may be prompted for your password."
-        if sudo pip3 install -r requirements.txt 2>/dev/null || sudo python3 -m pip install -r requirements.txt 2>/dev/null; then
+        echo ""
+        if sudo pip3 install -r requirements.txt || sudo python3 -m pip install -r requirements.txt; then
             echo ""
             echo "✓ Dependencies installed (system-wide)"
         else
             echo ""
             echo "✗ Error: Failed to install dependencies"
+            echo "Please check the error messages above for details."
             exit 1
         fi
     fi
@@ -171,7 +185,11 @@ echo "This will help you set up your Telegram bot token and optionally"
 echo "install CrazyOnes as a systemd service."
 echo ""
 
-read -p "Run configuration wizard? (y/n): " run_config
+read -r -p "Run configuration wizard? (y/n): " run_config || {
+    echo ""
+    echo "Skipping configuration wizard."
+    run_config="n"
+}
 
 if [ "$run_config" = "y" ] || [ "$run_config" = "Y" ]; then
     echo ""

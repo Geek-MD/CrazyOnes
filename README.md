@@ -324,7 +324,7 @@ The `config.json` file stores your Telegram bot token and default Apple Updates 
 
 ```json
 {
-  "version": "0.9.0",
+  "version": "X.Y.Z",
   "apple_updates_url": "https://support.apple.com/en-us/100100",
   "telegram_bot_token": "YOUR_TELEGRAM_BOT_TOKEN_HERE"
 }
