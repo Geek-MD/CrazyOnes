@@ -473,7 +473,6 @@ def install_systemd_service() -> bool:
     """
     try:
         import getpass
-        import shutil
         import subprocess
 
         # Get current user
@@ -527,19 +526,20 @@ def install_systemd_service() -> bool:
 
             # Write service content to temporary file with secure permissions
             import tempfile
-            
-            # Create a temporary file with secure permissions (0o600 = owner read/write only)
+
+            # Create a temporary file with secure permissions
+            # (0o600 = owner read/write only)
             tmp_fd, tmp_service_path_str = tempfile.mkstemp(
                 suffix=".service",
                 prefix="crazyones_",
                 dir="/tmp",
             )
             tmp_service_path = Path(tmp_service_path_str)
-            
+
             try:
                 # Explicitly set secure permissions on the file descriptor
                 os.fchmod(tmp_fd, 0o600)
-                
+
                 # Write to the file descriptor with secure permissions
                 with os.fdopen(tmp_fd, "w", encoding="utf-8") as f:
                     f.write(service_content)
@@ -563,11 +563,11 @@ def install_systemd_service() -> bool:
                     text=True,
                     timeout=30,
                 )
-                
+
                 if result.returncode != 0:
                     print(f"✗ Error setting permissions: {result.stderr}")
                     return False
-                    
+
             finally:
                 # Clean up temporary file
                 try:
@@ -586,9 +586,16 @@ def install_systemd_service() -> bool:
 
         # Reload systemd daemon
         print("Reloading systemd daemon...")
-        cmd = ["sudo", "systemctl", "daemon-reload"] if os.geteuid() != 0 else ["systemctl", "daemon-reload"]
+        is_root = os.geteuid() == 0
+        cmd = (
+            ["systemctl", "daemon-reload"]
+            if is_root
+            else ["sudo", "systemctl", "daemon-reload"]
+        )
         try:
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+            result = subprocess.run(
+                cmd, capture_output=True, text=True, timeout=30
+            )
         except subprocess.TimeoutExpired:
             print("✗ Error: systemctl daemon-reload timed out")
             print("   This may indicate system overload or systemd issues.")
@@ -603,9 +610,15 @@ def install_systemd_service() -> bool:
 
         # Enable service
         print("Enabling service to start on boot...")
-        cmd = ["sudo", "systemctl", "enable", service_name] if os.geteuid() != 0 else ["systemctl", "enable", service_name]
+        cmd = (
+            ["systemctl", "enable", service_name]
+            if is_root
+            else ["sudo", "systemctl", "enable", service_name]
+        )
         try:
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+            result = subprocess.run(
+                cmd, capture_output=True, text=True, timeout=30
+            )
         except subprocess.TimeoutExpired:
             print("✗ Error: systemctl enable timed out")
             print(f"   Try running manually: sudo systemctl enable {service_name}")
@@ -619,9 +632,15 @@ def install_systemd_service() -> bool:
 
         # Start service
         print("Starting service...")
-        cmd = ["sudo", "systemctl", "start", service_name] if os.geteuid() != 0 else ["systemctl", "start", service_name]
+        cmd = (
+            ["systemctl", "start", service_name]
+            if is_root
+            else ["sudo", "systemctl", "start", service_name]
+        )
         try:
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+            result = subprocess.run(
+                cmd, capture_output=True, text=True, timeout=30
+            )
         except subprocess.TimeoutExpired:
             print("✗ Error: systemctl start timed out")
             print(f"   Try running manually: sudo systemctl start {service_name}")
@@ -813,7 +832,10 @@ Examples:
     parser.add_argument(
         "--config",
         action="store_true",
-        help="Run configuration routine to set up Telegram bot token and systemd service",
+        help=(
+            "Run configuration routine to set up Telegram bot token "
+            "and systemd service"
+        ),
     )
 
     return parser.parse_args()
@@ -995,7 +1017,8 @@ def main() -> None:
         sys.exit(0)
 
     # Handle --config or no arguments (configuration routine)
-    # Check if user wants config wizard: explicit --config flag, or no token/daemon/interval/bot
+    # Check if user wants config wizard: explicit --config flag,
+    # or no token/daemon/interval/bot
     no_exec_args = not any([args.token, args.daemon, args.interval, args.bot])
     if args.config or no_exec_args:
         success = run_configuration_routine()
