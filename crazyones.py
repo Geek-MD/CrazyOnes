@@ -525,28 +525,52 @@ def install_systemd_service() -> bool:
             print("You may be prompted for your password.")
             print()
 
-            # Write service content to temporary file
-            tmp_service_path = Path("/tmp") / service_name
-            with open(tmp_service_path, "w", encoding="utf-8") as f:
-                f.write(service_content)
-
-            # Copy service file with sudo
-            result = subprocess.run(
-                ["sudo", "cp", str(tmp_service_path), str(service_path)],
-                capture_output=True,
-                text=True,
+            # Write service content to temporary file with secure permissions
+            import tempfile
+            
+            # Create a temporary file with secure permissions (0o600 = owner read/write only)
+            tmp_fd, tmp_service_path_str = tempfile.mkstemp(
+                suffix=".service",
+                prefix="crazyones_",
+                dir="/tmp",
             )
+            tmp_service_path = Path(tmp_service_path_str)
+            
+            try:
+                # Write to the file descriptor with secure permissions
+                with os.fdopen(tmp_fd, "w", encoding="utf-8") as f:
+                    f.write(service_content)
 
-            if result.returncode != 0:
-                print(f"✗ Error copying service file: {result.stderr}")
-                return False
+                # Copy service file with sudo
+                result = subprocess.run(
+                    ["sudo", "cp", str(tmp_service_path), str(service_path)],
+                    capture_output=True,
+                    text=True,
+                    timeout=60,  # 60 second timeout for sudo password prompt
+                )
 
-            # Set proper permissions
-            subprocess.run(
-                ["sudo", "chmod", "644", str(service_path)],
-                capture_output=True,
-                text=True,
-            )
+                if result.returncode != 0:
+                    print(f"✗ Error copying service file: {result.stderr}")
+                    return False
+
+                # Set proper permissions
+                result = subprocess.run(
+                    ["sudo", "chmod", "644", str(service_path)],
+                    capture_output=True,
+                    text=True,
+                    timeout=30,
+                )
+                
+                if result.returncode != 0:
+                    print(f"✗ Error setting permissions: {result.stderr}")
+                    return False
+                    
+            finally:
+                # Clean up temporary file
+                try:
+                    tmp_service_path.unlink()
+                except Exception:
+                    pass
 
         else:
             # Running as root, write directly
@@ -559,7 +583,11 @@ def install_systemd_service() -> bool:
         # Reload systemd daemon
         print("Reloading systemd daemon...")
         cmd = ["sudo", "systemctl", "daemon-reload"] if os.geteuid() != 0 else ["systemctl", "daemon-reload"]
-        result = subprocess.run(cmd, capture_output=True, text=True)
+        try:
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+        except subprocess.TimeoutExpired:
+            print("✗ Error: systemctl daemon-reload timed out")
+            return False
 
         if result.returncode != 0:
             print(f"✗ Error reloading systemd: {result.stderr}")
@@ -570,7 +598,11 @@ def install_systemd_service() -> bool:
         # Enable service
         print("Enabling service to start on boot...")
         cmd = ["sudo", "systemctl", "enable", service_name] if os.geteuid() != 0 else ["systemctl", "enable", service_name]
-        result = subprocess.run(cmd, capture_output=True, text=True)
+        try:
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+        except subprocess.TimeoutExpired:
+            print("✗ Error: systemctl enable timed out")
+            return False
 
         if result.returncode != 0:
             print(f"✗ Error enabling service: {result.stderr}")
@@ -581,7 +613,11 @@ def install_systemd_service() -> bool:
         # Start service
         print("Starting service...")
         cmd = ["sudo", "systemctl", "start", service_name] if os.geteuid() != 0 else ["systemctl", "start", service_name]
-        result = subprocess.run(cmd, capture_output=True, text=True)
+        try:
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+        except subprocess.TimeoutExpired:
+            print("✗ Error: systemctl start timed out")
+            return False
 
         if result.returncode != 0:
             print(f"✗ Error starting service: {result.stderr}")
@@ -603,6 +639,9 @@ def install_systemd_service() -> bool:
 
         return True
 
+    except subprocess.TimeoutExpired as e:
+        print(f"\n✗ Error: Command timed out: {e}")
+        return False
     except Exception as e:
         print(f"\n✗ Error installing systemd service: {e}")
         return False
@@ -948,7 +987,9 @@ def main() -> None:
         sys.exit(0)
 
     # Handle --config or no arguments (configuration routine)
-    if args.config or (not args.token and len(sys.argv) == 1):
+    # Check if user wants config wizard: explicit --config flag, or no token/daemon/interval/bot
+    no_exec_args = not any([args.token, args.daemon, args.interval, args.bot])
+    if args.config or no_exec_args:
         success = run_configuration_routine()
         sys.exit(0 if success else 1)
 
