@@ -60,14 +60,40 @@ All configuration (token, URL) is automatically saved to `config.json` for persi
 
 ### Installation
 
-#### 1. Clone the Repository
+#### Quick Setup (Automated)
+
+The easiest way to set up CrazyOnes is using the automated setup script:
+
+```bash
+# Clone the repository
+git clone https://github.com/Geek-MD/CrazyOnes.git
+cd CrazyOnes
+
+# Run the setup script
+bash setup.sh
+```
+
+The setup script will:
+1. Check if Python 3.10+ is installed
+2. Verify pip is available
+3. Let you choose between system-wide or virtual environment installation
+4. Install all required dependencies from `requirements.txt`
+5. Optionally run the configuration wizard
+
+#### Manual Setup
+
+If you prefer to install dependencies manually:
+
+**Step 1: Clone the Repository**
 
 ```bash
 git clone https://github.com/Geek-MD/CrazyOnes.git
 cd CrazyOnes
 ```
 
-#### 2. Install Python Dependencies
+**Step 2: Install Python Dependencies**
+
+Choose one of the following methods:
 
 **Option A: Using pip (recommended for most users)**
 
@@ -91,7 +117,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-**Option C: Using system package manager (Debian/Ubuntu/Raspberry Pi OS)**
+**Option C: On Debian/Ubuntu/Raspberry Pi OS**
 
 ```bash
 # Install Python and pip if not already installed
@@ -102,7 +128,7 @@ sudo apt install python3 python3-pip
 pip install -r requirements.txt
 ```
 
-**Option D: Using system package manager (Fedora/RHEL/CentOS)**
+**Option D: On Fedora/RHEL/CentOS**
 
 ```bash
 # Install Python and pip if not already installed
@@ -112,7 +138,7 @@ sudo dnf install python3 python3-pip
 pip install -r requirements.txt
 ```
 
-#### 3. Run the Configuration Wizard
+**Step 3: Run the Configuration Wizard**
 
 The easiest way to set up CrazyOnes is using the configuration wizard:
 
@@ -134,7 +160,7 @@ The wizard will:
 
 **Note**: The systemd service installation requires sudo privileges and is only available on Linux systems with systemd (like most modern Linux distributions and Raspberry Pi OS).
 
-#### 4. Verify Installation
+**Step 4: Verify Installation**
 
 Check if everything is working:
 
@@ -151,6 +177,7 @@ python crazyones.py --help
 ```
 CrazyOnes/
 ├── crazyones.py        # Main coordinator script (entry point)
+├── setup.sh            # Automated setup script for dependencies
 ├── config.json         # Configuration file with bot token and Apple Updates URL
 ├── requirements.txt    # Python dependencies
 ├── pyproject.toml      # Project metadata and tool configuration
