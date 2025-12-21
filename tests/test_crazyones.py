@@ -64,7 +64,7 @@ def test_parse_arguments_no_args():
         # Simulate no arguments (should succeed now, as config wizard will run)
         sys.argv = ["crazyones.py"]
         args = parse_arguments()
-        
+
         # With no arguments, token should be None and config should be False
         assert args.token is None, "Token should be None when no arguments provided"
         assert args.config is False, "Config should be False when no arguments provided"
@@ -344,10 +344,14 @@ def test_generate_systemd_service_content():
     assert "[Unit]" in content, "Service file should have [Unit] section"
     assert "[Service]" in content, "Service file should have [Service] section"
     assert "[Install]" in content, "Service file should have [Install] section"
-    
+
     # Check specific content
     assert "Description=CrazyOnes" in content
-    assert "ExecStart=/usr/bin/python3 /home/user/crazyones.py --daemon --interval 43200" in content
+    expected_exec = (
+        "ExecStart=/usr/bin/python3 /home/user/crazyones.py "
+        "--daemon --interval 43200"
+    )
+    assert expected_exec in content
     assert "User=testuser" in content
     assert "WorkingDirectory=/home/user" in content
     assert "Restart=always" in content

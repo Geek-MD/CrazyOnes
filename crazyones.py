@@ -529,10 +529,10 @@ def install_systemd_service() -> bool:
 
             # Create a temporary file with secure permissions
             # (0o600 = owner read/write only)
+            # Use system's secure temporary directory
             tmp_fd, tmp_service_path_str = tempfile.mkstemp(
                 suffix=".service",
                 prefix="crazyones_",
-                dir="/tmp",
             )
             tmp_service_path = Path(tmp_service_path_str)
 
@@ -1018,9 +1018,11 @@ def main() -> None:
 
     # Handle --config or no arguments (configuration routine)
     # Check if user wants config wizard: explicit --config flag,
-    # or no token/daemon/interval/bot
-    no_exec_args = not any([args.token, args.daemon, args.interval, args.bot])
-    if args.config or no_exec_args:
+    # or no execution flags provided
+    should_run_config = not any(
+        [args.token, args.daemon, args.interval, args.bot]
+    )
+    if args.config or should_run_config:
         success = run_configuration_routine()
         sys.exit(0 if success else 1)
 
