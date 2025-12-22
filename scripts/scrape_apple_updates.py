@@ -14,8 +14,14 @@ from urllib.parse import urljoin
 import requests
 from bs4 import BeautifulSoup
 
-from .generate_language_names import update_language_names
-from .utils import get_user_agent_headers
+try:
+    # Try relative import (when used as a module)
+    from .generate_language_names import update_language_names
+    from .utils import get_user_agent_headers
+except ImportError:
+    # Fall back to absolute import (when run directly)
+    from generate_language_names import update_language_names
+    from utils import get_user_agent_headers
 
 
 def fetch_apple_updates_page(url: str) -> str:

@@ -17,7 +17,12 @@ from urllib.parse import urljoin
 import requests
 from bs4 import BeautifulSoup, Tag
 
-from .utils import get_user_agent_headers
+try:
+    # Try relative import (when used as a module)
+    from .utils import get_user_agent_headers
+except ImportError:
+    # Fall back to absolute import (when run directly)
+    from utils import get_user_agent_headers
 
 
 def load_language_urls(file_path: str = "data/language_urls.json") -> dict[str, str]:

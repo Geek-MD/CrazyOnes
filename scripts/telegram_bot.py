@@ -20,7 +20,12 @@ from telegram.ext import (
     ContextTypes,
 )
 
-from .generate_language_names import LANGUAGE_NAME_MAP
+try:
+    # Try relative import (when used as a module)
+    from .generate_language_names import LANGUAGE_NAME_MAP
+except ImportError:
+    # Fall back to absolute import (when run directly)
+    from generate_language_names import LANGUAGE_NAME_MAP
 
 # Subscriptions file path
 SUBSCRIPTIONS_FILE = "data/subscriptions.json"
