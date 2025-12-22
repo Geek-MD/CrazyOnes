@@ -79,6 +79,7 @@ def parse_date_to_iso(date_str: str) -> str:
         "juin": 6,
         "juillet": 7, "juil": 7,
         "août": 8, "aout": 8,
+        "septembre": 9,
         "octobre": 10,
         "novembre": 11,
         "décembre": 12, "decembre": 12, "déc": 12,
@@ -174,7 +175,7 @@ def parse_date_to_iso(date_str: str) -> str:
                 month = month_mappings[part_clean]
 
     # If we successfully extracted all parts, format as ISO date
-    if day and month and year:
+    if day is not None and month is not None and year is not None:
         try:
             # Validate the date
             datetime(year, month, day)
