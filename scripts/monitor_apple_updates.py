@@ -21,10 +21,14 @@ try:
     # Try relative import (when used as a module)
     from .utils import (  # type: ignore[import-not-found,no-redef]
         get_user_agent_headers,
+        parse_date_to_iso,
     )
 except ImportError:
     # Fall back to absolute import (when run directly)
-    from utils import get_user_agent_headers  # type: ignore[import-not-found,no-redef]
+    from utils import (  # type: ignore[import-not-found,no-redef]
+        get_user_agent_headers,
+        parse_date_to_iso,
+    )
 
 
 def get_project_root() -> Path:
@@ -154,7 +158,8 @@ def extract_security_updates_table(
         base_url: Base URL for resolving relative links
 
     Returns:
-        List of dictionaries with 'name', 'url', 'target', and 'date' keys
+        List of dictionaries with 'id', 'name', 'url', 'target', and 'date' keys.
+        Date is in ISO 8601 format (YYYY-MM-DD) and each entry has an ascending id.
     """
     soup = BeautifulSoup(html_content, "lxml")
     updates: list[dict[str, Any]] = []
@@ -207,6 +212,9 @@ def extract_security_updates_table(
     # Get all rows, skip the header row (first row with th elements)
     rows = table.find_all("tr")  # type: ignore[union-attr]
 
+    # Track the current ID (ascending from 1)
+    current_id = 1
+
     for row in rows:
         # Skip header rows (rows with th elements)
         if row.find("th"):
@@ -231,19 +239,22 @@ def extract_security_updates_table(
         # Column 1: Target
         target = cols[1].get_text(strip=True)
 
-        # Column 2: Date
-        date = cols[2].get_text(strip=True)
+        # Column 2: Date - parse to ISO format
+        date_str = cols[2].get_text(strip=True)
+        date_iso = parse_date_to_iso(date_str)
 
         if name:  # Only add if we have at least a name
             update_entry: dict[str, Any] = {
+                "id": current_id,
                 "name": name,
                 "target": target,
-                "date": date,
+                "date": date_iso,
             }
             if url:
                 update_entry["url"] = url
 
             updates.append(update_entry)
+            current_id += 1
 
     return updates
 
