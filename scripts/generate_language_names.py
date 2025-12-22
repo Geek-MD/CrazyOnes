@@ -80,10 +80,10 @@ LANGUAGE_NAME_MAP = {
 def get_project_root() -> Path:
     """
     Get the project root directory.
-    
+
     Returns the parent directory of the scripts directory, which should be
     the project root. This allows scripts to be run from any directory.
-    
+
     Returns:
         Path object pointing to the project root
     """
@@ -199,8 +199,10 @@ def update_language_names(
     language_names.json.
 
     Args:
-        language_urls_file: Path to the language URLs JSON file (relative to project root)
-        language_names_file: Path to the language names JSON file (relative to project root)
+        language_urls_file: Path to the language URLs JSON file
+            (relative to project root)
+        language_names_file: Path to the language names JSON file
+            (relative to project root)
     """
     # Load language URLs
     language_urls = load_language_urls(language_urls_file)

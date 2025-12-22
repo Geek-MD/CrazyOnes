@@ -16,21 +16,27 @@ from bs4 import BeautifulSoup
 
 try:
     # Try relative import (when used as a module)
-    from .generate_language_names import update_language_names
-    from .utils import get_user_agent_headers
+    from .generate_language_names import (  # type: ignore[import-not-found,no-redef]  # noqa: E501
+        update_language_names,
+    )
+    from .utils import (  # type: ignore[import-not-found,no-redef]
+        get_user_agent_headers,
+    )
 except ImportError:
     # Fall back to absolute import (when run directly)
-    from generate_language_names import update_language_names
-    from utils import get_user_agent_headers
+    from generate_language_names import (  # type: ignore[import-not-found,no-redef]  # noqa: E501
+        update_language_names,
+    )
+    from utils import get_user_agent_headers  # type: ignore[import-not-found,no-redef]
 
 
 def get_project_root() -> Path:
     """
     Get the project root directory.
-    
+
     Returns the parent directory of the scripts directory, which should be
     the project root. This allows scripts to be run from any directory.
-    
+
     Returns:
         Path object pointing to the project root
     """
@@ -94,12 +100,12 @@ def save_language_urls_to_json(
 ) -> None:
     """
     Save language URLs to a JSON file, merging with existing data.
-    
+
     This function intelligently merges the new URLs with existing ones:
     - Adds new language URLs that weren't present before
     - Updates URLs for languages that changed
     - Removes language URLs that are no longer present
-    
+
     Args:
         language_urls: Dictionary mapping language codes to URLs
         output_file: Path to the output JSON file (relative to project root)
@@ -114,8 +120,11 @@ def save_language_urls_to_json(
         try:
             with open(output_path, encoding="utf-8") as f:
                 existing_urls = json.load(f)
-        except (json.JSONDecodeError, IOError):
-            print(f"Warning: Could not read existing {output_file}, will create new file")
+        except (OSError, json.JSONDecodeError):
+            print(
+                f"Warning: Could not read existing {output_file}, "
+                "will create new file"
+            )
             existing_urls = {}
 
     # Detect changes
@@ -139,24 +148,24 @@ def save_language_urls_to_json(
     else:
         print(f"Language URLs updated in {output_file}")
         print(f"Total languages: {len(language_urls)}")
-        
+
         if added_langs:
             print(f"\n✓ Added {len(added_langs)} new language(s):")
             for lang in sorted(added_langs):
                 print(f"  + {lang}: {language_urls[lang]}")
-        
+
         if removed_langs:
             print(f"\n✗ Removed {len(removed_langs)} language(s):")
             for lang in sorted(removed_langs):
                 print(f"  - {lang}: {existing_urls[lang]}")
-        
+
         if updated_langs:
             print(f"\n↻ Updated {len(updated_langs)} language URL(s):")
             for lang in sorted(updated_langs):
                 print(f"  ↻ {lang}:")
                 print(f"    Old: {existing_urls[lang]}")
                 print(f"    New: {language_urls[lang]}")
-        
+
         if not added_langs and not removed_langs and not updated_langs:
             print("\n✓ No changes detected in language URLs")
         else:

@@ -19,19 +19,21 @@ from bs4 import BeautifulSoup, Tag
 
 try:
     # Try relative import (when used as a module)
-    from .utils import get_user_agent_headers
+    from .utils import (  # type: ignore[import-not-found,no-redef]
+        get_user_agent_headers,
+    )
 except ImportError:
     # Fall back to absolute import (when run directly)
-    from utils import get_user_agent_headers
+    from utils import get_user_agent_headers  # type: ignore[import-not-found,no-redef]
 
 
 def get_project_root() -> Path:
     """
     Get the project root directory.
-    
+
     Returns the parent directory of the scripts directory, which should be
     the project root. This allows scripts to be run from any directory.
-    
+
     Returns:
         Path object pointing to the project root
     """
@@ -60,7 +62,8 @@ def load_language_urls(file_path: str = "data/language_urls.json") -> dict[str, 
         raise FileNotFoundError(f"Language URLs file not found: {file_path}")
 
     with open(path, encoding="utf-8") as f:
-        return json.load(f)
+        data: dict[str, str] = json.load(f)
+        return data
 
 
 def load_tracking_data(
@@ -81,7 +84,8 @@ def load_tracking_data(
         return {}
 
     with open(path, encoding="utf-8") as f:
-        return json.load(f)
+        data: dict[str, dict[str, str]] = json.load(f)
+        return data
 
 
 def save_tracking_data(
@@ -158,14 +162,15 @@ def extract_security_updates_table(
     # Strategy 1: Find div with class "table-wrapper gb-table" and get the table inside
     table_wrapper = soup.find("div", class_="table-wrapper gb-table")
     table = None
-    
+
     if table_wrapper:
         table = table_wrapper.find("table")
-    
-    # Strategy 2 (fallback): If no table-wrapper found, try finding table with specific classes
+
+    # Strategy 2 (fallback): If no table-wrapper found, try finding
+    # table with specific classes
     if not table:
         table = soup.find("table", class_="gb-table")
-    
+
     # Strategy 3 (fallback): Look for h2 with class gb-header and get next table
     if not table:
         h2_elements = soup.find_all("h2", class_="gb-header")
@@ -173,10 +178,19 @@ def extract_security_updates_table(
 
         for h2 in h2_elements:
             h2_text = h2.get_text().lower()
-            # Check for security/actualiz/mise/aggiorn/sicherheit keywords in various languages
-            if "security" in h2_text or "actualiz" in h2_text or "mise" in h2_text or \
-               "aggiorn" in h2_text or "sicherheit" in h2_text or "セキュリティ" in h2_text or \
-               "güvenlik" in h2_text or "безопасн" in h2_text or "安全" in h2_text:
+            # Check for security/actualiz/mise/aggiorn/sicherheit keywords
+            # in various languages
+            if (
+                "security" in h2_text
+                or "actualiz" in h2_text
+                or "mise" in h2_text
+                or "aggiorn" in h2_text
+                or "sicherheit" in h2_text
+                or "セキュリティ" in h2_text
+                or "güvenlik" in h2_text
+                or "безопасн" in h2_text
+                or "安全" in h2_text
+            ):
                 target_h2 = h2
                 break
 
@@ -191,7 +205,7 @@ def extract_security_updates_table(
         return updates
 
     # Get all rows, skip the header row (first row with th elements)
-    rows = table.find_all("tr")
+    rows = table.find_all("tr")  # type: ignore[union-attr]
 
     for row in rows:
         # Skip header rows (rows with th elements)
