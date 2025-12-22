@@ -19,10 +19,28 @@ from bs4 import BeautifulSoup, Tag
 
 try:
     # Try relative import (when used as a module)
-    from .utils import get_user_agent_headers
+    from .utils import (  # type: ignore[import-not-found,no-redef]
+        get_user_agent_headers,
+    )
 except ImportError:
     # Fall back to absolute import (when run directly)
-    from utils import get_user_agent_headers
+    from utils import get_user_agent_headers  # type: ignore[import-not-found,no-redef]
+
+
+def get_project_root() -> Path:
+    """
+    Get the project root directory.
+
+    Returns the parent directory of the scripts directory, which should be
+    the project root. This allows scripts to be run from any directory.
+
+    Returns:
+        Path object pointing to the project root
+    """
+    # Get the directory where this script is located
+    scripts_dir = Path(__file__).resolve().parent
+    # Go up one level to get the project root
+    return scripts_dir.parent
 
 
 def load_language_urls(file_path: str = "data/language_urls.json") -> dict[str, str]:
@@ -30,7 +48,7 @@ def load_language_urls(file_path: str = "data/language_urls.json") -> dict[str, 
     Load language URLs from JSON file.
 
     Args:
-        file_path: Path to the language URLs JSON file
+        file_path: Path to the language URLs JSON file (relative to project root)
 
     Returns:
         Dictionary mapping language codes to URLs
@@ -38,12 +56,14 @@ def load_language_urls(file_path: str = "data/language_urls.json") -> dict[str, 
     Raises:
         FileNotFoundError: If the language URLs file doesn't exist
     """
-    path = Path(file_path)
+    # Resolve path relative to project root
+    path = get_project_root() / file_path
     if not path.exists():
         raise FileNotFoundError(f"Language URLs file not found: {file_path}")
 
     with open(path, encoding="utf-8") as f:
-        return json.load(f)
+        data: dict[str, str] = json.load(f)
+        return data
 
 
 def load_tracking_data(
@@ -53,17 +73,19 @@ def load_tracking_data(
     Load tracking data for language URLs and their content hashes.
 
     Args:
-        tracking_file: Path to the tracking JSON file
+        tracking_file: Path to the tracking JSON file (relative to project root)
 
     Returns:
         Dictionary with language codes as keys and tracking info (url, hash) as values
     """
-    path = Path(tracking_file)
+    # Resolve path relative to project root
+    path = get_project_root() / tracking_file
     if not path.exists():
         return {}
 
     with open(path, encoding="utf-8") as f:
-        return json.load(f)
+        data: dict[str, dict[str, str]] = json.load(f)
+        return data
 
 
 def save_tracking_data(
@@ -75,9 +97,11 @@ def save_tracking_data(
 
     Args:
         tracking_data: Dictionary with language codes and tracking info
-        tracking_file: Path to the tracking JSON file
+        tracking_file: Path to the tracking JSON file (relative to project root)
     """
-    with open(tracking_file, "w", encoding="utf-8") as f:
+    # Resolve path relative to project root
+    path = get_project_root() / tracking_file
+    with open(path, "w", encoding="utf-8") as f:
         json.dump(tracking_data, f, indent=2, ensure_ascii=False)
 
 
@@ -121,8 +145,9 @@ def extract_security_updates_table(
     """
     Extract security updates table from HTML content.
 
-    Looks for the table under <h2 class="gb-header">Apple security updates</h2>
-    and extracts three columns: name (with URL if available), target, and date.
+    Looks for the security updates table by finding a div with class
+    "table-wrapper gb-table" which contains the updates table.
+    This is a language-agnostic approach that works for all language versions.
 
     Args:
         html_content: HTML content to parse
@@ -134,29 +159,53 @@ def extract_security_updates_table(
     soup = BeautifulSoup(html_content, "lxml")
     updates: list[dict[str, Any]] = []
 
-    # Find the h2 with class gb-header containing "Apple security updates"
-    h2_elements = soup.find_all("h2", class_="gb-header")
-    target_h2: Tag | None = None
+    # Strategy 1: Find div with class "table-wrapper gb-table" and get the table inside
+    table_wrapper = soup.find("div", class_="table-wrapper gb-table")
+    table = None
 
-    for h2 in h2_elements:
-        if "Apple security updates" in h2.get_text():
-            target_h2 = h2
-            break
+    if table_wrapper:
+        table = table_wrapper.find("table")
 
-    if not target_h2:
-        # Try alternative patterns - sometimes it might be different
-        target_h2 = soup.find("h2", string=lambda s: s and "security" in s.lower())
+    # Strategy 2 (fallback): If no table-wrapper found, try finding
+    # table with specific classes
+    if not table:
+        table = soup.find("table", class_="gb-table")
 
-    if not target_h2:
-        return updates
+    # Strategy 3 (fallback): Look for h2 with class gb-header and get next table
+    if not table:
+        h2_elements = soup.find_all("h2", class_="gb-header")
+        target_h2: Tag | None = None
 
-    # Find the next table after this h2
-    table = target_h2.find_next("table")
+        for h2 in h2_elements:
+            h2_text = h2.get_text().lower()
+            # Check for security/actualiz/mise/aggiorn/sicherheit keywords
+            # in various languages
+            if (
+                "security" in h2_text
+                or "actualiz" in h2_text
+                or "mise" in h2_text
+                or "aggiorn" in h2_text
+                or "sicherheit" in h2_text
+                or "セキュリティ" in h2_text
+                or "güvenlik" in h2_text
+                or "безопасн" in h2_text
+                or "安全" in h2_text
+            ):
+                target_h2 = h2
+                break
+
+        # If no header found, look for any h2 with class gb-header
+        if not target_h2 and h2_elements:
+            target_h2 = h2_elements[0]
+
+        if target_h2:
+            table = target_h2.find_next("table")
+
     if not table:
         return updates
 
     # Get all rows, skip the header row (first row with th elements)
-    rows = table.find_all("tr")
+    rows = table.find_all("tr")  # type: ignore[union-attr]
 
     for row in rows:
         # Skip header rows (rows with th elements)
@@ -208,10 +257,11 @@ def save_updates_to_json(
     Args:
         updates: List of security update dictionaries
         language_code: Language code (e.g., 'en-us', 'es-es')
-        output_dir: Directory to save the JSON files
+        output_dir: Directory to save the JSON files (relative to project root)
     """
-    output_path = Path(output_dir)
-    output_path.mkdir(exist_ok=True)
+    # Resolve path relative to project root
+    output_path = get_project_root() / output_dir
+    output_path.mkdir(parents=True, exist_ok=True)
 
     output_file = output_path / f"{language_code}.json"
     with open(output_file, "w", encoding="utf-8") as f:
