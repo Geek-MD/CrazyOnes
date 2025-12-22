@@ -338,7 +338,14 @@ The configuration persists across runs, so you only need to set it up once.
 
 ### Advanced: Individual Scripts (Development Only)
 
-**Note**: The following individual scripts are now integrated into the main workflow when using `crazyones.py` with or without `--daemon`. These commands are primarily for development and testing purposes.
+**Note**: The individual scripts are now integrated into the main workflow when using `crazyones.py` with or without `--daemon`. For detailed information on running scripts manually for debugging purposes, see [MANUAL_EXECUTION.md](MANUAL_EXECUTION.md).
+
+**Quick Summary of Execution Order:**
+1. **First**: `scrape_apple_updates.py` - Downloads language URLs from Apple
+2. **Second**: `monitor_apple_updates.py` - Scrapes security updates for each language
+3. **Optional**: `generate_language_names.py` - Auto-run by scrape script
+
+These commands are primarily for development and testing purposes.
 
 ### Testing
 
