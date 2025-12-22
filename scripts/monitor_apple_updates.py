@@ -141,9 +141,9 @@ def extract_security_updates_table(
     """
     Extract security updates table from HTML content.
 
-    Looks for the security updates table using language-agnostic patterns.
-    The table typically appears after an h2 header with class "gb-header" or
-    has specific table structure characteristics.
+    Looks for the security updates table by finding a div with class
+    "table-wrapper gb-table" which contains the updates table.
+    This is a language-agnostic approach that works for all language versions.
 
     Args:
         html_content: HTML content to parse
@@ -155,30 +155,38 @@ def extract_security_updates_table(
     soup = BeautifulSoup(html_content, "lxml")
     updates: list[dict[str, Any]] = []
 
-    # Strategy 1: Find h2 with class gb-header containing "security" or "updates"
-    # in any language (case-insensitive)
-    h2_elements = soup.find_all("h2", class_="gb-header")
-    target_h2: Tag | None = None
+    # Strategy 1: Find div with class "table-wrapper gb-table" and get the table inside
+    table_wrapper = soup.find("div", class_="table-wrapper gb-table")
+    table = None
+    
+    if table_wrapper:
+        table = table_wrapper.find("table")
+    
+    # Strategy 2 (fallback): If no table-wrapper found, try finding table with specific classes
+    if not table:
+        table = soup.find("table", class_="gb-table")
+    
+    # Strategy 3 (fallback): Look for h2 with class gb-header and get next table
+    if not table:
+        h2_elements = soup.find_all("h2", class_="gb-header")
+        target_h2: Tag | None = None
 
-    for h2 in h2_elements:
-        h2_text = h2.get_text().lower()
-        # Check for security/actualiz/mise/aggiorn/sicherheit keywords in various languages
-        if "security" in h2_text or "actualiz" in h2_text or "mise" in h2_text or \
-           "aggiorn" in h2_text or "sicherheit" in h2_text or "セキュリティ" in h2_text or \
-           "güvenlik" in h2_text or "безопасн" in h2_text or "安全" in h2_text:
-            target_h2 = h2
-            break
+        for h2 in h2_elements:
+            h2_text = h2.get_text().lower()
+            # Check for security/actualiz/mise/aggiorn/sicherheit keywords in various languages
+            if "security" in h2_text or "actualiz" in h2_text or "mise" in h2_text or \
+               "aggiorn" in h2_text or "sicherheit" in h2_text or "セキュリティ" in h2_text or \
+               "güvenlik" in h2_text or "безопасн" in h2_text or "安全" in h2_text:
+                target_h2 = h2
+                break
 
-    # Strategy 2: If no header found, look for any h2 with class gb-header
-    # (Apple Updates pages typically have the security updates table after the first gb-header)
-    if not target_h2 and h2_elements:
-        target_h2 = h2_elements[0]
+        # If no header found, look for any h2 with class gb-header
+        if not target_h2 and h2_elements:
+            target_h2 = h2_elements[0]
 
-    if not target_h2:
-        return updates
+        if target_h2:
+            table = target_h2.find_next("table")
 
-    # Find the next table after this h2
-    table = target_h2.find_next("table")
     if not table:
         return updates
 
