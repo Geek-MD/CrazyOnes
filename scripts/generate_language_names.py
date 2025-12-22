@@ -77,12 +77,28 @@ LANGUAGE_NAME_MAP = {
 }
 
 
+def get_project_root() -> Path:
+    """
+    Get the project root directory.
+    
+    Returns the parent directory of the scripts directory, which should be
+    the project root. This allows scripts to be run from any directory.
+    
+    Returns:
+        Path object pointing to the project root
+    """
+    # Get the directory where this script is located
+    scripts_dir = Path(__file__).resolve().parent
+    # Go up one level to get the project root
+    return scripts_dir.parent
+
+
 def load_language_urls(file_path: str = "data/language_urls.json") -> dict[str, str]:
     """
     Load language URLs from JSON file.
 
     Args:
-        file_path: Path to the language URLs JSON file
+        file_path: Path to the language URLs JSON file (relative to project root)
 
     Returns:
         Dictionary mapping language codes to URLs
@@ -90,7 +106,8 @@ def load_language_urls(file_path: str = "data/language_urls.json") -> dict[str, 
     Raises:
         FileNotFoundError: If the language URLs file doesn't exist
     """
-    path = Path(file_path)
+    # Resolve path relative to project root
+    path = get_project_root() / file_path
     if not path.exists():
         raise FileNotFoundError(f"Language URLs file not found: {file_path}")
 
@@ -157,13 +174,13 @@ def save_language_names(
 
     Args:
         language_names: Dictionary mapping language codes to names
-        output_file: Path to the output JSON file
+        output_file: Path to the output JSON file (relative to project root)
     """
-    # Create directory if it doesn't exist
-    output_path = Path(output_file)
+    # Resolve path relative to project root
+    output_path = get_project_root() / output_file
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    with open(output_file, "w", encoding="utf-8") as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         json.dump(language_names, f, indent=2, ensure_ascii=False)
 
     print(f"Language names saved to {output_file}")
@@ -182,14 +199,14 @@ def update_language_names(
     language_names.json.
 
     Args:
-        language_urls_file: Path to the language URLs JSON file
-        language_names_file: Path to the language names JSON file
+        language_urls_file: Path to the language URLs JSON file (relative to project root)
+        language_names_file: Path to the language names JSON file (relative to project root)
     """
     # Load language URLs
     language_urls = load_language_urls(language_urls_file)
 
     # Load existing language names if file exists
-    language_names_path = Path(language_names_file)
+    language_names_path = get_project_root() / language_names_file
     if language_names_path.exists():
         with open(language_names_path, encoding="utf-8") as f:
             existing_names = json.load(f)

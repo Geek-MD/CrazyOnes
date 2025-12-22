@@ -24,6 +24,22 @@ except ImportError:
     from utils import get_user_agent_headers
 
 
+def get_project_root() -> Path:
+    """
+    Get the project root directory.
+    
+    Returns the parent directory of the scripts directory, which should be
+    the project root. This allows scripts to be run from any directory.
+    
+    Returns:
+        Path object pointing to the project root
+    """
+    # Get the directory where this script is located
+    scripts_dir = Path(__file__).resolve().parent
+    # Go up one level to get the project root
+    return scripts_dir.parent
+
+
 def fetch_apple_updates_page(url: str) -> str:
     """
     Fetch the Apple Updates page with proper User-Agent to avoid blocking.
@@ -86,17 +102,17 @@ def save_language_urls_to_json(
     
     Args:
         language_urls: Dictionary mapping language codes to URLs
-        output_file: Path to the output JSON file
+        output_file: Path to the output JSON file (relative to project root)
     """
-    # Create directory if it doesn't exist
-    output_path = Path(output_file)
+    # Resolve path relative to project root
+    output_path = get_project_root() / output_file
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Load existing data if file exists
     existing_urls: dict[str, str] = {}
     if output_path.exists():
         try:
-            with open(output_file, encoding="utf-8") as f:
+            with open(output_path, encoding="utf-8") as f:
                 existing_urls = json.load(f)
         except (json.JSONDecodeError, IOError):
             print(f"Warning: Could not read existing {output_file}, will create new file")
@@ -111,7 +127,7 @@ def save_language_urls_to_json(
     }
 
     # Write the new data
-    with open(output_file, "w", encoding="utf-8") as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         json.dump(language_urls, f, indent=2, ensure_ascii=False)
 
     # Report changes
