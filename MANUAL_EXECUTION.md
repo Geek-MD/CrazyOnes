@@ -183,7 +183,7 @@ ImportError: attempted relative import with no known parent package
 requests.exceptions.ConnectionError: Failed to establish a new connection
 ```
 
-**Solución**: Verifica tu conexión a internet. Los scripts necesitan acceso a `support.apple.com`.
+**Solución**: Verifica la conexión a internet. Los scripts necesitan acceso a `support.apple.com`.
 
 ## Modo de Ejecución Normal (Recomendado)
 
@@ -208,7 +208,7 @@ Si estás desarrollando o depurando:
 
 1. **Primera vez**: Ejecuta `scrape_apple_updates.py` para obtener las URLs
 2. **Después**: Ejecuta `monitor_apple_updates.py` para obtener las actualizaciones
-3. **Para probar cambios**: Ejecuta el script específico que modificaste
+3. **Para probar cambios**: Ejecuta el script específico que modifiques
 4. **Para probar el flujo completo**: Usa `python3 crazyones.py`
 
 ## Verificar que los Scripts Funcionan
