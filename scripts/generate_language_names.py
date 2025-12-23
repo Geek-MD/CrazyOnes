@@ -12,16 +12,42 @@ import sys
 from pathlib import Path
 
 # Mapping of language-country codes to human-readable names
+# Based on ISO 639-1 (language) and ISO 3166-1 alpha-2 (country) codes
 LANGUAGE_NAME_MAP = {
+    # Arabic variants
     "ar-ae": "Arabic/UAE",
     "ar-bh": "Arabic/Bahrain",
+    "ar-dz": "Arabic/Algeria",
     "ar-eg": "Arabic/Egypt",
+    "ar-iq": "Arabic/Iraq",
     "ar-jo": "Arabic/Jordan",
     "ar-kw": "Arabic/Kuwait",
+    "ar-lb": "Arabic/Lebanon",
+    "ar-ly": "Arabic/Libya",
+    "ar-ma": "Arabic/Morocco",
+    "ar-om": "Arabic/Oman",
     "ar-qa": "Arabic/Qatar",
     "ar-sa": "Arabic/Saudi Arabia",
+    "ar-sy": "Arabic/Syria",
+    "ar-tn": "Arabic/Tunisia",
+    "ar-ye": "Arabic/Yemen",
+    # Bulgarian
+    "bg-bg": "Bulgarian/Bulgaria",
+    # Catalan
+    "ca-es": "Catalan/Spain",
+    # Czech
+    "cs-cz": "Czech/Czech Republic",
+    # Welsh
+    "cy-gb": "Welsh/UK",
+    # Danish
+    "da-dk": "Danish/Denmark",
+    # German variants
+    "de-at": "German/Austria",
+    "de-ch": "German/Switzerland",
     "de-de": "German/Germany",
+    # Greek
     "el-gr": "Greek/Greece",
+    # English variants
     "en-ae": "English/UAE",
     "en-al": "English/Albania",
     "en-am": "English/Armenia",
@@ -32,48 +58,124 @@ LANGUAGE_NAME_MAP = {
     "en-ca": "English/Canada",
     "en-gb": "English/UK",
     "en-hk": "English/Hong Kong",
+    "en-ie": "English/Ireland",
     "en-il": "English/Israel",
+    "en-in": "English/India",
     "en-is": "English/Iceland",
     "en-jo": "English/Jordan",
+    "en-my": "English/Malaysia",
+    "en-nz": "English/New Zealand",
+    "en-ph": "English/Philippines",
     "en-sa": "English/Saudi Arabia",
+    "en-sg": "English/Singapore",
     "en-us": "English/USA",
+    "en-za": "English/South Africa",
+    # Spanish variants
+    "es-ar": "Spanish/Argentina",
+    "es-bo": "Spanish/Bolivia",
     "es-cl": "Spanish/Chile",
     "es-co": "Spanish/Colombia",
+    "es-cr": "Spanish/Costa Rica",
+    "es-do": "Spanish/Dominican Republic",
+    "es-ec": "Spanish/Ecuador",
     "es-es": "Spanish/Spain",
+    "es-gt": "Spanish/Guatemala",
+    "es-hn": "Spanish/Honduras",
     "es-mx": "Spanish/Mexico",
+    "es-ni": "Spanish/Nicaragua",
+    "es-pa": "Spanish/Panama",
+    "es-pe": "Spanish/Peru",
+    "es-py": "Spanish/Paraguay",
+    "es-sv": "Spanish/El Salvador",
     "es-us": "Spanish/USA",
+    "es-uy": "Spanish/Uruguay",
+    "es-ve": "Spanish/Venezuela",
+    # Estonian
+    "et-ee": "Estonian/Estonia",
+    # Basque
+    "eu-es": "Basque/Spain",
+    # Finnish
     "fi-fi": "Finnish/Finland",
+    # French variants
+    "fr-be": "French/Belgium",
     "fr-ca": "French/Canada",
+    "fr-ch": "French/Switzerland",
     "fr-fr": "French/France",
+    "fr-lu": "French/Luxembourg",
+    "fr-ma": "French/Morocco",
     "fr-sn": "French/Senegal",
+    # Irish
+    "ga-ie": "Irish/Ireland",
+    # Galician
+    "gl-es": "Galician/Spain",
+    # Hebrew
     "he-il": "Hebrew/Israel",
+    # Croatian
+    "hr-hr": "Croatian/Croatia",
+    # Hungarian
     "hu-hu": "Hungarian/Hungary",
+    # Indonesian
     "id-id": "Indonesian/Indonesia",
+    # Icelandic
+    "is-is": "Icelandic/Iceland",
+    # Italian variants
+    "it-ch": "Italian/Switzerland",
     "it-it": "Italian/Italy",
+    # Japanese
     "ja-jp": "Japanese/Japan",
+    # Korean
     "ko-kr": "Korean/South Korea",
-    "nl-nl": "Dutch/Netherlands",
+    # Lithuanian
+    "lt-lt": "Lithuanian/Lithuania",
+    # Latvian
+    "lv-lv": "Latvian/Latvia",
+    # Malay
+    "ms-my": "Malay/Malaysia",
+    # Maltese
+    "mt-mt": "Maltese/Malta",
+    # Norwegian variants
+    # Note: Norwegian has three codes:
+    # - nb-no: Norwegian Bokmål (most common written form, ~85% of population)
+    # - nn-no: Norwegian Nynorsk (alternative written form, ~15% of population)
+    # - no-no: Generic Norwegian (used by Apple, defaults to Bokmål)
+    "nb-no": "Norwegian Bokmål/Norway",
+    "nn-no": "Norwegian Nynorsk/Norway",
     "no-no": "Norwegian/Norway",
+    # Dutch
+    "nl-nl": "Dutch/Netherlands",
+    # Polish
     "pl-pl": "Polish/Poland",
+    # Portuguese variants
+    "pt-ao": "Portuguese/Angola",
     "pt-br": "Portuguese/Brazil",
+    "pt-mz": "Portuguese/Mozambique",
     "pt-pt": "Portuguese/Portugal",
+    # Romanian
     "ro-ro": "Romanian/Romania",
+    # Russian
     "ru-ru": "Russian/Russia",
+    # Slovak
+    "sk-sk": "Slovak/Slovakia",
+    # Slovenian
+    "sl-si": "Slovenian/Slovenia",
+    # Serbian
+    "sr-rs": "Serbian/Serbia",
+    # Swedish
+    "sv-se": "Swedish/Sweden",
+    # Thai
     "th-th": "Thai/Thailand",
+    # Turkish
     "tr-tr": "Turkish/Turkey",
+    # Ukrainian
+    "uk-ua": "Ukrainian/Ukraine",
+    # Vietnamese
+    "vi-vn": "Vietnamese/Vietnam",
+    # Chinese variants
     "zh-cn": "Chinese/China",
     "zh-hk": "Chinese/Hong Kong",
+    "zh-mo": "Chinese/Macau",
+    "zh-sg": "Chinese/Singapore",
     "zh-tw": "Chinese/Taiwan",
-    "sv-se": "Swedish/Sweden",
-    "da-dk": "Danish/Denmark",
-    "cs-cz": "Czech/Czech Republic",
-    "sk-sk": "Slovak/Slovakia",
-    "uk-ua": "Ukrainian/Ukraine",
-    "bg-bg": "Bulgarian/Bulgaria",
-    "hr-hr": "Croatian/Croatia",
-    "vi-vn": "Vietnamese/Vietnam",
-    "ms-my": "Malay/Malaysia",
-    "ca-es": "Catalan/Spain",
 }
 
 

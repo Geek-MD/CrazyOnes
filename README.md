@@ -7,11 +7,11 @@
 
 _Crazy Ones_ is a Python-based service designed to automate monitoring and notifications about Apple security updates.
 
-The system continuously monitors Apple's security updates page across all available languages, detecting new updates and tracking changes automatically. It runs as a daemon checking for updates twice daily (every 12 hours by default).
+The system continuously monitors Apple's security updates page across all available languages, detecting new updates and tracking changes automatically. It runs as a daemon checking for updates four times daily (every 6 hours by default).
 
 ## Key Features
 
-- 🔄 **Automatic monitoring** runs continuously in daemon mode (2x per day by default)
+- 🔄 **Automatic monitoring** runs continuously in daemon mode (4x per day by default)
 - 🌍 **Multi-language support** - monitors all language versions of Apple Updates
 - 🔍 **Smart change detection** - only processes new or changed information
 - 📊 **Integrated workflow**:
@@ -44,7 +44,7 @@ CrazyOnes operates in a continuous monitoring cycle:
    - Tracks processed URLs in `data/updates_tracking.json`
    - Logs all activity to `crazyones.log`
 5. **Continuous Operation** (Daemon Mode):
-   - Waits for configured interval (default: 12 hours)
+   - Waits for configured interval (default: 6 hours)
    - Repeats the cycle
    - Gracefully handles shutdown signals
 
@@ -247,14 +247,14 @@ sudo systemctl disable crazyones
 Run CrazyOnes in daemon mode for continuous monitoring:
 
 ```bash
-# Run as daemon with default 12-hour interval (2x per day)
+# Run as daemon with default 6-hour interval (4x per day)
 python crazyones.py --token YOUR_BOT_TOKEN --daemon
 
 # Run as daemon with Telegram bot enabled
 python crazyones.py --token YOUR_BOT_TOKEN --daemon --bot
 
-# Run as daemon with custom interval (e.g., every 6 hours)
-python crazyones.py --token YOUR_BOT_TOKEN --daemon --interval 21600
+# Run as daemon with custom interval (e.g., every 3 hours)
+python crazyones.py --token YOUR_BOT_TOKEN --daemon --interval 10800
 
 # Run as daemon with custom URL
 python crazyones.py --token YOUR_BOT_TOKEN --url https://support.apple.com/es-es/100100 --daemon
