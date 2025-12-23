@@ -9,6 +9,7 @@ in their preferred language. It tracks subscriptions and sends updates according
 import difflib
 import json
 import logging
+import re
 from pathlib import Path
 from typing import Any
 
@@ -47,6 +48,12 @@ SUPPORTED_GROUP_TYPES = {Chat.GROUP, Chat.SUPERGROUP, Chat.CHANNEL}
 
 # Apple OS name patterns for tag extraction
 APPLE_OS_PATTERNS = ["ios", "ipados", "macos", "watchos", "tvos", "visionos"]
+
+# Pre-compiled regex patterns for OS name extraction (for performance)
+APPLE_OS_REGEX_PATTERNS = {
+    pattern: re.compile(r'\b' + re.escape(pattern) + r'\b')
+    for pattern in APPLE_OS_PATTERNS
+}
 
 # Valid bot commands for fuzzy matching
 VALID_COMMANDS = ["start", "stop", "updates", "language", "about", "help"]
@@ -514,22 +521,21 @@ def extract_os_names_from_updates(updates: list[dict[str, Any]]) -> set[str]:
     Extracts OS names like "iOS", "macOS", "visionOS", "watchOS", "tvOS", "iPadOS"
     from update names like "iOS 17.2 and iPadOS 17.2", "macOS Sonoma 14.2", etc.
     
+    Uses pre-compiled regex patterns with word boundaries to avoid false positives.
+    
     Args:
         updates: List of update dictionaries
     
     Returns:
         Set of unique OS names (lowercase)
     """
-    import re
-    
     os_names: set[str] = set()
     
     for update in updates:
         name = update.get("name", "").lower()
-        # Extract OS names using word boundary matching to avoid false positives
-        for pattern in APPLE_OS_PATTERNS:
-            # Use word boundary regex to match exact OS names
-            if re.search(r'\b' + re.escape(pattern) + r'\b', name):
+        # Extract OS names using pre-compiled regex patterns with word boundaries
+        for pattern, regex in APPLE_OS_REGEX_PATTERNS.items():
+            if regex.search(name):
                 os_names.add(pattern)
     
     return os_names
@@ -832,6 +838,37 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         await send_recent_updates_simple(update, context, chat_id, language_code)
 
 
+def extract_command_from_message(message_text: str) -> str:
+    """
+    Extract command name from a Telegram message.
+    
+    Handles bot usernames and parameters properly.
+    Examples:
+        "/start" -> "start"
+        "/updates@botname" -> "updates"
+        "/language en-us" -> "language"
+    
+    Args:
+        message_text: The message text starting with /
+    
+    Returns:
+        The extracted command name (lowercase), or empty string if not a command
+    """
+    if not message_text or not message_text.startswith("/"):
+        return ""
+    
+    # Remove the leading slash
+    without_slash = message_text[1:]
+    
+    # Split by @ to remove bot username (e.g., "/start@botname" -> "start")
+    without_username = without_slash.split("@")[0]
+    
+    # Split by space to remove parameters (e.g., "/updates ios" -> "updates")
+    command = without_username.split()[0] if without_username else ""
+    
+    return command.lower()
+
+
 async def handle_unknown_command(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> None:
@@ -848,12 +885,9 @@ async def handle_unknown_command(
         return
     
     # Extract the command from the message
-    command_text = update.message.text.strip()
-    if not command_text.startswith("/"):
+    command = extract_command_from_message(update.message.text.strip())
+    if not command:
         return
-    
-    # Remove the leading slash and any bot username
-    command = command_text[1:].split("@")[0].split()[0].lower()
     
     # Try to find similar commands using the module-level constant
     similar_commands = difflib.get_close_matches(
