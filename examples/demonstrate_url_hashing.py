@@ -13,12 +13,13 @@ This optimization saves significant processing time by avoiding HTML parsing
 when content hasn't changed, while still detecting any updates to the page.
 """
 
-import hashlib
+import sys
+from pathlib import Path
 
+# Add parent directory to path to import from scripts
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-def compute_content_hash(content: str) -> str:
-    """Compute SHA256 hash of content."""
-    return hashlib.sha256(content.encode("utf-8")).hexdigest()
+from scripts.monitor_apple_updates import compute_content_hash
 
 
 def demonstrate_optimization():
