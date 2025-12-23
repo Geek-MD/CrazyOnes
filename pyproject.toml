@@ -1,6 +1,6 @@
 [project]
 name = "apple-updates-bot"
-version = "0.9.3"
+version = "0.10.0"
 description = "Telegram bot for Apple software updates notifications"
 requires-python = ">=3.10"
 

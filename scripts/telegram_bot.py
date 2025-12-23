@@ -11,13 +11,15 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram import Chat, Update
 from telegram.ext import (
     Application,
     CallbackQueryHandler,
     ChatMemberHandler,
     CommandHandler,
     ContextTypes,
+    MessageHandler,
+    filters,
 )
 
 try:
@@ -198,7 +200,7 @@ def load_updates_for_language(language_code: str) -> list[dict[str, Any]]:
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
     Handle /start command. Automatically show recent updates for es-cl.
-    
+
     This is a simplified proof-of-concept version that automatically
     displays the 10 most recent Apple Updates for Chile (es-cl) without
     requiring language selection.
@@ -211,21 +213,21 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         return
 
     chat_id = str(update.effective_chat.id)
-    
+
     # Fixed language for proof of concept
     language_code = "es-cl"
-    
+
     # Send welcome message
     welcome_message = (
         "🍎 *¡Bienvenido al Bot de Actualizaciones de Apple!*\n\n"
         "Aquí están las 10 actualizaciones más recientes de Apple para Chile:\n"
     )
-    
+
     await update.message.reply_text(
         welcome_message,
         parse_mode="Markdown"
     )
-    
+
     # Load and send updates for es-cl
     await send_recent_updates_simple(update, context, chat_id, language_code)
 
@@ -326,6 +328,33 @@ async def stop_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     logger.info(f"Subscription stopped for chat {chat_id}")
 
 
+async def send_about_message(
+    context: ContextTypes.DEFAULT_TYPE,
+    chat_id: int,
+) -> None:
+    """
+    Send the about message to a chat.
+
+    This is a helper function that can be used by different handlers.
+
+    Args:
+        context: Callback context
+        chat_id: Chat ID to send the message to
+    """
+    about_message = (
+        "*CrazyOnes* is a Telegram bot that keeps you updated on Apple's "
+        "operating system and software releases.\n\n"
+        "Type /help for information on how to interact with the bot.\n\n"
+        "Developed by [Geek-MD](https://github.com/Geek-MD/CrazyOnes)"
+    )
+
+    await context.bot.send_message(
+        chat_id=chat_id,
+        text=about_message,
+        parse_mode="Markdown"
+    )
+
+
 async def about_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
     Handle /about command. Display information about the bot.
@@ -337,13 +366,30 @@ async def about_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     if not update.effective_chat or not update.message:
         return
 
-    about_message = (
-        "*CrazyOnes* is a Telegram bot that keeps you updated on Apple's "
-        "operating system and software releases.\n\n"
-        "Developed by [Geek-MD](https://github.com/Geek-MD/CrazyOnes)"
-    )
+    await send_about_message(context, update.effective_chat.id)
 
-    await update.message.reply_text(about_message, parse_mode="Markdown")
+
+async def handle_non_command_message(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
+    """
+    Handle non-command messages.
+
+    In private chats: send the about message.
+    In groups/channels: ignore the message.
+
+    Args:
+        update: Telegram update object
+        context: Callback context
+    """
+    if not update.effective_chat or not update.message:
+        return
+
+    chat_type = update.effective_chat.type
+
+    # Only respond in private chats
+    if chat_type == Chat.PRIVATE:
+        await send_about_message(context, update.effective_chat.id)
 
 
 async def chat_member_status_handler(
@@ -353,6 +399,7 @@ async def chat_member_status_handler(
     Handle bot being added/removed from chats.
 
     Automatically removes subscription when bot is removed from a chat.
+    Sends about message when bot is added to a group, channel, or supergroup.
 
     Args:
         update: Telegram update object
@@ -362,8 +409,15 @@ async def chat_member_status_handler(
         return
 
     chat_id = str(update.my_chat_member.chat.id)
+    chat_type = update.my_chat_member.chat.type
     old_status = update.my_chat_member.old_chat_member.status
     new_status = update.my_chat_member.new_chat_member.status
+
+    # Bot was added to a group, channel, or supergroup
+    if old_status in ["left", "kicked"] and new_status in ["member", "administrator"]:
+        if chat_type in [Chat.GROUP, Chat.SUPERGROUP, Chat.CHANNEL]:
+            logger.info(f"Bot added to {chat_type} {chat_id}, sending about message")
+            await send_about_message(context, int(chat_id))
 
     # Bot was removed from chat (kicked or left)
     if old_status in ["member", "administrator"] and new_status in [
@@ -590,9 +644,15 @@ def create_application(token: str) -> Application:  # type: ignore[type-arg]
     # Add callback query handler for language selection
     application.add_handler(CallbackQueryHandler(language_selection_callback))
 
-    # Add chat member handler to detect bot removal
+    # Add chat member handler to detect bot removal and addition
     application.add_handler(
         ChatMemberHandler(chat_member_status_handler, ChatMemberHandler.MY_CHAT_MEMBER)
+    )
+
+    # Add handler for non-command messages (must be last to not override commands)
+    # This will respond to any text message that is not a command
+    application.add_handler(
+        MessageHandler(filters.TEXT & ~filters.COMMAND, handle_non_command_message)
     )
 
     return application
