@@ -32,6 +32,9 @@ except ImportError:
 # Subscriptions file path
 SUBSCRIPTIONS_FILE = "data/subscriptions.json"
 
+# Supported group chat types for automatic about message
+SUPPORTED_GROUP_TYPES = {Chat.GROUP, Chat.SUPERGROUP, Chat.CHANNEL}
+
 logger = logging.getLogger(__name__)
 
 # Translations for different languages
@@ -369,6 +372,33 @@ async def about_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     await send_about_message(context, update.effective_chat.id)
 
 
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Handle /help command. Display available commands and usage information.
+
+    Args:
+        update: Telegram update object
+        context: Callback context
+    """
+    if not update.effective_chat or not update.message:
+        return
+
+    help_message = (
+        "*CrazyOnes Bot - Help*\n\n"
+        "*Available Commands:*\n"
+        "• /start - Subscribe to Apple Updates notifications\n"
+        "• /stop - Unsubscribe from notifications\n"
+        "• /about - Information about this bot\n"
+        "• /help - Show this help message\n\n"
+        "*How it works:*\n"
+        "This bot monitors Apple's software update releases and sends you "
+        "notifications when new updates are available.\n\n"
+        "Use /start to begin receiving notifications."
+    )
+
+    await update.message.reply_text(help_message, parse_mode="Markdown")
+
+
 async def handle_non_command_message(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> None:
@@ -415,7 +445,7 @@ async def chat_member_status_handler(
 
     # Bot was added to a group, channel, or supergroup
     if old_status in ["left", "kicked"] and new_status in ["member", "administrator"]:
-        if chat_type in [Chat.GROUP, Chat.SUPERGROUP, Chat.CHANNEL]:
+        if chat_type in SUPPORTED_GROUP_TYPES:
             logger.info(f"Bot added to {chat_type} {chat_id}, sending about message")
             await send_about_message(context, int(chat_id))
 
@@ -640,6 +670,7 @@ def create_application(token: str) -> Application:  # type: ignore[type-arg]
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("stop", stop_command))
     application.add_handler(CommandHandler("about", about_command))
+    application.add_handler(CommandHandler("help", help_command))
 
     # Add callback query handler for language selection
     application.add_handler(CallbackQueryHandler(language_selection_callback))
