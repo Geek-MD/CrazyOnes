@@ -133,14 +133,16 @@ LANGUAGE_NAME_MAP = {
     "ms-my": "Malay/Malaysia",
     # Maltese
     "mt-mt": "Maltese/Malta",
-    # Norwegian Bokmål
+    # Norwegian variants
+    # Note: Norwegian has three codes:
+    # - nb-no: Norwegian Bokmål (most common written form, ~85% of population)
+    # - nn-no: Norwegian Nynorsk (alternative written form, ~15% of population)
+    # - no-no: Generic Norwegian (used by Apple, defaults to Bokmål)
     "nb-no": "Norwegian Bokmål/Norway",
+    "nn-no": "Norwegian Nynorsk/Norway",
+    "no-no": "Norwegian/Norway",
     # Dutch
     "nl-nl": "Dutch/Netherlands",
-    # Norwegian Nynorsk
-    "nn-no": "Norwegian Nynorsk/Norway",
-    # Norwegian (generic)
-    "no-no": "Norwegian/Norway",
     # Polish
     "pl-pl": "Polish/Poland",
     # Portuguese variants
