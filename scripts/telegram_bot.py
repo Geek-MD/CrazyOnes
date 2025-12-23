@@ -388,15 +388,92 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         "*Available Commands:*\n"
         "• /start - Subscribe to Apple Updates notifications\n"
         "• /stop - Unsubscribe from notifications\n"
+        "• /language - List available languages or show updates for a language\n"
         "• /about - Information about this bot\n"
         "• /help - Show this help message\n\n"
         "*How it works:*\n"
         "This bot monitors Apple's software update releases and sends you "
         "notifications when new updates are available.\n\n"
-        "Use /start to begin receiving notifications."
+        "Use /start to begin receiving notifications.\n"
+        "Use /language to see available languages or /language [code] to see "
+        "updates for a specific language (e.g., /language en-us)."
     )
 
     await update.message.reply_text(help_message, parse_mode="Markdown")
+
+
+async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Handle /language command. List available languages or show updates for a language.
+
+    Args:
+        update: Telegram update object
+        context: Callback context
+    """
+    if not update.effective_chat or not update.message:
+        return
+
+    # Get the language parameter if provided
+    args = context.args if context.args else []
+
+    if not args:
+        # No parameter provided - list all available languages
+        language_urls = load_language_urls()
+
+        if not language_urls:
+            message = (
+                "⚠️ No languages are currently available.\n"
+                "Please try again later."
+            )
+            await update.message.reply_text(message)
+            return
+
+        # Build the list of available languages
+        message = "*Available Languages:*\n\n"
+
+        # Sort languages by display name for better readability
+        sorted_languages = sorted(
+            language_urls.items(),
+            key=lambda x: LANGUAGE_NAME_MAP.get(x[0], x[0])
+        )
+
+        for lang_code, _ in sorted_languages:
+            display_name = LANGUAGE_NAME_MAP.get(lang_code, lang_code.upper())
+            message += f"• `{lang_code}` - {display_name}\n"
+
+        message += (
+            f"\n📝 Total: {len(language_urls)} languages available\n\n"
+            "Use `/language [code]` to see updates for a specific language.\n"
+            "Example: `/language en-us`"
+        )
+
+        await update.message.reply_text(message, parse_mode="Markdown")
+    else:
+        # Parameter provided - show updates for that language
+        language_code = args[0].lower()
+
+        # Check if the language exists
+        language_urls = load_language_urls()
+        if language_code not in language_urls:
+            display_name = LANGUAGE_NAME_MAP.get(language_code, language_code.upper())
+            message = (
+                f"❌ Language `{language_code}` ({display_name}) is not available.\n\n"
+                "Use /language to see all available languages."
+            )
+            await update.message.reply_text(message, parse_mode="Markdown")
+            return
+
+        # Load and display updates for the language
+        display_name = LANGUAGE_NAME_MAP.get(language_code, language_code.upper())
+
+        await update.message.reply_text(
+            f"🍎 *Apple Updates - {display_name}*\n\n"
+            f"Loading the 10 most recent updates...",
+            parse_mode="Markdown"
+        )
+
+        chat_id = str(update.effective_chat.id)
+        await send_recent_updates_simple(update, context, chat_id, language_code)
 
 
 async def handle_non_command_message(
@@ -672,6 +749,7 @@ def create_application(token: str) -> Application:  # type: ignore[type-arg]
     # Add command handlers
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("stop", stop_command))
+    application.add_handler(CommandHandler("language", language_command))
     application.add_handler(CommandHandler("about", about_command))
     application.add_handler(CommandHandler("help", help_command))
 
