@@ -287,6 +287,8 @@ In daemon mode, the system will:
 **Bot Commands:**
 - `/start` - Subscribe to Apple Updates notifications and select language
 - `/stop` - Unsubscribe and stop receiving notifications
+- `/updates` - Show last 10 updates in your subscribed language
+- `/updates [tag]` - Show last 10 updates filtered by tag (e.g., `/updates ios`)
 
 Press `Ctrl+C` to stop the daemon gracefully.
 
