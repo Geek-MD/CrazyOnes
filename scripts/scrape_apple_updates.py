@@ -135,9 +135,9 @@ def save_language_urls_to_json(
         if language_urls[lang] != existing_urls[lang]
     }
 
-    # Write the new data
+    # Write the new data (sorted alphabetically by language code)
     with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(language_urls, f, indent=2, ensure_ascii=False)
+        json.dump(language_urls, f, indent=2, ensure_ascii=False, sort_keys=True)
 
     # Report changes
     if not existing_urls:
