@@ -32,6 +32,9 @@ except ImportError:
 # Subscriptions file path
 SUBSCRIPTIONS_FILE = "data/subscriptions.json"
 
+# Default language for new subscriptions
+DEFAULT_LANGUAGE = "en-us"
+
 # Supported group chat types for automatic about message
 SUPPORTED_GROUP_TYPES = {Chat.GROUP, Chat.SUPERGROUP, Chat.CHANNEL}
 
@@ -138,7 +141,10 @@ def load_subscriptions() -> dict[str, dict[str, Any]]:
 
     Returns:
         Dictionary with chat_id as keys and subscription data as values.
-        Each subscription contains: language_code, last_update_index
+        Each subscription contains:
+        - language_code: Language preference (default: en-us)
+        - active: Whether the subscription is active (True/False)
+        - last_update_index: Last update index sent (for future use)
     """
     path = Path(SUBSCRIPTIONS_FILE)
     if not path.exists():
@@ -156,13 +162,49 @@ def save_subscriptions(subscriptions: dict[str, dict[str, Any]]) -> None:
     Subscriptions are sorted alphabetically by chat_id.
 
     Args:
-        subscriptions: Dictionary with chat_id as keys and subscription data
+        subscriptions: Dictionary with chat_id as keys and subscription data.
+            Each subscription should contain:
+            - language_code: Language preference
+            - active: Whether the subscription is active
+            - last_update_index: Last update index (optional)
     """
     path = Path(SUBSCRIPTIONS_FILE)
     path.parent.mkdir(parents=True, exist_ok=True)
 
     with open(path, "w", encoding="utf-8") as f:
         json.dump(subscriptions, f, indent=2, ensure_ascii=False, sort_keys=True)
+
+
+def get_user_language(chat_id: str) -> str:
+    """
+    Get the user's language preference from subscriptions.
+
+    Args:
+        chat_id: Chat ID to look up
+
+    Returns:
+        Language code (defaults to DEFAULT_LANGUAGE if not found)
+    """
+    subscriptions = load_subscriptions()
+    if chat_id in subscriptions:
+        return subscriptions[chat_id].get("language_code", DEFAULT_LANGUAGE)
+    return DEFAULT_LANGUAGE
+
+
+def is_subscription_active(chat_id: str) -> bool:
+    """
+    Check if a subscription is active.
+
+    Args:
+        chat_id: Chat ID to check
+
+    Returns:
+        True if subscription exists and is active, False otherwise
+    """
+    subscriptions = load_subscriptions()
+    if chat_id in subscriptions:
+        return subscriptions[chat_id].get("active", False)
+    return False
 
 
 def load_language_urls() -> dict[str, str]:
@@ -202,11 +244,10 @@ def load_updates_for_language(language_code: str) -> list[dict[str, Any]]:
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
-    Handle /start command. Automatically show recent updates for es-cl.
+    Handle /start command. Subscribe user with default language (en-us).
 
-    This is a simplified proof-of-concept version that automatically
-    displays the 10 most recent Apple Updates for Chile (es-cl) without
-    requiring language selection.
+    Creates or activates a subscription with the default language preference.
+    Users can change their language preference using /language command.
 
     Args:
         update: Telegram update object
@@ -217,13 +258,34 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
     chat_id = str(update.effective_chat.id)
 
-    # Fixed language for proof of concept
-    language_code = "es-cl"
+    # Load subscriptions
+    subscriptions = load_subscriptions()
+
+    # Check if user already has a subscription
+    if chat_id in subscriptions:
+        # User exists, just activate and use their saved language
+        subscriptions[chat_id]["active"] = True
+        language_code = subscriptions[chat_id].get("language_code", DEFAULT_LANGUAGE)
+    else:
+        # New user, create subscription with default language
+        subscriptions[chat_id] = {
+            "language_code": DEFAULT_LANGUAGE,
+            "active": True,
+            "last_update_index": -1
+        }
+        language_code = DEFAULT_LANGUAGE
+
+    # Save updated subscriptions
+    save_subscriptions(subscriptions)
+
+    # Get display name for the language
+    display_name = LANGUAGE_NAME_MAP.get(language_code, language_code.upper())
 
     # Send welcome message
     welcome_message = (
-        "🍎 *¡Bienvenido al Bot de Actualizaciones de Apple!*\n\n"
-        "Aquí están las 10 actualizaciones más recientes de Apple para Chile:\n"
+        "🍎 *Welcome to Apple Updates Bot!*\n\n"
+        f"You are now subscribed with language: *{display_name}*\n\n"
+        "Here are the 10 most recent Apple Updates:\n"
     )
 
     await update.message.reply_text(
@@ -231,7 +293,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         parse_mode="Markdown"
     )
 
-    # Load and send updates for es-cl
+    # Load and send updates for the user's language
     await send_recent_updates_simple(update, context, chat_id, language_code)
 
 
@@ -296,7 +358,10 @@ async def language_selection_callback(
 
 async def stop_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
-    Handle /stop command. Remove user subscription.
+    Handle /stop command. Deactivate user subscription.
+
+    Marks the subscription as inactive but preserves language preference.
+    User can reactivate with /start command.
 
     Args:
         update: Telegram update object
@@ -317,18 +382,18 @@ async def stop_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         await update.message.reply_text(message, parse_mode="Markdown")
         return
 
-    # Get user's language before removing subscription
-    language_code = subscriptions[chat_id].get("language_code", "en")
+    # Get user's language before deactivating
+    language_code = subscriptions[chat_id].get("language_code", DEFAULT_LANGUAGE)
 
-    # Remove subscription
-    del subscriptions[chat_id]
+    # Deactivate subscription (keep language preference)
+    subscriptions[chat_id]["active"] = False
     save_subscriptions(subscriptions)
 
     # Send confirmation in user's language
     confirmation_message = get_translation(language_code, "stop_confirmation")
     await update.message.reply_text(confirmation_message, parse_mode="Markdown")
 
-    logger.info(f"Subscription stopped for chat {chat_id}")
+    logger.info(f"Subscription deactivated for chat {chat_id}")
 
 
 async def send_about_message(
@@ -475,13 +540,29 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         # Load and display updates for the language
         display_name = LANGUAGE_NAME_MAP.get(language_code, language_code.upper())
 
-        await update.message.reply_text(
-            f"🍎 *Apple Updates - {display_name}*\n\n"
-            f"Loading the 10 most recent updates...",
-            parse_mode="Markdown"
-        )
-
+        # Save user's language preference
         chat_id = str(update.effective_chat.id)
+        subscriptions = load_subscriptions()
+
+        if chat_id in subscriptions:
+            # Update existing subscription's language
+            subscriptions[chat_id]["language_code"] = language_code
+            save_subscriptions(subscriptions)
+            await update.message.reply_text(
+                f"✅ Language preference updated to *{display_name}*\n\n"
+                f"🍎 *Apple Updates - {display_name}*\n\n"
+                f"Loading the 10 most recent updates...",
+                parse_mode="Markdown"
+            )
+        else:
+            # User not subscribed, just show updates without saving preference
+            await update.message.reply_text(
+                f"🍎 *Apple Updates - {display_name}*\n\n"
+                f"Loading the 10 most recent updates...\n\n"
+                f"💡 Use /start to subscribe and set this as your default language.",
+                parse_mode="Markdown"
+            )
+
         await send_recent_updates_simple(update, context, chat_id, language_code)
 
 
@@ -546,11 +627,11 @@ async def chat_member_status_handler(
         subscriptions = load_subscriptions()
 
         if chat_id in subscriptions:
-            # Remove subscription
-            del subscriptions[chat_id]
+            # Deactivate subscription (keep language preference)
+            subscriptions[chat_id]["active"] = False
             save_subscriptions(subscriptions)
             logger.info(
-                f"Bot removed from chat {chat_id}, subscription deleted"
+                f"Bot removed from chat {chat_id}, subscription deactivated"
             )
 
 
