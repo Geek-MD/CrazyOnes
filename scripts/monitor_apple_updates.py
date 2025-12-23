@@ -279,7 +279,8 @@ def save_updates_to_json(
     output_path.mkdir(parents=True, exist_ok=True)
 
     # Sort updates by ID in ascending order (oldest to newest)
-    sorted_updates = sorted(updates, key=lambda x: x.get("id", 0))
+    # IDs are always integers, but use .get() for defensive programming
+    sorted_updates = sorted(updates, key=lambda x: int(x.get("id", 0)))
 
     output_file = output_path / f"{language_code}.json"
     with open(output_file, "w", encoding="utf-8") as f:
