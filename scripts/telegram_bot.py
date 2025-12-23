@@ -9,6 +9,7 @@ in their preferred language. It tracks subscriptions and sends updates according
 import difflib
 import json
 import logging
+import re
 from pathlib import Path
 from typing import Any
 
@@ -44,6 +45,24 @@ DEFAULT_LANGUAGE = "en-us"
 
 # Supported group chat types for automatic about message
 SUPPORTED_GROUP_TYPES = {Chat.GROUP, Chat.SUPERGROUP, Chat.CHANNEL}
+
+# Apple OS name patterns for tag extraction
+APPLE_OS_PATTERNS = ["ios", "ipados", "macos", "watchos", "tvos", "visionos"]
+
+# Pre-compiled regex patterns for OS name extraction (for performance)
+# Compiled once at module import time, then reused for all extractions
+# Using word boundaries (\b) to prevent false positives (e.g., "notmacos")
+APPLE_OS_REGEX_PATTERNS = {
+    pattern: re.compile(r'\b' + re.escape(pattern) + r'\b')
+    for pattern in APPLE_OS_PATTERNS
+}
+
+# Valid bot commands for fuzzy matching
+VALID_COMMANDS = ["start", "stop", "updates", "language", "about", "help"]
+
+# Fuzzy matching cutoff thresholds
+FUZZY_CUTOFF_TAGS = 0.5  # Lower threshold for OS tags (more lenient for typos)
+FUZZY_CUTOFF_COMMANDS = 0.6  # Higher threshold for commands (stricter matching)
 
 logger = logging.getLogger(__name__)
 
@@ -501,6 +520,33 @@ def get_all_targets_from_updates(updates: list[dict[str, Any]]) -> set[str]:
     return targets
 
 
+def extract_os_names_from_updates(updates: list[dict[str, Any]]) -> set[str]:
+    """
+    Extract all unique OS names from update names.
+
+    Extracts OS names like "iOS", "macOS", "visionOS", "watchOS", "tvOS", "iPadOS"
+    from update names like "iOS 17.2 and iPadOS 17.2", "macOS Sonoma 14.2", etc.
+
+    Uses pre-compiled regex patterns with word boundaries to avoid false positives.
+
+    Args:
+        updates: List of update dictionaries
+
+    Returns:
+        Set of unique OS names (lowercase)
+    """
+    os_names: set[str] = set()
+
+    for update in updates:
+        name = update.get("name", "").lower()
+        # Extract OS names using pre-compiled regex patterns with word boundaries
+        for pattern, regex in APPLE_OS_REGEX_PATTERNS.items():
+            if regex.search(name):
+                os_names.add(pattern)
+
+    return os_names
+
+
 def filter_updates_by_tag(
     updates: list[dict[str, Any]], tag: str
 ) -> list[dict[str, Any]]:
@@ -674,9 +720,11 @@ async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                 disable_web_page_preview=True
             )
         else:
-            # No updates found - try to find similar tags
-            all_targets = get_all_targets_from_updates(updates)
-            similar_tags = find_similar_tags(tag, all_targets)
+            # No updates found - try to find similar tags (OS names)
+            all_os_names = extract_os_names_from_updates(updates)
+            similar_tags = find_similar_tags(
+                tag, all_os_names, cutoff=FUZZY_CUTOFF_TAGS
+            )
 
             if similar_tags:
                 # Found similar tags - suggest them
@@ -796,6 +844,82 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             )
 
         await send_recent_updates_simple(update, context, chat_id, language_code)
+
+
+def extract_command_from_message(message_text: str) -> str:
+    """
+    Extract command name from a Telegram message.
+
+    Handles bot usernames and parameters properly.
+    Examples:
+        "/start" -> "start"
+        "/updates@botname" -> "updates"
+        "/language en-us" -> "language"
+
+    Args:
+        message_text: The message text starting with /
+
+    Returns:
+        The extracted command name (lowercase), or empty string if not a command
+    """
+    if not message_text or not message_text.startswith("/"):
+        return ""
+
+    # Remove the leading slash
+    without_slash = message_text[1:]
+
+    # Split by @ to remove bot username (e.g., "/start@botname" -> "start")
+    without_username = without_slash.split("@")[0]
+
+    # Split by space to remove parameters (e.g., "/updates ios" -> "updates")
+    command = without_username.split()[0] if without_username else ""
+
+    return command.lower()
+
+
+async def handle_unknown_command(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
+    """
+    Handle unknown commands with fuzzy matching.
+
+    Suggests similar valid commands when a user types an invalid command.
+
+    Args:
+        update: Telegram update object
+        context: Callback context
+    """
+    if not update.effective_chat or not update.message or not update.message.text:
+        return
+
+    # Extract the command from the message
+    command = extract_command_from_message(update.message.text.strip())
+    if not command:
+        return
+
+    # Try to find similar commands using the module-level constant
+    similar_commands = difflib.get_close_matches(
+        command,
+        VALID_COMMANDS,
+        n=1,
+        cutoff=FUZZY_CUTOFF_COMMANDS
+    )
+
+    if similar_commands:
+        # Found a similar command - suggest it
+        suggestion = similar_commands[0]
+        message = (
+            f"❌ Unknown command: `/{command}`\n\n"
+            f"Did you mean `/{suggestion}`?"
+        )
+    else:
+        # No similar command found
+        message = (
+            f"❌ Unknown command: `/{command}`\n\n"
+            "Use /help to see all available commands."
+        )
+
+    await update.message.reply_text(message, parse_mode="Markdown")
 
 
 async def handle_non_command_message(
@@ -1065,7 +1189,7 @@ def create_application(token: str) -> Application:  # type: ignore[type-arg]
     # Create application
     application = Application.builder().token(token).build()
 
-    # Add command handlers
+    # Add command handlers (these are processed before MessageHandlers)
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("stop", stop_command))
     application.add_handler(CommandHandler("updates", updates_command))
@@ -1079,6 +1203,13 @@ def create_application(token: str) -> Application:  # type: ignore[type-arg]
     # Add chat member handler to detect bot removal and addition
     application.add_handler(
         ChatMemberHandler(chat_member_status_handler, ChatMemberHandler.MY_CHAT_MEMBER)
+    )
+
+    # Add handler for unknown commands
+    # Note: This is added AFTER specific CommandHandlers, so valid commands
+    # are handled first. This catches any commands that weren't matched above.
+    application.add_handler(
+        MessageHandler(filters.COMMAND, handle_unknown_command)
     )
 
     # Add handler for non-command messages (must be last to not override commands)

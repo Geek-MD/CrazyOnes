@@ -289,6 +289,24 @@ In daemon mode, the system will:
 - `/stop` - Unsubscribe and stop receiving notifications
 - `/updates` - Show last 10 updates in your subscribed language
 - `/updates [tag]` - Show last 10 updates filtered by tag (e.g., `/updates ios`)
+- `/language` - List all available languages
+- `/language [code]` - Show updates for a specific language (e.g., `/language en-us`)
+- `/about` - Information about this bot
+- `/help` - Show all available commands and usage information
+
+**Fuzzy Matching (Smart Suggestions):**
+The bot includes intelligent fuzzy matching to help users when they make typos:
+
+- **Command suggestions**: If you type an invalid command, the bot suggests the correct one
+  - Example: `/languages` → "Did you mean `/language`?"
+  - Example: `/updat` → "Did you mean `/updates`?"
+  - Example: `/halp` → "Did you mean `/help`?"
+
+- **Tag suggestions**: When filtering updates by tag, typos are automatically matched to valid OS names
+  - Example: `/updates mangos` → suggests "macos"
+  - Example: `/updates visinos` → suggests "visionos"
+  - Example: `/updates ioss` → suggests "ios"
+  - Uses word-boundary regex to extract OS names (iOS, macOS, visionOS, watchOS, tvOS, iPadOS) from update names
 
 Press `Ctrl+C` to stop the daemon gracefully.
 
