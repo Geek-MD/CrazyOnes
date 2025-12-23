@@ -505,7 +505,7 @@ def filter_updates_by_tag(
     updates: list[dict[str, Any]], tag: str
 ) -> list[dict[str, Any]]:
     """
-    Filter updates by a tag (case-insensitive search in target field).
+    Filter updates by a tag (case-insensitive search in name field).
 
     Args:
         updates: List of update dictionaries
@@ -518,9 +518,9 @@ def filter_updates_by_tag(
     filtered = []
 
     for update in updates:
-        target = update.get("target", "").lower()
-        # Check if tag appears in the target field
-        if tag_lower in target:
+        name = update.get("name", "").lower()
+        # Check if tag appears in the name field
+        if tag_lower in name:
             filtered.append(update)
 
     return filtered
@@ -727,10 +727,10 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         # Build the list of available languages
         message = "*Available Languages:*\n\n"
 
-        # Sort languages by display name for better readability
+        # Sort languages alphabetically by language code (xx-yy format)
         sorted_languages = sorted(
             language_urls.items(),
-            key=lambda x: LANGUAGE_NAME_MAP.get(x[0], x[0])
+            key=lambda x: x[0]
         )
 
         for lang_code, _ in sorted_languages:
