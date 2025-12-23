@@ -44,9 +44,9 @@ def demonstrate_optimization():
     """
 
     hash_v1 = compute_content_hash(content_v1)
-    print(f"Content downloaded (simulated HTTP request)")
+    print("Content downloaded (simulated HTTP request)")
     print(f"Content hash: {hash_v1[:16]}...")
-    print(f"Action: Full analysis performed (extract table, parse dates, etc.)")
+    print("Action: Full analysis performed (extract table, parse dates, etc.)")
     print(f"Stored hash: {hash_v1[:16]}... for future comparisons")
     print()
 
@@ -55,7 +55,7 @@ def demonstrate_optimization():
     print("-" * 70)
     content_v2 = content_v1  # Same content
     hash_v2 = compute_content_hash(content_v2)
-    print(f"Content downloaded (simulated HTTP request)")
+    print("Content downloaded (simulated HTTP request)")
     print(f"Content hash: {hash_v2[:16]}...")
     print(f"Stored hash:  {hash_v1[:16]}...")
 
@@ -84,7 +84,7 @@ def demonstrate_optimization():
     """
 
     hash_v3 = compute_content_hash(content_v3)
-    print(f"Content downloaded (simulated HTTP request)")
+    print("Content downloaded (simulated HTTP request)")
     print(f"Content hash: {hash_v3[:16]}...")
     print(f"Stored hash:  {hash_v1[:16]}...")
 
