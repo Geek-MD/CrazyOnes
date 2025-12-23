@@ -6,12 +6,17 @@ This bot communicates in English and allows users to subscribe to Apple Updates
 in their preferred language. It tracks subscriptions and sends updates accordingly.
 """
 
+import difflib
 import json
 import logging
 from pathlib import Path
 from typing import Any
 
-from telegram import Chat, ChatMember, Update
+from telegram import (
+    Chat,
+    ChatMember,
+    Update,
+)
 from telegram.ext import (
     Application,
     CallbackQueryHandler,
@@ -27,7 +32,7 @@ try:
     from .generate_language_names import LANGUAGE_NAME_MAP
 except ImportError:
     # Fall back to absolute import (when run directly)
-    from generate_language_names import LANGUAGE_NAME_MAP
+    from generate_language_names import LANGUAGE_NAME_MAP  # type: ignore[import-not-found,no-redef]
 
 # Subscriptions file path
 SUBSCRIPTIONS_FILE = "data/subscriptions.json"
@@ -187,7 +192,9 @@ def get_user_language(chat_id: str) -> str:
     """
     subscriptions = load_subscriptions()
     if chat_id in subscriptions:
-        return subscriptions[chat_id].get("language_code", DEFAULT_LANGUAGE)
+        lang_code = subscriptions[chat_id].get("language_code", DEFAULT_LANGUAGE)
+        # Ensure we return a string
+        return str(lang_code) if lang_code else DEFAULT_LANGUAGE
     return DEFAULT_LANGUAGE
 
 
@@ -203,7 +210,9 @@ def is_subscription_active(chat_id: str) -> bool:
     """
     subscriptions = load_subscriptions()
     if chat_id in subscriptions:
-        return subscriptions[chat_id].get("active", False)
+        active = subscriptions[chat_id].get("active", False)
+        # Ensure we return a bool
+        return bool(active) if active is not None else False
     return False
 
 
@@ -454,7 +463,11 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         "*Available Commands:*\n"
         "• /start - Subscribe to Apple Updates notifications\n"
         "• /stop - Unsubscribe from notifications\n"
-        "• /language [code] - List languages or show updates (e.g., /language en-us)\n"
+        "• /updates - Show last 10 updates in your language\n"
+        "• /updates [tag] - Show last 10 updates filtered by tag "
+        "(e.g., /updates ios)\n"
+        "• /language [code] - List languages or show updates "
+        "(e.g., /language en-us)\n"
         "• /about - Information about this bot\n"
         "• /help - Show this help message\n\n"
         "*How it works:*\n"
@@ -464,6 +477,222 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     )
 
     await update.message.reply_text(help_message, parse_mode="Markdown")
+
+
+def get_all_targets_from_updates(updates: list[dict[str, Any]]) -> set[str]:
+    """
+    Extract all unique targets from a list of updates.
+
+    Args:
+        updates: List of update dictionaries
+
+    Returns:
+        Set of unique target strings
+    """
+    targets: set[str] = set()
+    for update in updates:
+        target = update.get("target", "")
+        if target and target != "N/A":
+            # Split by comma to handle multiple targets
+            parts = [t.strip() for t in target.split(",")]
+            targets.update(parts)
+    return targets
+
+
+def filter_updates_by_tag(
+    updates: list[dict[str, Any]], tag: str
+) -> list[dict[str, Any]]:
+    """
+    Filter updates by a tag (case-insensitive search in target field).
+
+    Args:
+        updates: List of update dictionaries
+        tag: Tag to search for (e.g., "ios", "macos")
+
+    Returns:
+        Filtered list of updates matching the tag
+    """
+    tag_lower = tag.lower()
+    filtered = []
+
+    for update in updates:
+        target = update.get("target", "").lower()
+        # Check if tag appears in the target field
+        if tag_lower in target:
+            filtered.append(update)
+
+    return filtered
+
+
+def find_similar_tags(
+    tag: str, available_tags: set[str], cutoff: float = 0.6
+) -> list[str]:
+    """
+    Find similar tags using fuzzy matching.
+
+    Args:
+        tag: The tag to match
+        available_tags: Set of available tags
+        cutoff: Similarity threshold (0.0 to 1.0)
+
+    Returns:
+        List of similar tags sorted by similarity (most similar first)
+    """
+    # Use difflib to find close matches
+    matches = difflib.get_close_matches(
+        tag.lower(),
+        [t.lower() for t in available_tags],
+        n=3,
+        cutoff=cutoff
+    )
+
+    # Return the original case versions of the matches
+    result = []
+    for match in matches:
+        for original in available_tags:
+            if original.lower() == match:
+                result.append(original)
+                break
+
+    return result
+
+
+async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Handle /updates command. Show updates with optional tag filtering.
+
+    Without parameters: Shows the last 10 updates in user's language.
+    With parameter (tag): Shows last 10 updates filtered by tag.
+
+    Args:
+        update: Telegram update object
+        context: Callback context
+    """
+    if not update.effective_chat or not update.message:
+        return
+
+    chat_id = str(update.effective_chat.id)
+
+    # Get user's language preference
+    language_code = get_user_language(chat_id)
+
+    # Load updates for the user's language
+    updates = load_updates_for_language(language_code)
+
+    if not updates:
+        message = (
+            "ℹ️ No updates available yet for your language. "
+            "You'll be notified when new updates are published."
+        )
+        await update.message.reply_text(message)
+        return
+
+    # Check if a tag parameter was provided
+    args = context.args if context.args else []
+
+    if not args:
+        # No parameter - show last 10 updates
+        display_name = LANGUAGE_NAME_MAP.get(language_code, language_code.upper())
+        await update.message.reply_text(
+            f"🍎 *Apple Updates - {display_name}*\n\n"
+            f"Here are the 10 most recent updates:",
+            parse_mode="Markdown"
+        )
+
+        # Get the 10 most recent updates
+        recent_updates = updates[:10]
+
+        # Build message with all updates
+        message = ""
+        for idx, update_item in enumerate(recent_updates, 1):
+            date = update_item.get("date", "N/A")
+            name = update_item.get("name", "Unknown")
+            target = update_item.get("target", "N/A")
+            url = update_item.get("url")
+
+            if url:
+                update_line = f"{idx}. {date} - [{name}]({url}) - {target}\n"
+            else:
+                update_line = f"{idx}. {date} - {name} - {target}\n"
+
+            message += update_line
+
+        await update.message.reply_text(
+            message,
+            parse_mode="Markdown",
+            disable_web_page_preview=True
+        )
+    else:
+        # Parameter provided - filter by tag
+        tag = args[0].lower()
+
+        # Validate tag format
+        if not all(c.isalnum() or c in "-_ " for c in tag):
+            message = (
+                "❌ Invalid tag format. "
+                "Only letters, numbers, hyphens, underscores, and spaces are allowed."
+            )
+            await update.message.reply_text(message)
+            return
+
+        # Filter updates by tag
+        filtered_updates = filter_updates_by_tag(updates, tag)
+
+        if filtered_updates:
+            # Found updates for this tag
+            display_name = LANGUAGE_NAME_MAP.get(language_code, language_code.upper())
+            count = min(len(filtered_updates), 10)
+            await update.message.reply_text(
+                f"🍎 *Apple Updates - {display_name}*\n\n"
+                f"Found {len(filtered_updates)} update(s) for tag *{tag}*\n\n"
+                f"Showing the {count} most recent:",
+                parse_mode="Markdown"
+            )
+
+            # Show up to 10 most recent filtered updates
+            recent_filtered = filtered_updates[:10]
+
+            message = ""
+            for idx, update_item in enumerate(recent_filtered, 1):
+                date = update_item.get("date", "N/A")
+                name = update_item.get("name", "Unknown")
+                target = update_item.get("target", "N/A")
+                url = update_item.get("url")
+
+                if url:
+                    update_line = f"{idx}. {date} - [{name}]({url}) - {target}\n"
+                else:
+                    update_line = f"{idx}. {date} - {name} - {target}\n"
+
+                message += update_line
+
+            await update.message.reply_text(
+                message,
+                parse_mode="Markdown",
+                disable_web_page_preview=True
+            )
+        else:
+            # No updates found - try to find similar tags
+            all_targets = get_all_targets_from_updates(updates)
+            similar_tags = find_similar_tags(tag, all_targets)
+
+            if similar_tags:
+                # Found similar tags - suggest them
+                suggestions = ", ".join(f"`{t}`" for t in similar_tags[:3])
+                message = (
+                    f"❌ No updates found for tag *{tag}*\n\n"
+                    f"Did you mean: {suggestions}?\n\n"
+                    "Please reply with one of the suggested tags or use "
+                    "`/updates [tag]` with a different tag."
+                )
+                await update.message.reply_text(message, parse_mode="Markdown")
+            else:
+                # No similar tags found
+                message = (
+                    f"❌ No updates found for tag *{tag}*\n\n"
+                    "Use `/updates` without parameters to see all recent updates."
+                )
+                await update.message.reply_text(message, parse_mode="Markdown")
 
 
 async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -837,6 +1066,7 @@ def create_application(token: str) -> Application:  # type: ignore[type-arg]
     # Add command handlers
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("stop", stop_command))
+    application.add_handler(CommandHandler("updates", updates_command))
     application.add_handler(CommandHandler("language", language_command))
     application.add_handler(CommandHandler("about", about_command))
     application.add_handler(CommandHandler("help", help_command))
