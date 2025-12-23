@@ -326,6 +326,26 @@ async def stop_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     logger.info(f"Subscription stopped for chat {chat_id}")
 
 
+async def about_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Handle /about command. Display information about the bot.
+
+    Args:
+        update: Telegram update object
+        context: Callback context
+    """
+    if not update.effective_chat or not update.message:
+        return
+
+    about_message = (
+        "*CrazyOnes* is a Telegram bot that keeps you updated on Apple's "
+        "operating system and software releases.\n\n"
+        "Developed by [Geek-MD](https://github.com/Geek-MD/CrazyOnes)"
+    )
+
+    await update.message.reply_text(about_message, parse_mode="Markdown")
+
+
 async def chat_member_status_handler(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> None:
@@ -565,6 +585,7 @@ def create_application(token: str) -> Application:  # type: ignore[type-arg]
     # Add command handlers
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("stop", stop_command))
+    application.add_handler(CommandHandler("about", about_command))
 
     # Add callback query handler for language selection
     application.add_handler(CallbackQueryHandler(language_selection_callback))

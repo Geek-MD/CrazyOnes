@@ -135,6 +135,7 @@ async def main() -> None:
     logger.info("Bot commands:")
     logger.info("  /start - Subscribe to Apple Updates notifications")
     logger.info("  /stop  - Unsubscribe from notifications")
+    logger.info("  /about - Show information about the bot")
     logger.info("")
     logger.info("Press Ctrl+C to stop the bot")
     logger.info("=" * 60)
