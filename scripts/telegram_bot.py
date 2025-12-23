@@ -11,7 +11,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from telegram import Chat, Update
+from telegram import Chat, ChatMember, Update
 from telegram.ext import (
     Application,
     CallbackQueryHandler,
@@ -444,15 +444,18 @@ async def chat_member_status_handler(
     new_status = update.my_chat_member.new_chat_member.status
 
     # Bot was added to a group, channel, or supergroup
-    if old_status in ["left", "kicked"] and new_status in ["member", "administrator"]:
+    if old_status in [ChatMember.LEFT, ChatMember.BANNED] and new_status in [
+        ChatMember.MEMBER,
+        ChatMember.ADMINISTRATOR,
+    ]:
         if chat_type in SUPPORTED_GROUP_TYPES:
             logger.info(f"Bot added to {chat_type} {chat_id}, sending about message")
             await send_about_message(context, int(chat_id))
 
     # Bot was removed from chat (kicked or left)
-    if old_status in ["member", "administrator"] and new_status in [
-        "left",
-        "kicked",
+    if old_status in [ChatMember.MEMBER, ChatMember.ADMINISTRATOR] and new_status in [
+        ChatMember.LEFT,
+        ChatMember.BANNED,
     ]:
         subscriptions = load_subscriptions()
 
