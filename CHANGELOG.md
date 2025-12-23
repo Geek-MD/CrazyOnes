@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.2] - 2024-12-23
+
+### Fixed
+- **Fuzzy tag matching** for `/updates` command now works correctly with misspelled OS names
+  - Fixed logic to extract OS names (iOS, macOS, visionOS, watchOS, tvOS, iPadOS) from update names
+  - "mangos" now suggests "macos", "visinos" suggests "visionos", etc.
+  - Lowered cutoff threshold to 0.5 for better matching of typos
+  - Searches OS names instead of target descriptions for more accurate suggestions
+
+### Added
+- **Fuzzy command matching** for mistyped bot commands
+  - Suggests correct command when user types similar but invalid command
+  - Examples: "/languages" suggests "/language", "/updat" suggests "/updates"
+  - Provides helpful error message when no similar command is found
+
 ## [0.9.3] - 2024-12-23
 
 ### Changed
