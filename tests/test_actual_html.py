@@ -93,10 +93,10 @@ def test_with_actual_html():
     for lang, url in sorted_langs[-10:]:
         print(f"  {lang}: {url}")
 
-    # Save to a different file
+    # Save to a different file (sorted alphabetically)
     output_file = "tests/actual_test_language_urls.json"
     with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(language_urls, f, indent=2, ensure_ascii=False)
+        json.dump(language_urls, f, indent=2, ensure_ascii=False, sort_keys=True)
 
     print(f"\n✓ Successfully saved {len(language_urls)} language URLs to {output_file}")
 

@@ -172,6 +172,8 @@ def save_language_names(
     """
     Save language names to a JSON file.
 
+    Language names are sorted alphabetically by language code.
+
     Args:
         language_names: Dictionary mapping language codes to names
         output_file: Path to the output JSON file (relative to project root)
@@ -181,7 +183,7 @@ def save_language_names(
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(language_names, f, indent=2, ensure_ascii=False)
+        json.dump(language_names, f, indent=2, ensure_ascii=False, sort_keys=True)
 
     print(f"Language names saved to {output_file}")
     print(f"Generated {len(language_names)} language name mappings")

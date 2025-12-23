@@ -46,7 +46,7 @@ from scripts.scrape_apple_updates import (
 )
 
 # Version from pyproject.toml
-__version__ = "0.9.0"
+__version__ = "0.9.2"
 
 # PID file location
 PID_FILE = "/tmp/crazyones.pid"
@@ -838,6 +838,13 @@ Examples:
         ),
     )
 
+    # Hidden parameter for testing - not shown in help
+    parser.add_argument(
+        "--once",
+        action="store_true",
+        help=argparse.SUPPRESS,  # Hide from help output
+    )
+
     return parser.parse_args()
 
 
@@ -1020,14 +1027,14 @@ def main() -> None:
     # Check if user wants config wizard: explicit --config flag,
     # or no execution flags provided
     should_run_config = not any(
-        [args.token, args.daemon, args.interval, args.bot]
+        [args.token, args.daemon, args.interval, args.bot, args.once]
     )
     if args.config or should_run_config:
         success = run_configuration_routine()
         sys.exit(0 if success else 1)
 
-    # Validate token is provided for normal execution
-    if not args.token:
+    # Validate token is provided for normal execution (not needed for --once)
+    if not args.token and not args.once:
         print("Error: --token is required for execution")
         print("Use --help for usage information, --log to view log file,")
         print("or run without arguments to start the configuration wizard")
@@ -1050,6 +1057,7 @@ def main() -> None:
     # Default 12 hours (2 times per day)
     interval = args.interval if args.interval else 43200
     bot_mode = args.bot
+    once_mode = args.once  # Hidden parameter for testing
 
     # Validate bot mode
     if bot_mode and not daemon_mode:
@@ -1074,33 +1082,37 @@ def main() -> None:
         log_and_print(f"Daemon PID: {os.getpid()}")
         log_and_print("")
 
-    # Validate Telegram bot token format
-    if not validate_telegram_token(args.token):
-        error_msg = (
-            "✗ Error: Invalid Telegram bot token format.\n"
-            "Expected format: <bot_id>:<auth_token>\n"
-            "  - bot_id: 8-10 digits\n"
-            "  - auth_token: 35+ alphanumeric characters (can include - and _)\n"
-            "Example: 123456789:ABCdefGHIjklMNOpqrsTUVwxyz-1234567890"
-        )
-        log_and_print(error_msg)
-        log_only("Token validation failed", "ERROR")
-        sys.exit(1)
+    # Validate Telegram bot token format (skip for --once mode)
+    if not once_mode:
+        if not validate_telegram_token(args.token):
+            error_msg = (
+                "✗ Error: Invalid Telegram bot token format.\n"
+                "Expected format: <bot_id>:<auth_token>\n"
+                "  - bot_id: 8-10 digits\n"
+                "  - auth_token: 35+ alphanumeric characters "
+                "(can include - and _)\n"
+                "Example: 123456789:ABCdefGHIjklMNOpqrsTUVwxyz-1234567890"
+            )
+            log_and_print(error_msg)
+            log_only("Token validation failed", "ERROR")
+            sys.exit(1)
 
     # Check if token is different from saved token
     try:
         config = load_config()
         saved_token = config.get("telegram_bot_token", "")
 
-        # Check if tokens are different and saved token is not the placeholder
-        if (saved_token and
+        # For --once mode, we don't need a token
+        if once_mode:
+            token_to_use = saved_token  # Use saved token or empty string
+        elif (saved_token and
             saved_token != "YOUR_TELEGRAM_BOT_TOKEN_HERE" and
             saved_token != args.token):
-            # In daemon mode, don't ask for confirmation, use provided token
+            # In daemon mode, don't ask, use provided token
             if daemon_mode:
                 log_and_print(
                     "Token mismatch detected. "
-                    "Using provided token in daemon mode."
+                    "Using provided token in non-interactive mode."
                 )
                 token_to_use = args.token
             else:
@@ -1119,11 +1131,14 @@ def main() -> None:
             # No conflict, use provided token
             token_to_use = args.token
     except FileNotFoundError:
-        # No config file exists yet, use provided token
-        config = {}
-        token_to_use = args.token
+        # No config file exists yet
+        if once_mode:
+            token_to_use = ""  # No token needed for --once
+        else:
+            config = {}
+            token_to_use = args.token
 
-    # Save token and URL to config.json
+    # Save token and URL to config.json (skip token save for --once mode)
     try:
         # Config was already loaded above when checking token
         if "config" not in locals():
@@ -1132,9 +1147,12 @@ def main() -> None:
             except FileNotFoundError:
                 config = {}
 
-        # Update token in config with the chosen token
-        config["telegram_bot_token"] = token_to_use
-        log_and_print(f"Telegram bot token: {'*' * 20} (configured)")
+        # Update token in config with the chosen token (skip for --once mode)
+        if not once_mode:
+            config["telegram_bot_token"] = token_to_use
+            log_and_print(f"Telegram bot token: {'*' * 20} (configured)")
+        else:
+            log_and_print("Running in ONCE mode (token not required)")
 
         # Save version to config
         config["version"] = __version__
@@ -1155,9 +1173,13 @@ def main() -> None:
                 log_and_print("Please provide a URL with --url or -u")
                 sys.exit(1)
 
-        # Save updated config
-        save_config(config)
-        log_and_print("✓ Token and configuration saved to config.json")
+        # Save updated config (only if not in --once mode or if URL changed)
+        if not once_mode or args.url:
+            save_config(config)
+            if once_mode:
+                log_and_print("✓ Configuration saved to config.json")
+            else:
+                log_and_print("✓ Token and configuration saved to config.json")
 
     except Exception as e:
         log_and_print(f"⚠ Warning: Could not save to config.json: {e}")
@@ -1253,7 +1275,10 @@ def main() -> None:
 
     else:
         # Single execution mode
-        log_and_print("Running in SINGLE execution mode")
+        if once_mode:
+            log_and_print("Running in ONCE mode (single execution for testing)")
+        else:
+            log_and_print("Running in SINGLE execution mode")
         log_and_print("")
 
         run_monitoring_cycle(apple_updates_url)
@@ -1263,11 +1288,28 @@ def main() -> None:
         log_and_print("Workflow completed")
         log_and_print("=" * 60)
         log_and_print("")
-        log_and_print("Next steps:")
-        log_and_print("  - Language URLs saved to: data/language_urls.json")
-        log_and_print("  - Language names saved to: data/language_names.json")
-        log_and_print("  - You can now run: python -m scripts.monitor_apple_updates")
-        log_and_print("")
+        if once_mode:
+            log_and_print("Execution summary:")
+            log_and_print("  ✓ Language URLs scraped and saved")
+            log_and_print("  ✓ Security updates processed for all languages")
+            log_and_print("  ✓ All JSON files generated with proper sorting:")
+            log_and_print("    - Language files: alphabetically sorted")
+            log_and_print("    - Update files: sorted by ID (ascending, oldest first)")
+            log_and_print("")
+            log_and_print("Files generated:")
+            log_and_print("  - data/language_urls.json")
+            log_and_print("  - data/language_names.json")
+            log_and_print("  - data/updates_tracking.json")
+            log_and_print("  - data/updates/<lang-code>.json (one per language)")
+            log_and_print("")
+        else:
+            log_and_print("Next steps:")
+            log_and_print("  - Language URLs saved to: data/language_urls.json")
+            log_and_print("  - Language names saved to: data/language_names.json")
+            log_and_print(
+                "  - You can now run: python -m scripts.monitor_apple_updates"
+            )
+            log_and_print("")
 
 
 if __name__ == "__main__":

@@ -148,6 +148,8 @@ def save_subscriptions(subscriptions: dict[str, dict[str, Any]]) -> None:
     """
     Save subscriptions to JSON file.
 
+    Subscriptions are sorted alphabetically by chat_id.
+
     Args:
         subscriptions: Dictionary with chat_id as keys and subscription data
     """
@@ -155,7 +157,7 @@ def save_subscriptions(subscriptions: dict[str, dict[str, Any]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
 
     with open(path, "w", encoding="utf-8") as f:
-        json.dump(subscriptions, f, indent=2, ensure_ascii=False)
+        json.dump(subscriptions, f, indent=2, ensure_ascii=False, sort_keys=True)
 
 
 def load_language_urls() -> dict[str, str]:

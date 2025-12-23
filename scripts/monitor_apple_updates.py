@@ -99,6 +99,8 @@ def save_tracking_data(
     """
     Save tracking data for language URLs and their content hashes.
 
+    Tracking data is sorted alphabetically by language code.
+
     Args:
         tracking_data: Dictionary with language codes and tracking info
         tracking_file: Path to the tracking JSON file (relative to project root)
@@ -106,7 +108,7 @@ def save_tracking_data(
     # Resolve path relative to project root
     path = get_project_root() / tracking_file
     with open(path, "w", encoding="utf-8") as f:
-        json.dump(tracking_data, f, indent=2, ensure_ascii=False)
+        json.dump(tracking_data, f, indent=2, ensure_ascii=False, sort_keys=True)
 
 
 def compute_content_hash(content: str) -> str:
@@ -265,6 +267,8 @@ def save_updates_to_json(
     """
     Save security updates to a JSON file for a specific language.
 
+    Updates are sorted by ID in ascending order (oldest to newest).
+
     Args:
         updates: List of security update dictionaries
         language_code: Language code (e.g., 'en-us', 'es-es')
@@ -274,9 +278,13 @@ def save_updates_to_json(
     output_path = get_project_root() / output_dir
     output_path.mkdir(parents=True, exist_ok=True)
 
+    # Sort updates by ID in ascending order (oldest to newest)
+    # IDs are always integers, but use .get() for defensive programming
+    sorted_updates = sorted(updates, key=lambda x: int(x.get("id", 0)))
+
     output_file = output_path / f"{language_code}.json"
     with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(updates, f, indent=2, ensure_ascii=False)
+        json.dump(sorted_updates, f, indent=2, ensure_ascii=False)
 
 
 def detect_changes(
