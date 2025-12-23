@@ -36,9 +36,13 @@ CrazyOnes operates in a continuous monitoring cycle:
 3. **Security Updates Monitoring**:
    - Fetches security updates from each language-specific page
    - Extracts update details (name, target device, release date)
-   - Computes content hashes to detect changes
+   - **Smart Change Detection with Content Hashing**:
+     * Downloads content from each URL (necessary to detect changes)
+     * Computes SHA256 hash of the content
+     * If hash matches previous → skips expensive HTML parsing
+     * If hash differs → proceeds with full table extraction
    - First run: processes all languages
-   - Subsequent runs: only processes changed content
+   - Subsequent runs: only analyzes content when hash changes
 4. **Data Persistence**:
    - Saves updates to individual JSON files per language (`data/updates/en-us.json`, etc.)
    - Tracks processed URLs in `data/updates_tracking.json`
