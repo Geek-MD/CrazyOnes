@@ -501,6 +501,33 @@ def get_all_targets_from_updates(updates: list[dict[str, Any]]) -> set[str]:
     return targets
 
 
+def extract_os_names_from_updates(updates: list[dict[str, Any]]) -> set[str]:
+    """
+    Extract all unique OS names from update names.
+    
+    Extracts OS names like "iOS", "macOS", "visionOS", "watchOS", "tvOS", "iPadOS"
+    from update names like "iOS 17.2 and iPadOS 17.2", "macOS Sonoma 14.2", etc.
+    
+    Args:
+        updates: List of update dictionaries
+    
+    Returns:
+        Set of unique OS names (lowercase)
+    """
+    os_names: set[str] = set()
+    # Common Apple OS patterns
+    os_patterns = ["ios", "ipados", "macos", "watchos", "tvos", "visionos", "iphone", "ipad", "mac"]
+    
+    for update in updates:
+        name = update.get("name", "").lower()
+        # Extract OS names by checking for known patterns
+        for pattern in os_patterns:
+            if pattern in name:
+                os_names.add(pattern)
+    
+    return os_names
+
+
 def filter_updates_by_tag(
     updates: list[dict[str, Any]], tag: str
 ) -> list[dict[str, Any]]:
@@ -674,9 +701,9 @@ async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                 disable_web_page_preview=True
             )
         else:
-            # No updates found - try to find similar tags
-            all_targets = get_all_targets_from_updates(updates)
-            similar_tags = find_similar_tags(tag, all_targets)
+            # No updates found - try to find similar tags (OS names)
+            all_os_names = extract_os_names_from_updates(updates)
+            similar_tags = find_similar_tags(tag, all_os_names, cutoff=0.5)
 
             if similar_tags:
                 # Found similar tags - suggest them
@@ -796,6 +823,57 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             )
 
         await send_recent_updates_simple(update, context, chat_id, language_code)
+
+
+async def handle_unknown_command(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
+    """
+    Handle unknown commands with fuzzy matching.
+    
+    Suggests similar valid commands when a user types an invalid command.
+    
+    Args:
+        update: Telegram update object
+        context: Callback context
+    """
+    if not update.effective_chat or not update.message or not update.message.text:
+        return
+    
+    # Extract the command from the message
+    command_text = update.message.text.strip()
+    if not command_text.startswith("/"):
+        return
+    
+    # Remove the leading slash and any bot username
+    command = command_text[1:].split("@")[0].split()[0].lower()
+    
+    # List of valid commands
+    valid_commands = ["start", "stop", "updates", "language", "about", "help"]
+    
+    # Try to find similar commands
+    similar_commands = difflib.get_close_matches(
+        command,
+        valid_commands,
+        n=1,
+        cutoff=0.6
+    )
+    
+    if similar_commands:
+        # Found a similar command - suggest it
+        suggestion = similar_commands[0]
+        message = (
+            f"❌ Unknown command: `/{command}`\n\n"
+            f"Did you mean `/{suggestion}`?"
+        )
+    else:
+        # No similar command found
+        message = (
+            f"❌ Unknown command: `/{command}`\n\n"
+            "Use /help to see all available commands."
+        )
+    
+    await update.message.reply_text(message, parse_mode="Markdown")
 
 
 async def handle_non_command_message(
@@ -1079,6 +1157,11 @@ def create_application(token: str) -> Application:  # type: ignore[type-arg]
     # Add chat member handler to detect bot removal and addition
     application.add_handler(
         ChatMemberHandler(chat_member_status_handler, ChatMemberHandler.MY_CHAT_MEMBER)
+    )
+
+    # Add handler for unknown commands (before non-command message handler)
+    application.add_handler(
+        MessageHandler(filters.COMMAND, handle_unknown_command)
     )
 
     # Add handler for non-command messages (must be last to not override commands)
