@@ -325,13 +325,14 @@ async def language_selection_callback(
     # Check if this is a first-time subscription
     is_first_time = chat_id not in subscriptions
 
-    # Save subscription with language and initial tracking
+    # Save subscription with language, active status, and initial tracking
     last_idx = (
         -1 if is_first_time
         else subscriptions[chat_id].get("last_update_index", -1)
     )
     subscriptions[chat_id] = {
         "language_code": language_code,
+        "active": True,
         "last_update_index": last_idx,
     }
     save_subscriptions(subscriptions)
