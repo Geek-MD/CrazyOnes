@@ -289,6 +289,10 @@ In daemon mode, the system will:
 - `/stop` - Unsubscribe and stop receiving notifications
 - `/updates` - Show last 10 updates in your subscribed language
 - `/updates [tag]` - Show last 10 updates filtered by tag (e.g., `/updates ios`)
+- `/language` - List all available languages
+- `/language [code]` - Show updates for a specific language (e.g., `/language en-us`)
+- `/about` - Information about this bot
+- `/help` - Show all available commands and usage information
 
 Press `Ctrl+C` to stop the daemon gracefully.
 
