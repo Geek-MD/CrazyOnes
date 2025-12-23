@@ -197,7 +197,11 @@ def load_updates_for_language(language_code: str) -> list[dict[str, Any]]:
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
-    Handle /start command. Show welcome message and language selection.
+    Handle /start command. Automatically show recent updates for es-cl.
+    
+    This is a simplified proof-of-concept version that automatically
+    displays the 10 most recent Apple Updates for Chile (es-cl) without
+    requiring language selection.
 
     Args:
         update: Telegram update object
@@ -206,35 +210,24 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     if not update.effective_chat or not update.message:
         return
 
-    # Welcome message in English (bot interface is in English)
-    welcome_message = get_translation("en", "welcome")
-
-    # Load available languages
-    language_urls = load_language_urls()
-
-    if not language_urls:
-        await update.message.reply_text(
-            get_translation("en", "no_languages")
-        )
-        return
-
-    # Create inline keyboard with language options
-    # Format: "code: Language/Country"
-    keyboard = []
-    for lang_code in sorted(language_urls.keys()):
-        display_name = LANGUAGE_NAME_MAP.get(
-            lang_code, lang_code.upper().replace("-", "/")
-        )
-        button_text = f"{lang_code}: {display_name}"
-        keyboard.append([InlineKeyboardButton(button_text, callback_data=lang_code)])
-
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
+    chat_id = str(update.effective_chat.id)
+    
+    # Fixed language for proof of concept
+    language_code = "es-cl"
+    
+    # Send welcome message
+    welcome_message = (
+        "🍎 *¡Bienvenido al Bot de Actualizaciones de Apple!*\n\n"
+        "Aquí están las 10 actualizaciones más recientes de Apple para Chile:\n"
+    )
+    
     await update.message.reply_text(
         welcome_message,
-        reply_markup=reply_markup,
         parse_mode="Markdown"
     )
+    
+    # Load and send updates for es-cl
+    await send_recent_updates_simple(update, context, chat_id, language_code)
 
 
 async def language_selection_callback(
@@ -366,6 +359,65 @@ async def chat_member_status_handler(
             logger.info(
                 f"Bot removed from chat {chat_id}, subscription deleted"
             )
+
+
+async def send_recent_updates_simple(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE,
+    chat_id: str,
+    language_code: str,
+) -> None:
+    """
+    Send the 10 most recent updates (simplified version for proof of concept).
+
+    This is a streamlined version that doesn't manage subscriptions,
+    just displays the updates.
+
+    Args:
+        update: Telegram update object
+        context: Callback context
+        chat_id: Chat ID to send updates to
+        language_code: Language code for updates (es-cl for proof of concept)
+    """
+    # Load updates for the language
+    updates = load_updates_for_language(language_code)
+
+    if not updates:
+        message = (
+            "ℹ️ Aún no hay actualizaciones disponibles para este idioma.\n"
+            "Se te notificará cuando se publiquen nuevas actualizaciones."
+        )
+        await context.bot.send_message(
+            chat_id=int(chat_id),
+            text=message
+        )
+        return
+
+    # Get the 10 most recent updates
+    recent_updates = updates[:10]
+
+    # Spanish format: one message with all updates (date - name - target)
+    message = ""
+    for idx, update_item in enumerate(recent_updates, 1):
+        date = update_item.get("date", "N/A")
+        name = update_item.get("name", "Unknown")
+        target = update_item.get("target", "N/A")
+        url = update_item.get("url")
+
+        if url:
+            # Name as link
+            update_line = f"{idx}. {date} - [{name}]({url}) - {target}\n"
+        else:
+            update_line = f"{idx}. {date} - {name} - {target}\n"
+
+        message += update_line
+
+    await context.bot.send_message(
+        chat_id=int(chat_id),
+        text=message,
+        parse_mode="Markdown",
+        disable_web_page_preview=True
+    )
 
 
 async def send_recent_updates(
