@@ -98,7 +98,7 @@ def save_tracking_data(
 ) -> None:
     """
     Save tracking data for language URLs and their content hashes.
-    
+
     Tracking data is sorted alphabetically by language code.
 
     Args:
@@ -266,7 +266,7 @@ def save_updates_to_json(
 ) -> None:
     """
     Save security updates to a JSON file for a specific language.
-    
+
     Updates are sorted by ID in ascending order (oldest to newest).
 
     Args:

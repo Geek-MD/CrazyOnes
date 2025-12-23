@@ -171,7 +171,7 @@ def save_language_names(
 ) -> None:
     """
     Save language names to a JSON file.
-    
+
     Language names are sorted alphabetically by language code.
 
     Args:

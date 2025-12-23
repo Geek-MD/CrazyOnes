@@ -147,7 +147,7 @@ def load_subscriptions() -> dict[str, dict[str, Any]]:
 def save_subscriptions(subscriptions: dict[str, dict[str, Any]]) -> None:
     """
     Save subscriptions to JSON file.
-    
+
     Subscriptions are sorted alphabetically by chat_id.
 
     Args:
