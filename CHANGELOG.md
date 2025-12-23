@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.3] - 2024-12-23
+
+### Changed
+- **Default monitoring interval** reduced from 12 hours to 6 hours (4x per day)
+  - Daemon mode now checks for updates 4 times daily by default
+  - `--interval` default changed from 43200 to 21600 seconds
+  - Systemd service updated to use 6-hour interval
+- **Comprehensive language-country code mappings** expanded to 115 codes
+  - Added 54 missing language-country combinations
+  - Fixed issue where codes like "ar-om" were generated as "Ar/OM" instead of "Arabic/Oman"
+  - Organized by language family with clear inline comments
+  - Added Norwegian variant explanation (Bokmål, Nynorsk, generic)
+
+### Documentation
+- Updated README.md to reflect 6-hour default interval
+- Updated all examples to show 4x per day monitoring
+- Updated help text and argument descriptions
+
 ## [0.8.0] - 2024-12-19
 
 ### Added

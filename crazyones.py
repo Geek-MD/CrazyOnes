@@ -46,7 +46,7 @@ from scripts.scrape_apple_updates import (
 )
 
 # Version from pyproject.toml
-__version__ = "0.9.2"
+__version__ = "0.9.3"
 
 # PID file location
 PID_FILE = "/tmp/crazyones.pid"
@@ -451,7 +451,7 @@ After=network.target
 Type=simple
 User={user}
 WorkingDirectory={work_dir}
-ExecStart={python_path} {script_path} --daemon --interval 43200
+ExecStart={python_path} {script_path} --daemon --interval 21600
 Restart=always
 RestartSec=10
 StandardOutput=journal
@@ -806,8 +806,8 @@ Examples:
         "--daemon",
         action="store_true",
         help=(
-            "Run as daemon (continuous monitoring with 12 hour interval, "
-            "2 times per day)"
+            "Run as daemon (continuous monitoring with 6 hour interval, "
+            "4 times per day)"
         ),
     )
 
@@ -817,7 +817,7 @@ Examples:
         type=int,
         help=(
             "Monitoring interval in seconds (implies daemon mode, "
-            "default: 43200 = 12 hours)"
+            "default: 21600 = 6 hours)"
         ),
         metavar="SECONDS",
     )
@@ -1054,8 +1054,8 @@ def main() -> None:
 
     # Determine daemon mode and interval
     daemon_mode = args.daemon or args.interval is not None
-    # Default 12 hours (2 times per day)
-    interval = args.interval if args.interval else 43200
+    # Default 6 hours (4 times per day)
+    interval = args.interval if args.interval else 21600
     bot_mode = args.bot
     once_mode = args.once  # Hidden parameter for testing
 
