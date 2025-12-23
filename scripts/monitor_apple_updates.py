@@ -5,7 +5,26 @@ Module to monitor changes in language_urls.json and scrape Apple security update
 This module monitors the language_urls.json file created by scrape_apple_updates.py
 and scrapes the security updates table from each language page. For each language,
 it extracts the table data (name with URL, target, date) and saves it to individual
-JSON files. It tracks content changes to avoid re-processing unchanged pages.
+JSON files.
+
+Change Detection Strategy:
+--------------------------
+This module uses content hashing to efficiently detect changes:
+
+1. **Download**: Always downloads content from each URL (HTTP request is necessary)
+2. **Hash**: Computes SHA256 hash of the downloaded HTML content
+3. **Compare**: Compares hash with stored hash from previous run
+4. **Skip or Process**:
+   - If hash MATCHES → content unchanged, skip expensive HTML parsing
+   - If hash DIFFERS → content changed, proceed with full analysis
+
+This approach optimizes performance by:
+- Detecting ANY change in page content (even minor updates)
+- Avoiding expensive HTML parsing/extraction when content is identical
+- Still making necessary HTTP requests to check for updates
+
+The tracking data stores both the URL and its content hash, allowing the system
+to handle URL changes while still benefiting from content-based optimization.
 """
 
 import hashlib
@@ -321,10 +340,19 @@ def process_language_url(
     """
     Process a single language URL: fetch, parse, and save updates.
 
+    Implements content-based change detection with URL hashing optimization:
+    1. Always downloads content from the URL (HTTP request is necessary)
+    2. Computes SHA256 hash of the downloaded content
+    3. If hash matches stored hash → skip analysis (no table extraction)
+    4. If hash changed → proceed with analysis (extract security updates table)
+
+    This optimization avoids expensive HTML parsing when content hasn't changed,
+    while still detecting any modifications to the page content.
+
     Args:
         lang_code: Language code
         url: URL to process
-        tracking_data: Current tracking data
+        tracking_data: Current tracking data with content hashes
         force_update: If True, process even if content hasn't changed
 
     Returns:
@@ -342,6 +370,8 @@ def process_language_url(
             if lang_code in tracking_data:
                 if tracking_data[lang_code].get("hash") == content_hash:
                     print(f"  ⊙ No content changes detected for {lang_code}")
+                    # Update tracking data with current URL (in case URL changed)
+                    tracking_data[lang_code] = {"url": url, "hash": content_hash}
                     return False
 
         # Extract security updates

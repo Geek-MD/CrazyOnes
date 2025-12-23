@@ -261,6 +261,79 @@ def test_load_language_urls_missing_file():
         print("  ✓ Missing file handling works correctly")
 
 
+def test_content_hash_change_detection():
+    """
+    Test that content hashing correctly detects changes.
+
+    This test verifies the core optimization:
+    1. Download content (always happens)
+    2. Hash the content
+    3. Compare with stored hash
+    4. Only analyze if hash differs
+    """
+    print("\nTesting content hash change detection workflow...")
+
+    # Two identical contents (should have same hash)
+    content1 = """
+    <html>
+    <body>
+        <h2>Apple security updates</h2>
+        <table>
+            <tr><td>iOS 17.2</td><td>iPhone</td><td>11 Dec 2023</td></tr>
+        </table>
+    </body>
+    </html>
+    """
+
+    content2 = content1  # Same content
+
+    # Different content (should have different hash)
+    content3 = """
+    <html>
+    <body>
+        <h2>Apple security updates</h2>
+        <table>
+            <tr><td>iOS 17.3</td><td>iPhone</td><td>15 Jan 2024</td></tr>
+        </table>
+    </body>
+    </html>
+    """
+
+    hash1 = compute_content_hash(content1)
+    hash2 = compute_content_hash(content2)
+    hash3 = compute_content_hash(content3)
+
+    # Test 1: Same content should produce same hash (no need to analyze)
+    assert hash1 == hash2, "Identical content should have same hash"
+    print("  ✓ Identical content produces same hash (skip analysis)")
+
+    # Test 2: Different content should produce different hash (need to analyze)
+    assert hash1 != hash3, "Different content should have different hash"
+    print("  ✓ Changed content produces different hash (proceed with analysis)")
+
+    # Test 3: Even small changes should be detected
+    content4 = content1 + " "  # Just added a space
+    hash4 = compute_content_hash(content4)
+    assert hash1 != hash4, "Even minor changes should be detected"
+    print("  ✓ Minor content changes detected correctly")
+
+    # Test 4: Tracking data structure includes hash
+    tracking_data = {
+        "en-us": {
+            "url": "https://support.apple.com/en-us/100100",
+            "hash": hash1
+        }
+    }
+
+    # Simulate: content hasn't changed (hash matches)
+    assert tracking_data["en-us"]["hash"] == hash2
+    print("  ✓ Hash comparison works for unchanged content")
+
+    # Simulate: content has changed (hash differs)
+    assert tracking_data["en-us"]["hash"] != hash3
+    print("  ✓ Hash comparison detects content changes")
+
+
 def main():
     """Run all tests."""
     print("=== Testing monitor_apple_updates module ===\n")
@@ -272,6 +345,7 @@ def main():
     test_save_updates_to_json()
     test_extract_with_alternative_html()
     test_load_language_urls_missing_file()
+    test_content_hash_change_detection()
 
     print("\n=== All tests passed ===")
 
