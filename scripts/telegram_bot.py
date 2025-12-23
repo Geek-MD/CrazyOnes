@@ -11,13 +11,15 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram import Chat, ChatMember, Update
 from telegram.ext import (
     Application,
     CallbackQueryHandler,
     ChatMemberHandler,
     CommandHandler,
     ContextTypes,
+    MessageHandler,
+    filters,
 )
 
 try:
@@ -29,6 +31,12 @@ except ImportError:
 
 # Subscriptions file path
 SUBSCRIPTIONS_FILE = "data/subscriptions.json"
+
+# Default language for new subscriptions
+DEFAULT_LANGUAGE = "en-us"
+
+# Supported group chat types for automatic about message
+SUPPORTED_GROUP_TYPES = {Chat.GROUP, Chat.SUPERGROUP, Chat.CHANNEL}
 
 logger = logging.getLogger(__name__)
 
@@ -133,7 +141,10 @@ def load_subscriptions() -> dict[str, dict[str, Any]]:
 
     Returns:
         Dictionary with chat_id as keys and subscription data as values.
-        Each subscription contains: language_code, last_update_index
+        Each subscription contains:
+        - language_code: Language preference (default: en-us)
+        - active: Whether the subscription is active (True/False)
+        - last_update_index: Last update index sent (for future use)
     """
     path = Path(SUBSCRIPTIONS_FILE)
     if not path.exists():
@@ -151,13 +162,49 @@ def save_subscriptions(subscriptions: dict[str, dict[str, Any]]) -> None:
     Subscriptions are sorted alphabetically by chat_id.
 
     Args:
-        subscriptions: Dictionary with chat_id as keys and subscription data
+        subscriptions: Dictionary with chat_id as keys and subscription data.
+            Each subscription should contain:
+            - language_code: Language preference
+            - active: Whether the subscription is active
+            - last_update_index: Last update index (optional)
     """
     path = Path(SUBSCRIPTIONS_FILE)
     path.parent.mkdir(parents=True, exist_ok=True)
 
     with open(path, "w", encoding="utf-8") as f:
         json.dump(subscriptions, f, indent=2, ensure_ascii=False, sort_keys=True)
+
+
+def get_user_language(chat_id: str) -> str:
+    """
+    Get the user's language preference from subscriptions.
+
+    Args:
+        chat_id: Chat ID to look up
+
+    Returns:
+        Language code (defaults to DEFAULT_LANGUAGE if not found)
+    """
+    subscriptions = load_subscriptions()
+    if chat_id in subscriptions:
+        return subscriptions[chat_id].get("language_code", DEFAULT_LANGUAGE)
+    return DEFAULT_LANGUAGE
+
+
+def is_subscription_active(chat_id: str) -> bool:
+    """
+    Check if a subscription is active.
+
+    Args:
+        chat_id: Chat ID to check
+
+    Returns:
+        True if subscription exists and is active, False otherwise
+    """
+    subscriptions = load_subscriptions()
+    if chat_id in subscriptions:
+        return subscriptions[chat_id].get("active", False)
+    return False
 
 
 def load_language_urls() -> dict[str, str]:
@@ -197,11 +244,10 @@ def load_updates_for_language(language_code: str) -> list[dict[str, Any]]:
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
-    Handle /start command. Automatically show recent updates for es-cl.
-    
-    This is a simplified proof-of-concept version that automatically
-    displays the 10 most recent Apple Updates for Chile (es-cl) without
-    requiring language selection.
+    Handle /start command. Subscribe user with default language (en-us).
+
+    Creates or activates a subscription with the default language preference.
+    Users can change their language preference using /language command.
 
     Args:
         update: Telegram update object
@@ -211,22 +257,43 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         return
 
     chat_id = str(update.effective_chat.id)
-    
-    # Fixed language for proof of concept
-    language_code = "es-cl"
-    
+
+    # Load subscriptions
+    subscriptions = load_subscriptions()
+
+    # Check if user already has a subscription
+    if chat_id in subscriptions:
+        # User exists, just activate and use their saved language
+        subscriptions[chat_id]["active"] = True
+        language_code = subscriptions[chat_id].get("language_code", DEFAULT_LANGUAGE)
+    else:
+        # New user, create subscription with default language
+        subscriptions[chat_id] = {
+            "language_code": DEFAULT_LANGUAGE,
+            "active": True,
+            "last_update_index": -1
+        }
+        language_code = DEFAULT_LANGUAGE
+
+    # Save updated subscriptions
+    save_subscriptions(subscriptions)
+
+    # Get display name for the language
+    display_name = LANGUAGE_NAME_MAP.get(language_code, language_code.upper())
+
     # Send welcome message
     welcome_message = (
-        "🍎 *¡Bienvenido al Bot de Actualizaciones de Apple!*\n\n"
-        "Aquí están las 10 actualizaciones más recientes de Apple para Chile:\n"
+        "🍎 *Welcome to Apple Updates Bot!*\n\n"
+        f"You are now subscribed with language: *{display_name}*\n\n"
+        "Here are the 10 most recent Apple Updates:\n"
     )
-    
+
     await update.message.reply_text(
         welcome_message,
         parse_mode="Markdown"
     )
-    
-    # Load and send updates for es-cl
+
+    # Load and send updates for the user's language
     await send_recent_updates_simple(update, context, chat_id, language_code)
 
 
@@ -258,13 +325,14 @@ async def language_selection_callback(
     # Check if this is a first-time subscription
     is_first_time = chat_id not in subscriptions
 
-    # Save subscription with language and initial tracking
+    # Save subscription with language, active status, and initial tracking
     last_idx = (
         -1 if is_first_time
         else subscriptions[chat_id].get("last_update_index", -1)
     )
     subscriptions[chat_id] = {
         "language_code": language_code,
+        "active": True,
         "last_update_index": last_idx,
     }
     save_subscriptions(subscriptions)
@@ -291,7 +359,10 @@ async def language_selection_callback(
 
 async def stop_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
-    Handle /stop command. Remove user subscription.
+    Handle /stop command. Deactivate user subscription.
+
+    Marks the subscription as inactive but preserves language preference.
+    User can reactivate with /start command.
 
     Args:
         update: Telegram update object
@@ -312,18 +383,211 @@ async def stop_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         await update.message.reply_text(message, parse_mode="Markdown")
         return
 
-    # Get user's language before removing subscription
-    language_code = subscriptions[chat_id].get("language_code", "en")
+    # Get user's language before deactivating
+    language_code = subscriptions[chat_id].get("language_code", DEFAULT_LANGUAGE)
 
-    # Remove subscription
-    del subscriptions[chat_id]
+    # Deactivate subscription (keep language preference)
+    subscriptions[chat_id]["active"] = False
     save_subscriptions(subscriptions)
 
     # Send confirmation in user's language
     confirmation_message = get_translation(language_code, "stop_confirmation")
     await update.message.reply_text(confirmation_message, parse_mode="Markdown")
 
-    logger.info(f"Subscription stopped for chat {chat_id}")
+    logger.info(f"Subscription deactivated for chat {chat_id}")
+
+
+async def send_about_message(
+    context: ContextTypes.DEFAULT_TYPE,
+    chat_id: int,
+) -> None:
+    """
+    Send the about message to a chat.
+
+    This is a helper function that can be used by different handlers.
+
+    Args:
+        context: Callback context
+        chat_id: Chat ID to send the message to
+    """
+    about_message = (
+        "*CrazyOnes* is a Telegram bot that keeps you updated on Apple's "
+        "operating system and software releases.\n\n"
+        "Type /help for information on how to interact with the bot.\n\n"
+        "Developed by [Geek-MD](https://github.com/Geek-MD/CrazyOnes)"
+    )
+
+    await context.bot.send_message(
+        chat_id=chat_id,
+        text=about_message,
+        parse_mode="Markdown"
+    )
+
+
+async def about_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Handle /about command. Display information about the bot.
+
+    Args:
+        update: Telegram update object
+        context: Callback context
+    """
+    if not update.effective_chat or not update.message:
+        return
+
+    await send_about_message(context, update.effective_chat.id)
+
+
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Handle /help command. Display available commands and usage information.
+
+    Args:
+        update: Telegram update object
+        context: Callback context
+    """
+    if not update.effective_chat or not update.message:
+        return
+
+    help_message = (
+        "*CrazyOnes Bot - Help*\n\n"
+        "*Available Commands:*\n"
+        "• /start - Subscribe to Apple Updates notifications\n"
+        "• /stop - Unsubscribe from notifications\n"
+        "• /language [code] - List languages or show updates (e.g., /language en-us)\n"
+        "• /about - Information about this bot\n"
+        "• /help - Show this help message\n\n"
+        "*How it works:*\n"
+        "This bot monitors Apple's software update releases and sends you "
+        "notifications when new updates are available.\n\n"
+        "Use /start to begin receiving notifications."
+    )
+
+    await update.message.reply_text(help_message, parse_mode="Markdown")
+
+
+async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Handle /language command. List available languages or show updates for a language.
+
+    Args:
+        update: Telegram update object
+        context: Callback context
+    """
+    if not update.effective_chat or not update.message:
+        return
+
+    # Load available languages once
+    language_urls = load_language_urls()
+
+    if not language_urls:
+        message = (
+            "⚠️ No languages are currently available.\n"
+            "Please try again later."
+        )
+        await update.message.reply_text(message)
+        return
+
+    # Get the language parameter if provided
+    args = context.args if context.args else []
+
+    if not args:
+        # No parameter provided - list all available languages
+        # Build the list of available languages
+        message = "*Available Languages:*\n\n"
+
+        # Sort languages by display name for better readability
+        sorted_languages = sorted(
+            language_urls.items(),
+            key=lambda x: LANGUAGE_NAME_MAP.get(x[0], x[0])
+        )
+
+        for lang_code, _ in sorted_languages:
+            display_name = LANGUAGE_NAME_MAP.get(lang_code, lang_code.upper())
+            message += f"• `{lang_code}` - {display_name}\n"
+
+        message += (
+            f"\n📝 Total: {len(language_urls)} languages available\n\n"
+            "Use `/language [code]` to see updates for a specific language.\n"
+            "Example: `/language en-us`"
+        )
+
+        await update.message.reply_text(message, parse_mode="Markdown")
+    else:
+        # Parameter provided - show updates for that language
+        language_code = args[0].lower()
+
+        # Validate language code format to prevent injection attacks
+        # Only allow alphanumeric characters and hyphens
+        if not all(c.isalnum() or c == "-" for c in language_code):
+            message = (
+                "❌ Invalid language code format. "
+                "Only letters, numbers, and hyphens are allowed.\n\n"
+                "Use /language to see all available languages."
+            )
+            await update.message.reply_text(message, parse_mode="Markdown")
+            return
+
+        # Check if the language exists
+        if language_code not in language_urls:
+            display_name = LANGUAGE_NAME_MAP.get(language_code, language_code.upper())
+            message = (
+                f"❌ Language `{language_code}` ({display_name}) is not available.\n\n"
+                "Use /language to see all available languages."
+            )
+            await update.message.reply_text(message, parse_mode="Markdown")
+            return
+
+        # Load and display updates for the language
+        display_name = LANGUAGE_NAME_MAP.get(language_code, language_code.upper())
+
+        # Save user's language preference
+        chat_id = str(update.effective_chat.id)
+        subscriptions = load_subscriptions()
+
+        if chat_id in subscriptions:
+            # Update existing subscription's language
+            subscriptions[chat_id]["language_code"] = language_code
+            save_subscriptions(subscriptions)
+            await update.message.reply_text(
+                f"✅ Language preference updated to *{display_name}*\n\n"
+                f"🍎 *Apple Updates - {display_name}*\n\n"
+                f"Loading the 10 most recent updates...",
+                parse_mode="Markdown"
+            )
+        else:
+            # User not subscribed, just show updates without saving preference
+            await update.message.reply_text(
+                f"🍎 *Apple Updates - {display_name}*\n\n"
+                f"Loading the 10 most recent updates...\n\n"
+                f"💡 Use /start to subscribe and set this as your default language.",
+                parse_mode="Markdown"
+            )
+
+        await send_recent_updates_simple(update, context, chat_id, language_code)
+
+
+async def handle_non_command_message(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
+    """
+    Handle non-command messages.
+
+    In private chats: send the about message.
+    In groups/channels: ignore the message.
+
+    Args:
+        update: Telegram update object
+        context: Callback context
+    """
+    if not update.effective_chat or not update.message:
+        return
+
+    chat_type = update.effective_chat.type
+
+    # Only respond in private chats
+    if chat_type == Chat.PRIVATE:
+        await send_about_message(context, update.effective_chat.id)
 
 
 async def chat_member_status_handler(
@@ -333,6 +597,7 @@ async def chat_member_status_handler(
     Handle bot being added/removed from chats.
 
     Automatically removes subscription when bot is removed from a chat.
+    Sends about message when bot is added to a group, channel, or supergroup.
 
     Args:
         update: Telegram update object
@@ -342,22 +607,32 @@ async def chat_member_status_handler(
         return
 
     chat_id = str(update.my_chat_member.chat.id)
+    chat_type = update.my_chat_member.chat.type
     old_status = update.my_chat_member.old_chat_member.status
     new_status = update.my_chat_member.new_chat_member.status
 
+    # Bot was added to a group, channel, or supergroup
+    if old_status in [ChatMember.LEFT, ChatMember.BANNED] and new_status in [
+        ChatMember.MEMBER,
+        ChatMember.ADMINISTRATOR,
+    ]:
+        if chat_type in SUPPORTED_GROUP_TYPES:
+            logger.info(f"Bot added to {chat_type} {chat_id}, sending about message")
+            await send_about_message(context, int(chat_id))
+
     # Bot was removed from chat (kicked or left)
-    if old_status in ["member", "administrator"] and new_status in [
-        "left",
-        "kicked",
+    if old_status in [ChatMember.MEMBER, ChatMember.ADMINISTRATOR] and new_status in [
+        ChatMember.LEFT,
+        ChatMember.BANNED,
     ]:
         subscriptions = load_subscriptions()
 
         if chat_id in subscriptions:
-            # Remove subscription
-            del subscriptions[chat_id]
+            # Deactivate subscription (keep language preference)
+            subscriptions[chat_id]["active"] = False
             save_subscriptions(subscriptions)
             logger.info(
-                f"Bot removed from chat {chat_id}, subscription deleted"
+                f"Bot removed from chat {chat_id}, subscription deactivated"
             )
 
 
@@ -383,10 +658,7 @@ async def send_recent_updates_simple(
     updates = load_updates_for_language(language_code)
 
     if not updates:
-        message = (
-            "ℹ️ Aún no hay actualizaciones disponibles para este idioma.\n"
-            "Se te notificará cuando se publiquen nuevas actualizaciones."
-        )
+        message = get_translation(language_code, "no_updates")
         await context.bot.send_message(
             chat_id=int(chat_id),
             text=message
@@ -396,7 +668,7 @@ async def send_recent_updates_simple(
     # Get the 10 most recent updates
     recent_updates = updates[:10]
 
-    # Spanish format: one message with all updates (date - name - target)
+    # Build message with all updates (format: date - name - target)
     message = ""
     for idx, update_item in enumerate(recent_updates, 1):
         date = update_item.get("date", "N/A")
@@ -565,13 +837,22 @@ def create_application(token: str) -> Application:  # type: ignore[type-arg]
     # Add command handlers
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("stop", stop_command))
+    application.add_handler(CommandHandler("language", language_command))
+    application.add_handler(CommandHandler("about", about_command))
+    application.add_handler(CommandHandler("help", help_command))
 
     # Add callback query handler for language selection
     application.add_handler(CallbackQueryHandler(language_selection_callback))
 
-    # Add chat member handler to detect bot removal
+    # Add chat member handler to detect bot removal and addition
     application.add_handler(
         ChatMemberHandler(chat_member_status_handler, ChatMemberHandler.MY_CHAT_MEMBER)
+    )
+
+    # Add handler for non-command messages (must be last to not override commands)
+    # This will respond to any text message that is not a command
+    application.add_handler(
+        MessageHandler(filters.TEXT & ~filters.COMMAND, handle_non_command_message)
     )
 
     return application

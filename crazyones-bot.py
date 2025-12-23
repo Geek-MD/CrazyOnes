@@ -15,7 +15,6 @@ import argparse
 import asyncio
 import json
 import logging
-import signal
 import sys
 from pathlib import Path
 
@@ -102,7 +101,9 @@ async def main() -> None:
             token = config.get("telegram_bot_token", "")
             if not token or token == "YOUR_TELEGRAM_BOT_TOKEN_HERE":
                 logger.error("No valid token found in config.json")
-                logger.error("Please provide a token with --token or update config.json")
+                logger.error(
+                    "Please provide a token with --token or update config.json"
+                )
                 sys.exit(1)
             logger.info("Using token from config.json")
         except FileNotFoundError as e:
@@ -133,8 +134,11 @@ async def main() -> None:
     logger.info("✓ Bot is running and polling for updates")
     logger.info("")
     logger.info("Bot commands:")
-    logger.info("  /start - Subscribe to Apple Updates notifications")
-    logger.info("  /stop  - Unsubscribe from notifications")
+    logger.info("  /start    - Subscribe to Apple Updates notifications")
+    logger.info("  /stop     - Unsubscribe from notifications")
+    logger.info("  /language - List or show updates for a specific language")
+    logger.info("  /about    - Show information about the bot")
+    logger.info("  /help     - Show help and available commands")
     logger.info("")
     logger.info("Press Ctrl+C to stop the bot")
     logger.info("=" * 60)
