@@ -523,27 +523,27 @@ def get_all_targets_from_updates(updates: list[dict[str, Any]]) -> set[str]:
 def extract_os_names_from_updates(updates: list[dict[str, Any]]) -> set[str]:
     """
     Extract all unique OS names from update names.
-    
+
     Extracts OS names like "iOS", "macOS", "visionOS", "watchOS", "tvOS", "iPadOS"
     from update names like "iOS 17.2 and iPadOS 17.2", "macOS Sonoma 14.2", etc.
-    
+
     Uses pre-compiled regex patterns with word boundaries to avoid false positives.
-    
+
     Args:
         updates: List of update dictionaries
-    
+
     Returns:
         Set of unique OS names (lowercase)
     """
     os_names: set[str] = set()
-    
+
     for update in updates:
         name = update.get("name", "").lower()
         # Extract OS names using pre-compiled regex patterns with word boundaries
         for pattern, regex in APPLE_OS_REGEX_PATTERNS.items():
             if regex.search(name):
                 os_names.add(pattern)
-    
+
     return os_names
 
 
@@ -722,7 +722,9 @@ async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         else:
             # No updates found - try to find similar tags (OS names)
             all_os_names = extract_os_names_from_updates(updates)
-            similar_tags = find_similar_tags(tag, all_os_names, cutoff=FUZZY_CUTOFF_TAGS)
+            similar_tags = find_similar_tags(
+                tag, all_os_names, cutoff=FUZZY_CUTOFF_TAGS
+            )
 
             if similar_tags:
                 # Found similar tags - suggest them
@@ -847,31 +849,31 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 def extract_command_from_message(message_text: str) -> str:
     """
     Extract command name from a Telegram message.
-    
+
     Handles bot usernames and parameters properly.
     Examples:
         "/start" -> "start"
         "/updates@botname" -> "updates"
         "/language en-us" -> "language"
-    
+
     Args:
         message_text: The message text starting with /
-    
+
     Returns:
         The extracted command name (lowercase), or empty string if not a command
     """
     if not message_text or not message_text.startswith("/"):
         return ""
-    
+
     # Remove the leading slash
     without_slash = message_text[1:]
-    
+
     # Split by @ to remove bot username (e.g., "/start@botname" -> "start")
     without_username = without_slash.split("@")[0]
-    
+
     # Split by space to remove parameters (e.g., "/updates ios" -> "updates")
     command = without_username.split()[0] if without_username else ""
-    
+
     return command.lower()
 
 
@@ -880,21 +882,21 @@ async def handle_unknown_command(
 ) -> None:
     """
     Handle unknown commands with fuzzy matching.
-    
+
     Suggests similar valid commands when a user types an invalid command.
-    
+
     Args:
         update: Telegram update object
         context: Callback context
     """
     if not update.effective_chat or not update.message or not update.message.text:
         return
-    
+
     # Extract the command from the message
     command = extract_command_from_message(update.message.text.strip())
     if not command:
         return
-    
+
     # Try to find similar commands using the module-level constant
     similar_commands = difflib.get_close_matches(
         command,
@@ -902,7 +904,7 @@ async def handle_unknown_command(
         n=1,
         cutoff=FUZZY_CUTOFF_COMMANDS
     )
-    
+
     if similar_commands:
         # Found a similar command - suggest it
         suggestion = similar_commands[0]
@@ -916,7 +918,7 @@ async def handle_unknown_command(
             f"❌ Unknown command: `/{command}`\n\n"
             "Use /help to see all available commands."
         )
-    
+
     await update.message.reply_text(message, parse_mode="Markdown")
 
 
