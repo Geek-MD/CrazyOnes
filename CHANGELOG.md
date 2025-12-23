@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - "mangos" now suggests "macos", "visinos" suggests "visionos", etc.
   - Lowered cutoff threshold to 0.5 for better matching of typos
   - Searches OS names instead of target descriptions for more accurate suggestions
+- **Language names mapping** expanded with 42 additional language-country codes
+  - Added missing entries for German, Greek, English, French, Dutch, and Romanian variants
+  - All language codes now display proper human-readable names (e.g., "English/Botswana" instead of "En/BW")
+  - Total entries increased from 115 to 157 language-country combinations
 
 ### Added
 - **Fuzzy command matching** for mistyped bot commands
