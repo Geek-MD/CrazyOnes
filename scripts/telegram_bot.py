@@ -50,6 +50,8 @@ SUPPORTED_GROUP_TYPES = {Chat.GROUP, Chat.SUPERGROUP, Chat.CHANNEL}
 APPLE_OS_PATTERNS = ["ios", "ipados", "macos", "watchos", "tvos", "visionos"]
 
 # Pre-compiled regex patterns for OS name extraction (for performance)
+# Compiled once at module import time, then reused for all extractions
+# Using word boundaries (\b) to prevent false positives (e.g., "notmacos")
 APPLE_OS_REGEX_PATTERNS = {
     pattern: re.compile(r'\b' + re.escape(pattern) + r'\b')
     for pattern in APPLE_OS_PATTERNS
@@ -57,6 +59,10 @@ APPLE_OS_REGEX_PATTERNS = {
 
 # Valid bot commands for fuzzy matching
 VALID_COMMANDS = ["start", "stop", "updates", "language", "about", "help"]
+
+# Fuzzy matching cutoff thresholds
+FUZZY_CUTOFF_TAGS = 0.5  # Lower threshold for OS tags (more lenient for typos)
+FUZZY_CUTOFF_COMMANDS = 0.6  # Higher threshold for commands (stricter matching)
 
 logger = logging.getLogger(__name__)
 
@@ -716,7 +722,7 @@ async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         else:
             # No updates found - try to find similar tags (OS names)
             all_os_names = extract_os_names_from_updates(updates)
-            similar_tags = find_similar_tags(tag, all_os_names, cutoff=0.5)
+            similar_tags = find_similar_tags(tag, all_os_names, cutoff=FUZZY_CUTOFF_TAGS)
 
             if similar_tags:
                 # Found similar tags - suggest them
@@ -894,7 +900,7 @@ async def handle_unknown_command(
         command,
         VALID_COMMANDS,
         n=1,
-        cutoff=0.6
+        cutoff=FUZZY_CUTOFF_COMMANDS
     )
     
     if similar_commands:
