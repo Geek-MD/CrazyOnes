@@ -568,8 +568,8 @@ async def send_recent_updates_simple(
 
     if not updates:
         message = (
-            "ℹ️ Aún no hay actualizaciones disponibles para este idioma.\n"
-            "Se te notificará cuando se publiquen nuevas actualizaciones."
+            "ℹ️ No updates available yet for this language.\n"
+            "You'll be notified when new updates are published."
         )
         await context.bot.send_message(
             chat_id=int(chat_id),
@@ -580,7 +580,7 @@ async def send_recent_updates_simple(
     # Get the 10 most recent updates
     recent_updates = updates[:10]
 
-    # Spanish format: one message with all updates (date - name - target)
+    # Format: one message with all updates (date - name - target)
     message = ""
     for idx, update_item in enumerate(recent_updates, 1):
         date = update_item.get("date", "N/A")
