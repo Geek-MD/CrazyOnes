@@ -388,15 +388,13 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         "*Available Commands:*\n"
         "• /start - Subscribe to Apple Updates notifications\n"
         "• /stop - Unsubscribe from notifications\n"
-        "• /language - List available languages or show updates for a language\n"
+        "• /language [code] - List languages or show updates (e.g., /language en-us)\n"
         "• /about - Information about this bot\n"
         "• /help - Show this help message\n\n"
         "*How it works:*\n"
         "This bot monitors Apple's software update releases and sends you "
         "notifications when new updates are available.\n\n"
-        "Use /start to begin receiving notifications.\n"
-        "Use /language to see available languages or /language [code] to see "
-        "updates for a specific language (e.g., /language en-us)."
+        "Use /start to begin receiving notifications."
     )
 
     await update.message.reply_text(help_message, parse_mode="Markdown")
@@ -457,7 +455,8 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         # Only allow alphanumeric characters and hyphens
         if not all(c.isalnum() or c == "-" for c in language_code):
             message = (
-                "❌ Invalid language code format.\n\n"
+                "❌ Invalid language code format. "
+                "Only letters, numbers, and hyphens are allowed.\n\n"
                 "Use /language to see all available languages."
             )
             await update.message.reply_text(message, parse_mode="Markdown")
@@ -577,7 +576,6 @@ async def send_recent_updates_simple(
     updates = load_updates_for_language(language_code)
 
     if not updates:
-        # Use translation system for the message
         message = get_translation(language_code, "no_updates")
         await context.bot.send_message(
             chat_id=int(chat_id),
@@ -588,7 +586,7 @@ async def send_recent_updates_simple(
     # Get the 10 most recent updates
     recent_updates = updates[:10]
 
-    # Format: one message with all updates (date - name - target)
+    # Build message with all updates (format: date - name - target)
     message = ""
     for idx, update_item in enumerate(recent_updates, 1):
         date = update_item.get("date", "N/A")
