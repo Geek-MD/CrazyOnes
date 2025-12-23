@@ -32,8 +32,8 @@ try:
     from .generate_language_names import LANGUAGE_NAME_MAP
 except ImportError:
     # Fall back to absolute import (when run directly)
-    from generate_language_names import (
-        LANGUAGE_NAME_MAP,  # type: ignore[import-not-found,no-redef]
+    from generate_language_names import (  # type: ignore[import-not-found,no-redef]
+        LANGUAGE_NAME_MAP,
     )
 
 # Subscriptions file path
