@@ -413,21 +413,22 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     if not update.effective_chat or not update.message:
         return
 
+    # Load available languages once
+    language_urls = load_language_urls()
+
+    if not language_urls:
+        message = (
+            "⚠️ No languages are currently available.\n"
+            "Please try again later."
+        )
+        await update.message.reply_text(message)
+        return
+
     # Get the language parameter if provided
     args = context.args if context.args else []
 
     if not args:
         # No parameter provided - list all available languages
-        language_urls = load_language_urls()
-
-        if not language_urls:
-            message = (
-                "⚠️ No languages are currently available.\n"
-                "Please try again later."
-            )
-            await update.message.reply_text(message)
-            return
-
         # Build the list of available languages
         message = "*Available Languages:*\n\n"
 
@@ -452,8 +453,17 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         # Parameter provided - show updates for that language
         language_code = args[0].lower()
 
+        # Validate language code format to prevent injection attacks
+        # Only allow alphanumeric characters and hyphens
+        if not all(c.isalnum() or c == "-" for c in language_code):
+            message = (
+                "❌ Invalid language code format.\n\n"
+                "Use /language to see all available languages."
+            )
+            await update.message.reply_text(message, parse_mode="Markdown")
+            return
+
         # Check if the language exists
-        language_urls = load_language_urls()
         if language_code not in language_urls:
             display_name = LANGUAGE_NAME_MAP.get(language_code, language_code.upper())
             message = (
@@ -567,10 +577,8 @@ async def send_recent_updates_simple(
     updates = load_updates_for_language(language_code)
 
     if not updates:
-        message = (
-            "ℹ️ No updates available yet for this language.\n"
-            "You'll be notified when new updates are published."
-        )
+        # Use translation system for the message
+        message = get_translation(language_code, "no_updates")
         await context.bot.send_message(
             chat_id=int(chat_id),
             text=message
