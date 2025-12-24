@@ -66,77 +66,48 @@ FUZZY_CUTOFF_COMMANDS = 0.6  # Higher threshold for commands (stricter matching)
 
 logger = logging.getLogger(__name__)
 
-# Translations for different languages
-TRANSLATIONS = {
-    "en": {
-        "welcome": (
-            "🍎 *Welcome to Apple Updates Bot!*\n\n"
-            "I'm a bot that notifies about Apple software updates.\n\n"
-            "Please select the language of Apple Updates you want to "
-            "monitor:"
-        ),
-        "no_languages": (
-            "⚠️ Sorry, no languages are available at the moment. "
-            "Please try again later."
-        ),
-        "language_selected": (
-            "✅ *Language selected: {display_name}*\n\n"
-            "You will now receive Apple Updates in this language."
-        ),
-        "no_updates": (
-            "ℹ️ No updates available yet for this language. "
-            "You'll be notified when new updates are published."
-        ),
-        "recent_updates_header": (
-            "📱 *Here are the {count} most recent Apple Updates:*\n"
-        ),
-        "new_updates_header": "🔔 *New Apple Updates*\n",
-        "stop_confirmation": (
-            "✅ *Subscription stopped*\n\n"
-            "You will no longer receive Apple Updates notifications.\n"
-            "Send /start anytime to subscribe again."
-        ),
-        "not_subscribed": (
-            "ℹ️ You are not currently subscribed to notifications.\n"
-            "Send /start to subscribe."
-        ),
-    },
-    "es": {
-        "welcome": (
-            "🍎 *¡Bienvenido al Bot de Actualizaciones de Apple!*\n\n"
-            "Soy un bot que notifica sobre actualizaciones de software "
-            "de Apple.\n\n"
-            "Por favor selecciona el idioma de Apple Updates que quieres "
-            "monitorizar:"
-        ),
-        "no_languages": (
-            "⚠️ Lo siento, no hay idiomas disponibles en este momento. "
-            "Por favor, inténtalo más tarde."
-        ),
-        "language_selected": (
-            "✅ *Idioma seleccionado: {display_name}*\n\n"
-            "Ahora recibirás las Actualizaciones de Apple en este idioma."
-        ),
-        "no_updates": (
-            "ℹ️ Aún no hay actualizaciones disponibles para este idioma. "
-            "Se te notificará cuando se publiquen nuevas actualizaciones."
-        ),
-        "recent_updates_header": (
-            "📱 *Estas son las {count} actualizaciones más recientes de "
-            "Apple:*\n"
-        ),
-        "new_updates_header": "🔔 *Nuevas actualizaciones de Apple*\n",
-        "stop_confirmation": (
-            "✅ *Suscripción detenida*\n\n"
-            "Ya no recibirás notificaciones de Actualizaciones de Apple.\n"
-            "Envía /start en cualquier momento para suscribirte de nuevo."
-        ),
-        "not_subscribed": (
-            "ℹ️ No estás suscrito actualmente a las notificaciones.\n"
-            "Envía /start para suscribirte."
-        ),
-    },
-}
+# Cache for loaded translation files
+_TRANSLATION_CACHE: dict[str, dict[str, str]] = {}
+
+
+def load_translation_file(lang_code: str) -> dict[str, str]:
+    """
+    Load translation strings from JSON file for a given language.
+
+    Args:
+        lang_code: Language code (e.g., 'en-us', 'es-es')
+
+    Returns:
+        Dictionary with translation strings
+    """
+    # Check cache first
+    if lang_code in _TRANSLATION_CACHE:
+        return _TRANSLATION_CACHE[lang_code]
+
+    # Determine the file path
+    # First try the exact language code (e.g., 'en-us.json')
+    script_dir = Path(__file__).parent
+    translations_dir = script_dir / "translations"
+    lang_file = translations_dir / f"{lang_code}.json"
+
+    # If not found, try strings.json as default
+    if not lang_file.exists():
+        lang_file = translations_dir / "strings.json"
+
+    # If strings.json doesn't exist either, return empty dict
+    if not lang_file.exists():
+        logger.warning(f"Translation file not found for {lang_code}, using empty dict")
+        return {}
+
+    try:
+        with open(lang_file, encoding="utf-8") as f:
+            translations: dict[str, str] = json.load(f)
+            # Cache the loaded translations
+            _TRANSLATION_CACHE[lang_code] = translations
+            return translations
+    except (OSError, json.JSONDecodeError) as e:
+        logger.error(f"Error loading translation file {lang_file}: {e}")
+        return {}
 
 
 def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
@@ -151,14 +122,30 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
     Returns:
         Translated and formatted string
     """
-    # Extract base language (e.g., 'en' from 'en-us')
-    base_lang = lang_code.split("-")[0] if "-" in lang_code else lang_code
+    # Try to load translations for the exact language code first
+    translations = load_translation_file(lang_code)
 
-    # Default to English if translation not found
-    translations = TRANSLATIONS.get(base_lang, TRANSLATIONS["en"])
-    text = translations.get(key, TRANSLATIONS["en"].get(key, ""))
+    # If key not found or translations empty, try strings.json as fallback
+    if not translations or key not in translations:
+        translations = load_translation_file("strings")
 
-    return text.format(**kwargs) if kwargs else text
+    # Get the text, default to empty string if not found
+    text = translations.get(key, "")
+
+    # If still not found, log warning and return key
+    if not text:
+        logger.warning(f"Translation key '{key}' not found for language '{lang_code}'")
+        return key
+
+    # Format with kwargs if provided
+    try:
+        return text.format(**kwargs) if kwargs else text
+    except KeyError as e:
+        logger.error(
+            f"Missing format argument {e} for key '{key}' "
+            f"in language '{lang_code}'"
+        )
+        return text
 
 
 def load_subscriptions() -> dict[str, dict[str, Any]]:
@@ -312,10 +299,8 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     display_name = LANGUAGE_NAME_MAP.get(language_code, language_code.upper())
 
     # Send welcome message
-    welcome_message = (
-        "*Welcome to _CrazyOnes Bot_!*\n\n"
-        f"You are now subscribed with language: _{display_name}_\n\n"
-        "Here are the 10 most recent Apple Updates:\n"
+    welcome_message = get_translation(
+        language_code, "start_welcome", display_name=display_name
     )
 
     await update.message.reply_text(
@@ -409,7 +394,7 @@ async def stop_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     # Check if user is subscribed
     if chat_id not in subscriptions:
         # Get language from subscription or default to English
-        message = get_translation("en", "not_subscribed")
+        message = get_translation(DEFAULT_LANGUAGE, "not_subscribed")
         await update.message.reply_text(message, parse_mode="Markdown")
         return
 
@@ -440,12 +425,13 @@ async def send_about_message(
         context: Callback context
         chat_id: Chat ID to send the message to
     """
-    about_message = (
-        "*CrazyOnes* is a _Telegram bot_ that keeps you updated on Apple's "
-        "operating system and software releases.\n\n"
-        "Type /help for information on how to interact with the bot.\n\n"
-        "Developed by [_Geek-MD_](https://github.com/Geek-MD/CrazyOnes)"
-    )
+    # Get user's language preference, default to en-us
+    subscriptions = load_subscriptions()
+    lang_code = DEFAULT_LANGUAGE
+    if str(chat_id) in subscriptions:
+        lang_code = subscriptions[str(chat_id)].get("language_code", DEFAULT_LANGUAGE)
+
+    about_message = get_translation(lang_code, "about_message")
 
     await context.bot.send_message(
         chat_id=chat_id,
@@ -479,22 +465,24 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     if not update.effective_chat or not update.message:
         return
 
+    # Get user's language preference
+    chat_id = str(update.effective_chat.id)
+    lang_code = get_user_language(chat_id)
+
+    # Build help message from translation strings
     help_message = (
-        "*CrazyOnes Bot - Help*\n\n"
-        "_Available Commands:_\n"
-        "• _/start_ - Subscribe to CrazyOnes Bot\n"
-        "• _/stop_ - Unsubscribe from notifications\n"
-        "• _/updates_ - Show last 10 updates in your language\n"
-        "• _/updates [tag]_ - Show last 10 updates filtered by tag "
-        "(e.g., _/updates ios_)\n"
-        "• _/language [code]_ - List languages or show updates "
-        "(e.g., _/language en-us_)\n"
-        "• _/about_ - Information about this bot\n"
-        "• _/help_ - Show this help message\n\n"
-        "_How it works:_\n"
-        "This bot monitors Apple's software update releases and sends you "
-        "notifications when new updates are available.\n\n"
-        "Use _/start_ to begin receiving notifications."
+        get_translation(lang_code, "help_title") +
+        get_translation(lang_code, "help_commands") +
+        get_translation(lang_code, "help_start") +
+        get_translation(lang_code, "help_stop") +
+        get_translation(lang_code, "help_updates") +
+        get_translation(lang_code, "help_updates_tag") +
+        get_translation(lang_code, "help_language") +
+        get_translation(lang_code, "help_about") +
+        get_translation(lang_code, "help_help") +
+        get_translation(lang_code, "help_how_it_works") +
+        get_translation(lang_code, "help_description") +
+        get_translation(lang_code, "help_get_started")
     )
 
     await update.message.reply_text(help_message, parse_mode="Markdown")
@@ -628,10 +616,7 @@ async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     updates = load_updates_for_language(language_code)
 
     if not updates:
-        message = (
-            "ℹ️ No updates available yet for your language. "
-            "You'll be notified when new updates are published."
-        )
+        message = get_translation(language_code, "updates_no_updates")
         await update.message.reply_text(message)
         return
 
@@ -640,10 +625,14 @@ async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
     if not args:
         # No parameter - show last 10 updates
-        display_name = LANGUAGE_NAME_MAP.get(language_code, language_code.upper())
+        display_name = LANGUAGE_NAME_MAP.get(
+            language_code, language_code.upper()
+        )
+        header = get_translation(
+            language_code, "updates_header", display_name=display_name
+        )
         await update.message.reply_text(
-            f"🍎 *Apple Updates - {display_name}*\n\n"
-            f"Here are the 10 most recent updates:",
+            header,
             parse_mode="Markdown"
         )
 
@@ -676,10 +665,7 @@ async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
         # Validate tag format
         if not all(c.isalnum() or c in "-_ " for c in tag):
-            message = (
-                "❌ Invalid tag format. "
-                "Only letters, numbers, hyphens, underscores, and spaces are allowed."
-            )
+            message = get_translation(language_code, "updates_invalid_tag")
             await update.message.reply_text(message)
             return
 
@@ -689,11 +675,14 @@ async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         if filtered_updates:
             # Found updates for this tag
             display_name = LANGUAGE_NAME_MAP.get(language_code, language_code.upper())
-            count = min(len(filtered_updates), 10)
+            count = len(filtered_updates)
+            showing = min(count, 10)
+            header = get_translation(
+                language_code, "updates_found_tag",
+                display_name=display_name, count=count, tag=tag, showing=showing
+            )
             await update.message.reply_text(
-                f"🍎 *Apple Updates - {display_name}*\n\n"
-                f"Found {len(filtered_updates)} update(s) for tag *{tag}*\n\n"
-                f"Showing the {count} most recent:",
+                header,
                 parse_mode="Markdown"
             )
 
@@ -729,18 +718,16 @@ async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             if similar_tags:
                 # Found similar tags - suggest them
                 suggestions = ", ".join(f"`{t}`" for t in similar_tags[:3])
-                message = (
-                    f"❌ No updates found for tag *{tag}*\n\n"
-                    f"Did you mean: {suggestions}?\n\n"
-                    "Please reply with one of the suggested tags or use "
-                    "`/updates [tag]` with a different tag."
+                message = get_translation(
+                    language_code, "updates_not_found_tag",
+                    tag=tag, suggestions=suggestions
                 )
                 await update.message.reply_text(message, parse_mode="Markdown")
             else:
                 # No similar tags found
-                message = (
-                    f"❌ No updates found for tag *{tag}*\n\n"
-                    "Use `/updates` without parameters to see all recent updates."
+                message = get_translation(
+                    language_code, "updates_not_found_no_suggestions",
+                    tag=tag
                 )
                 await update.message.reply_text(message, parse_mode="Markdown")
 
@@ -759,11 +746,12 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     # Load available languages once
     language_urls = load_language_urls()
 
+    # Get user's language preference
+    chat_id = str(update.effective_chat.id)
+    user_lang = get_user_language(chat_id)
+
     if not language_urls:
-        message = (
-            "⚠️ No languages are currently available.\n"
-            "Please try again later."
-        )
+        message = get_translation(user_lang, "language_not_available")
         await update.message.reply_text(message)
         return
 
@@ -773,7 +761,7 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     if not args:
         # No parameter provided - list all available languages
         # Build the list of available languages
-        message = "*Crazy Ones - Available Languages:*\n\n"
+        message = get_translation(user_lang, "language_list_header")
 
         # Sort languages alphabetically by language code (xx-yy format)
         sorted_languages = sorted(
@@ -785,10 +773,8 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             display_name = LANGUAGE_NAME_MAP.get(lang_code, lang_code.upper())
             message += f"_{lang_code}_ - {display_name}\n"
 
-        message += (
-            f"\nTotal: {len(language_urls)} languages available\n\n"
-            "Use _/language [code]_ to subscribe for specific language updates.\n"
-            "Example: _/language en-us_"
+        message += get_translation(
+            user_lang, "language_list_footer", count=len(language_urls)
         )
 
         await update.message.reply_text(message, parse_mode="Markdown")
@@ -799,20 +785,16 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         # Validate language code format to prevent injection attacks
         # Only allow alphanumeric characters and hyphens
         if not all(c.isalnum() or c == "-" for c in language_code):
-            message = (
-                "❌ Invalid language code format. "
-                "Only letters, numbers, and hyphens are allowed.\n\n"
-                "Use /language to see all available languages."
-            )
+            message = get_translation(user_lang, "language_invalid_format")
             await update.message.reply_text(message, parse_mode="Markdown")
             return
 
         # Check if the language exists
         if language_code not in language_urls:
             display_name = LANGUAGE_NAME_MAP.get(language_code, language_code.upper())
-            message = (
-                f"❌ Language `{language_code}` ({display_name}) is not available.\n\n"
-                "Use /language to see all available languages."
+            message = get_translation(
+                user_lang, "language_not_found",
+                language_code=language_code, display_name=display_name
             )
             await update.message.reply_text(message, parse_mode="Markdown")
             return
@@ -821,25 +803,28 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         display_name = LANGUAGE_NAME_MAP.get(language_code, language_code.upper())
 
         # Save user's language preference
-        chat_id = str(update.effective_chat.id)
         subscriptions = load_subscriptions()
 
         if chat_id in subscriptions:
             # Update existing subscription's language
             subscriptions[chat_id]["language_code"] = language_code
             save_subscriptions(subscriptions)
+            message = get_translation(
+                language_code, "language_updated",
+                display_name=display_name
+            )
             await update.message.reply_text(
-                f"✅ Language preference updated to *{display_name}*\n\n"
-                f"🍎 *Apple Updates - {display_name}*\n\n"
-                f"Loading the 10 most recent updates...",
+                message,
                 parse_mode="Markdown"
             )
         else:
             # User not subscribed, just show updates without saving preference
+            message = get_translation(
+                language_code, "language_not_subscribed",
+                display_name=display_name
+            )
             await update.message.reply_text(
-                f"🍎 *Apple Updates - {display_name}*\n\n"
-                f"Loading the 10 most recent updates...\n\n"
-                f"💡 Use /start to subscribe and set this as your default language.",
+                message,
                 parse_mode="Markdown"
             )
 
@@ -897,6 +882,10 @@ async def handle_unknown_command(
     if not command:
         return
 
+    # Get user's language preference
+    chat_id = str(update.effective_chat.id)
+    lang_code = get_user_language(chat_id)
+
     # Try to find similar commands using the module-level constant
     similar_commands = difflib.get_close_matches(
         command,
@@ -908,15 +897,15 @@ async def handle_unknown_command(
     if similar_commands:
         # Found a similar command - suggest it
         suggestion = similar_commands[0]
-        message = (
-            f"❌ Unknown command: `/{command}`\n\n"
-            f"Did you mean `/{suggestion}`?"
+        message = get_translation(
+            lang_code, "unknown_command_with_suggestion",
+            command=command, suggestion=suggestion
         )
     else:
         # No similar command found
-        message = (
-            f"❌ Unknown command: `/{command}`\n\n"
-            "Use /help to see all available commands."
+        message = get_translation(
+            lang_code, "unknown_command_no_suggestion",
+            command=command
         )
 
     await update.message.reply_text(message, parse_mode="Markdown")
@@ -1167,11 +1156,11 @@ def format_update_message(
         else:
             message = f"*{name}*\n"
 
-        message += f"📱 Target: {target}\n"
-        message += f"📅 Date: {date}\n"
+        message += get_translation(language_code, "update_format_target", target=target)
+        message += get_translation(language_code, "update_format_date", date=date)
 
         if url:
-            message += f"🔗 [More info]({url})"
+            message += get_translation(language_code, "update_format_link", url=url)
 
     return message
 
