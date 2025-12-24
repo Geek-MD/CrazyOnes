@@ -391,7 +391,7 @@ async def stop_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     # Check if user is subscribed
     if chat_id not in subscriptions:
         # Get language from subscription or default to English
-        message = get_translation("en", "not_subscribed")
+        message = get_translation(DEFAULT_LANGUAGE, "not_subscribed")
         await update.message.reply_text(message, parse_mode="Markdown")
         return
 
