@@ -28,7 +28,7 @@
   "updates_not_found_tag": "*{tag}* etiketi için güncelleme bulunamadı\n\nŞunu mu demek istediniz: {suggestions}?\n\nLütfen önerilen etiketlerden biriyle yanıt verin veya farklı bir etiketle `/updates [etiket]` kullanın.",
   "updates_not_found_no_suggestions": "*{tag}* etiketi için güncelleme bulunamadı\n\nTüm son güncellemeleri görmek için parametresiz `/updates` kullanın.",
   "language_not_available": "Şu anda kullanılabilir dil yok.\nLütfen daha sonra tekrar deneyin.",
-  "language_list_header": "*Crazy Ones - Kullanılabilir Diller:*",
+  "language_list_header": "*CrazyOnes - Kullanılabilir Diller:*",
   "language_list_footer": "Toplam: {count} kullanılabilir dil\n\nBelirli bir dil için güncellemelere abone olmak için _/language [kod]_ kullanın.\nÖrnek: _/language tr-tr_",
   "language_invalid_format": "Geçersiz dil kodu biçimi. Yalnızca harfler, sayılar ve tirelere izin verilir.\n\nTüm kullanılabilir dilleri görmek için /language kullanın.",
   "language_not_found": "`{language_code}` ({display_name}) dili kullanılamıyor.\n\nTüm kullanılabilir dilleri görmek için /language kullanın.",

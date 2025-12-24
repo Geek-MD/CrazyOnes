@@ -28,7 +28,7 @@
   "updates_not_found_tag": "لم يتم العثور على تحديثات للوسم *{tag}*\n\nهل قصدت: {suggestions}؟\n\nالرجاء الرد بأحد الوسوم المقترحة أو استخدم `/updates [وسم]` مع وسم مختلف.",
   "updates_not_found_no_suggestions": "لم يتم العثور على تحديثات للوسم *{tag}*\n\nاستخدم `/updates` بدون معاملات لرؤية جميع التحديثات الأخيرة.",
   "language_not_available": "لا توجد لغات متاحة حالياً.\nيرجى المحاولة لاحقاً.",
-  "language_list_header": "*Crazy Ones - اللغات المتاحة:*",
+  "language_list_header": "*CrazyOnes - اللغات المتاحة:*",
   "language_list_footer": "الإجمالي: {count} لغة متاحة\n\nاستخدم _/language [رمز]_ للاشتراك في تحديثات لغة معينة.\nمثال: _/language ar-sa_",
   "language_invalid_format": "تنسيق رمز اللغة غير صالح. يُسمح فقط بالحروف والأرقام والشرطات.\n\nاستخدم /language لرؤية جميع اللغات المتاحة.",
   "language_not_found": "اللغة `{language_code}` ({display_name}) غير متاحة.\n\nاستخدم /language لرؤية جميع اللغات المتاحة.",

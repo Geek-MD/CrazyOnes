@@ -28,7 +28,7 @@
   "updates_not_found_tag": "Geen updates gevonden voor tag *{tag}*\n\nBedoelde je: {suggestions}?\n\nReageer met een van de voorgestelde tags of gebruik `/updates [tag]` met een andere tag.",
   "updates_not_found_no_suggestions": "Geen updates gevonden voor tag *{tag}*\n\nGebruik `/updates` zonder parameters om alle recente updates te zien.",
   "language_not_available": "Er zijn momenteel geen talen beschikbaar.\nProbeer het later opnieuw.",
-  "language_list_header": "*Crazy Ones - Beschikbare Talen:*",
+  "language_list_header": "*CrazyOnes - Beschikbare Talen:*",
   "language_list_footer": "Totaal: {count} beschikbare talen\n\nGebruik _/language [code]_ om je te abonneren op updates in een specifieke taal.\nVoorbeeld: _/language nl-nl_",
   "language_invalid_format": "Ongeldig taalcode-formaat. Alleen letters, cijfers en koppeltekens zijn toegestaan.\n\nGebruik /language om alle beschikbare talen te zien.",
   "language_not_found": "Taal `{language_code}` ({display_name}) is niet beschikbaar.\n\nGebruik /language om alle beschikbare talen te zien.",

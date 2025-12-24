@@ -28,7 +28,7 @@
   "updates_not_found_tag": "No updates found for tag *{tag}*\n\nDid you mean: {suggestions}?\n\nPlease reply with one of the suggested tags or use `/updates [tag]` with a different tag.",
   "updates_not_found_no_suggestions": "No updates found for tag *{tag}*\n\nUse `/updates` without parameters to see all recent updates.",
   "language_not_available": "No languages are currently available.\nPlease try again later.",
-  "language_list_header": "*Crazy Ones - Available Languages:*",
+  "language_list_header": "*CrazyOnes - Available Languages:*",
   "language_list_footer": "Total: {count} languages available\n\nUse _/language [code]_ to subscribe for specific language updates.\nExample: _/language en-us_",
   "language_invalid_format": "Invalid language code format. Only letters, numbers, and hyphens are allowed.\n\nUse /language to see all available languages.",
   "language_not_found": "Language `{language_code}` ({display_name}) is not available.\n\nUse /language to see all available languages.",
