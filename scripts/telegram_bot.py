@@ -481,20 +481,20 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
     help_message = (
         "*CrazyOnes Bot - Help*\n\n"
-        "*Available Commands:*\n"
-        "• /start - Subscribe to Apple Updates notifications\n"
-        "• /stop - Unsubscribe from notifications\n"
-        "• /updates - Show last 10 updates in your language\n"
-        "• /updates [tag] - Show last 10 updates filtered by tag "
-        "(e.g., /updates ios)\n"
-        "• /language [code] - List languages or show updates "
-        "(e.g., /language en-us)\n"
-        "• /about - Information about this bot\n"
-        "• /help - Show this help message\n\n"
-        "*How it works:*\n"
+        "_Available Commands:_\n"
+        "• _/start_ - Subscribe to CrazyOnes Bot\n"
+        "• _/stop_ - Unsubscribe from notifications\n"
+        "• _/updates_ - Show last 10 updates in your language\n"
+        "• _/updates [tag]_ - Show last 10 updates filtered by tag "
+        "(e.g., _/updates ios_)\n"
+        "• _/language [code]_ - List languages or show updates "
+        "(e.g., _/language en-us_)\n"
+        "• _/about_ - Information about this bot\n"
+        "• _/help_ - Show this help message\n\n"
+        "_How it works:_\n"
         "This bot monitors Apple's software update releases and sends you "
         "notifications when new updates are available.\n\n"
-        "Use /start to begin receiving notifications."
+        "Use _/start_ to begin receiving notifications."
     )
 
     await update.message.reply_text(help_message, parse_mode="Markdown")
