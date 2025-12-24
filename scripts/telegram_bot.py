@@ -441,10 +441,10 @@ async def send_about_message(
         chat_id: Chat ID to send the message to
     """
     about_message = (
-        "*CrazyOnes* is a Telegram bot that keeps you updated on Apple's "
+        "*CrazyOnes* is a _Telegram bot_ that keeps you updated on Apple's "
         "operating system and software releases.\n\n"
         "Type /help for information on how to interact with the bot.\n\n"
-        "Developed by [Geek-MD](https://github.com/Geek-MD/CrazyOnes)"
+        "Developed by [_Geek-MD_](https://github.com/Geek-MD/CrazyOnes)"
     )
 
     await context.bot.send_message(
