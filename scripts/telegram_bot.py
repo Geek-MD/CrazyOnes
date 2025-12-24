@@ -66,77 +66,47 @@ FUZZY_CUTOFF_COMMANDS = 0.6  # Higher threshold for commands (stricter matching)
 
 logger = logging.getLogger(__name__)
 
-# Translations for different languages
-TRANSLATIONS = {
-    "en": {
-        "welcome": (
-            "🍎 *Welcome to Apple Updates Bot!*\n\n"
-            "I'm a bot that notifies about Apple software updates.\n\n"
-            "Please select the language of Apple Updates you want to "
-            "monitor:"
-        ),
-        "no_languages": (
-            "⚠️ Sorry, no languages are available at the moment. "
-            "Please try again later."
-        ),
-        "language_selected": (
-            "✅ *Language selected: {display_name}*\n\n"
-            "You will now receive Apple Updates in this language."
-        ),
-        "no_updates": (
-            "ℹ️ No updates available yet for this language. "
-            "You'll be notified when new updates are published."
-        ),
-        "recent_updates_header": (
-            "📱 *Here are the {count} most recent Apple Updates:*\n"
-        ),
-        "new_updates_header": "🔔 *New Apple Updates*\n",
-        "stop_confirmation": (
-            "✅ *Subscription stopped*\n\n"
-            "You will no longer receive Apple Updates notifications.\n"
-            "Send /start anytime to subscribe again."
-        ),
-        "not_subscribed": (
-            "ℹ️ You are not currently subscribed to notifications.\n"
-            "Send /start to subscribe."
-        ),
-    },
-    "es": {
-        "welcome": (
-            "🍎 *¡Bienvenido al Bot de Actualizaciones de Apple!*\n\n"
-            "Soy un bot que notifica sobre actualizaciones de software "
-            "de Apple.\n\n"
-            "Por favor selecciona el idioma de Apple Updates que quieres "
-            "monitorizar:"
-        ),
-        "no_languages": (
-            "⚠️ Lo siento, no hay idiomas disponibles en este momento. "
-            "Por favor, inténtalo más tarde."
-        ),
-        "language_selected": (
-            "✅ *Idioma seleccionado: {display_name}*\n\n"
-            "Ahora recibirás las Actualizaciones de Apple en este idioma."
-        ),
-        "no_updates": (
-            "ℹ️ Aún no hay actualizaciones disponibles para este idioma. "
-            "Se te notificará cuando se publiquen nuevas actualizaciones."
-        ),
-        "recent_updates_header": (
-            "📱 *Estas son las {count} actualizaciones más recientes de "
-            "Apple:*\n"
-        ),
-        "new_updates_header": "🔔 *Nuevas actualizaciones de Apple*\n",
-        "stop_confirmation": (
-            "✅ *Suscripción detenida*\n\n"
-            "Ya no recibirás notificaciones de Actualizaciones de Apple.\n"
-            "Envía /start en cualquier momento para suscribirte de nuevo."
-        ),
-        "not_subscribed": (
-            "ℹ️ No estás suscrito actualmente a las notificaciones.\n"
-            "Envía /start para suscribirte."
-        ),
-    },
-}
+# Cache for loaded translation files
+_TRANSLATION_CACHE: dict[str, dict[str, str]] = {}
+
+
+def load_translation_file(lang_code: str) -> dict[str, str]:
+    """
+    Load translation strings from JSON file for a given language.
+
+    Args:
+        lang_code: Language code (e.g., 'en-us', 'es-es')
+
+    Returns:
+        Dictionary with translation strings
+    """
+    # Check cache first
+    if lang_code in _TRANSLATION_CACHE:
+        return _TRANSLATION_CACHE[lang_code]
+
+    # Determine the file path
+    # First try the exact language code (e.g., 'en-us.json')
+    script_dir = Path(__file__).parent
+    lang_file = script_dir / f"{lang_code}.json"
+    
+    # If not found, try strings.json as default
+    if not lang_file.exists():
+        lang_file = script_dir / "strings.json"
+    
+    # If strings.json doesn't exist either, return empty dict
+    if not lang_file.exists():
+        logger.warning(f"Translation file not found for {lang_code}, using empty dict")
+        return {}
+
+    try:
+        with open(lang_file, encoding="utf-8") as f:
+            translations: dict[str, str] = json.load(f)
+            # Cache the loaded translations
+            _TRANSLATION_CACHE[lang_code] = translations
+            return translations
+    except (json.JSONDecodeError, IOError) as e:
+        logger.error(f"Error loading translation file {lang_file}: {e}")
+        return {}
 
 
 def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
