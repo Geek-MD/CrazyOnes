@@ -94,11 +94,27 @@ In daemon mode, the system will:
 **Telegram Bot Features:**
 - Users can subscribe by sending `/start` to the bot
 - Select their preferred Apple Updates language
+- **Automatic UI language detection** - bot interface adapts to user's selected language
+- **157 languages supported** - full translation system with JSON-based string management
 - First-time subscribers receive the 10 most recent updates
 - Subsequently, only new updates are sent
-- Notifications are formatted in the user's selected language (English or Spanish)
+- Notifications are formatted in the user's selected language
 - Users can unsubscribe anytime by sending `/stop`
 - Automatically unsubscribes when bot is removed from channels/groups
+
+**Supported Languages:**
+The bot supports 157 languages with automatic interface translation:
+- **English variants**: en-us, en-gb, en-au, en-ca, en-in, and 50+ more
+- **Spanish variants**: es-es, es-mx, es-ar, es-cl, and 15+ more
+- **French variants**: fr-fr, fr-ca, fr-be, fr-ch, and 10+ more
+- **Arabic variants**: ar-ae, ar-sa, ar-eg, and 10+ more
+- **Chinese variants**: zh-cn, zh-tw, zh-hk, zh-sg, zh-mo
+- **German, Italian, Japanese, Korean, Portuguese, Russian**, and many more
+
+When a user selects their Apple Updates language preference, the bot automatically:
+- Displays all messages in that language (if translation available)
+- Fallback to English for languages without full translations
+- Maintains consistent user experience across all commands
 
 **Bot Commands:**
 - `/start` - Subscribe to Apple Updates notifications and select language

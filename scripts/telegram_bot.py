@@ -89,11 +89,11 @@ def load_translation_file(lang_code: str) -> dict[str, str]:
     script_dir = Path(__file__).parent
     translations_dir = script_dir / "translations"
     lang_file = translations_dir / f"{lang_code}.json"
-    
+
     # If not found, try strings.json as default
     if not lang_file.exists():
         lang_file = translations_dir / "strings.json"
-    
+
     # If strings.json doesn't exist either, return empty dict
     if not lang_file.exists():
         logger.warning(f"Translation file not found for {lang_code}, using empty dict")
@@ -105,7 +105,7 @@ def load_translation_file(lang_code: str) -> dict[str, str]:
             # Cache the loaded translations
             _TRANSLATION_CACHE[lang_code] = translations
             return translations
-    except (json.JSONDecodeError, IOError) as e:
+    except (OSError, json.JSONDecodeError) as e:
         logger.error(f"Error loading translation file {lang_file}: {e}")
         return {}
 
@@ -124,24 +124,27 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
     """
     # Try to load translations for the exact language code first
     translations = load_translation_file(lang_code)
-    
+
     # If key not found or translations empty, try strings.json as fallback
     if not translations or key not in translations:
         translations = load_translation_file("strings")
-    
+
     # Get the text, default to empty string if not found
     text = translations.get(key, "")
-    
+
     # If still not found, log warning and return key
     if not text:
         logger.warning(f"Translation key '{key}' not found for language '{lang_code}'")
         return key
-    
+
     # Format with kwargs if provided
     try:
         return text.format(**kwargs) if kwargs else text
     except KeyError as e:
-        logger.error(f"Missing format argument {e} for key '{key}' in language '{lang_code}'")
+        logger.error(
+            f"Missing format argument {e} for key '{key}' "
+            f"in language '{lang_code}'"
+        )
         return text
 
 
@@ -427,7 +430,7 @@ async def send_about_message(
     lang_code = DEFAULT_LANGUAGE
     if str(chat_id) in subscriptions:
         lang_code = subscriptions[str(chat_id)].get("language_code", DEFAULT_LANGUAGE)
-    
+
     about_message = get_translation(lang_code, "about_message")
 
     await context.bot.send_message(
@@ -622,8 +625,12 @@ async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
     if not args:
         # No parameter - show last 10 updates
-        display_name = LANGUAGE_NAME_MAP.get(language_code, language_code.upper())
-        header = get_translation(language_code, "updates_header", display_name=display_name)
+        display_name = LANGUAGE_NAME_MAP.get(
+            language_code, language_code.upper()
+        )
+        header = get_translation(
+            language_code, "updates_header", display_name=display_name
+        )
         await update.message.reply_text(
             header,
             parse_mode="Markdown"
@@ -738,7 +745,7 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
     # Load available languages once
     language_urls = load_language_urls()
-    
+
     # Get user's language preference
     chat_id = str(update.effective_chat.id)
     user_lang = get_user_language(chat_id)
@@ -766,7 +773,9 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             display_name = LANGUAGE_NAME_MAP.get(lang_code, lang_code.upper())
             message += f"_{lang_code}_ - {display_name}\n"
 
-        message += get_translation(user_lang, "language_list_footer", count=len(language_urls))
+        message += get_translation(
+            user_lang, "language_list_footer", count=len(language_urls)
+        )
 
         await update.message.reply_text(message, parse_mode="Markdown")
     else:

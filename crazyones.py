@@ -46,7 +46,7 @@ from scripts.scrape_apple_updates import (
 )
 
 # Version from pyproject.toml
-__version__ = "0.11.2"
+__version__ = "0.12.0"
 
 # PID file location
 PID_FILE = "/tmp/crazyones.pid"
