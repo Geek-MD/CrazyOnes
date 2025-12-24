@@ -313,8 +313,8 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
     # Send welcome message
     welcome_message = (
-        "🍎 *Welcome to Apple Updates Bot!*\n\n"
-        f"You are now subscribed with language: *{display_name}*\n\n"
+        "*Welcome to _CrazyOnes Bot_!*\n\n"
+        f"You are now subscribed with language: _{display_name}_\n\n"
         "Here are the 10 most recent Apple Updates:\n"
     )
 
@@ -441,10 +441,10 @@ async def send_about_message(
         chat_id: Chat ID to send the message to
     """
     about_message = (
-        "*CrazyOnes* is a Telegram bot that keeps you updated on Apple's "
+        "*CrazyOnes* is a _Telegram bot_ that keeps you updated on Apple's "
         "operating system and software releases.\n\n"
         "Type /help for information on how to interact with the bot.\n\n"
-        "Developed by [Geek-MD](https://github.com/Geek-MD/CrazyOnes)"
+        "Developed by [_Geek-MD_](https://github.com/Geek-MD/CrazyOnes)"
     )
 
     await context.bot.send_message(
@@ -481,20 +481,20 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
     help_message = (
         "*CrazyOnes Bot - Help*\n\n"
-        "*Available Commands:*\n"
-        "• /start - Subscribe to Apple Updates notifications\n"
-        "• /stop - Unsubscribe from notifications\n"
-        "• /updates - Show last 10 updates in your language\n"
-        "• /updates [tag] - Show last 10 updates filtered by tag "
-        "(e.g., /updates ios)\n"
-        "• /language [code] - List languages or show updates "
-        "(e.g., /language en-us)\n"
-        "• /about - Information about this bot\n"
-        "• /help - Show this help message\n\n"
-        "*How it works:*\n"
+        "_Available Commands:_\n"
+        "• _/start_ - Subscribe to CrazyOnes Bot\n"
+        "• _/stop_ - Unsubscribe from notifications\n"
+        "• _/updates_ - Show last 10 updates in your language\n"
+        "• _/updates [tag]_ - Show last 10 updates filtered by tag "
+        "(e.g., _/updates ios_)\n"
+        "• _/language [code]_ - List languages or show updates "
+        "(e.g., _/language en-us_)\n"
+        "• _/about_ - Information about this bot\n"
+        "• _/help_ - Show this help message\n\n"
+        "_How it works:_\n"
         "This bot monitors Apple's software update releases and sends you "
         "notifications when new updates are available.\n\n"
-        "Use /start to begin receiving notifications."
+        "Use _/start_ to begin receiving notifications."
     )
 
     await update.message.reply_text(help_message, parse_mode="Markdown")
@@ -773,7 +773,7 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     if not args:
         # No parameter provided - list all available languages
         # Build the list of available languages
-        message = "*Available Languages:*\n\n"
+        message = "*Crazy Ones - Available Languages:*\n\n"
 
         # Sort languages alphabetically by language code (xx-yy format)
         sorted_languages = sorted(
@@ -783,12 +783,12 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
         for lang_code, _ in sorted_languages:
             display_name = LANGUAGE_NAME_MAP.get(lang_code, lang_code.upper())
-            message += f"• `{lang_code}` - {display_name}\n"
+            message += f"_{lang_code}_ - {display_name}\n"
 
         message += (
-            f"\n📝 Total: {len(language_urls)} languages available\n\n"
-            "Use `/language [code]` to see updates for a specific language.\n"
-            "Example: `/language en-us`"
+            f"\nTotal: {len(language_urls)} languages available\n\n"
+            "Use _/language [code]_ to subscribe for specific language updates.\n"
+            "Example: _/language en-us_"
         )
 
         await update.message.reply_text(message, parse_mode="Markdown")
