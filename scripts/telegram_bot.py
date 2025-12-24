@@ -761,7 +761,7 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     if not args:
         # No parameter provided - list all available languages
         # Build the list of available languages
-        message = get_translation(user_lang, "language_list_header") + "\n\n"
+        message = get_translation(user_lang, "language_list_header")
 
         # Sort languages alphabetically by language code (xx-yy format)
         sorted_languages = sorted(
