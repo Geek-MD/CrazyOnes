@@ -818,7 +818,7 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
                 parse_mode="Markdown"
             )
         else:
-            # User not subscribed, just show updates without saving preference
+            # User not subscribed, just show message without saving preference
             message = get_translation(
                 language_code, "language_not_subscribed",
                 display_name=display_name
@@ -827,8 +827,6 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
                 message,
                 parse_mode="Markdown"
             )
-
-        await send_recent_updates_simple(update, context, chat_id, language_code)
 
 
 def extract_command_from_message(message_text: str) -> str:
