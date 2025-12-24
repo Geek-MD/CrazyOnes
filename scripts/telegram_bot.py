@@ -773,7 +773,7 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     if not args:
         # No parameter provided - list all available languages
         # Build the list of available languages
-        message = "*Available Languages:*\n\n"
+        message = "*Crazy Ones - Available Languages:*\n\n"
 
         # Sort languages alphabetically by language code (xx-yy format)
         sorted_languages = sorted(
@@ -783,12 +783,12 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
         for lang_code, _ in sorted_languages:
             display_name = LANGUAGE_NAME_MAP.get(lang_code, lang_code.upper())
-            message += f"• `{lang_code}` - {display_name}\n"
+            message += f"_{lang_code}_ - {display_name}\n"
 
         message += (
-            f"\n📝 Total: {len(language_urls)} languages available\n\n"
-            "Use `/language [code]` to see updates for a specific language.\n"
-            "Example: `/language en-us`"
+            f"\nTotal: {len(language_urls)} languages available\n\n"
+            "Use _/language [code]_ to subscribe for specific language updates.\n"
+            "Example: _/language en-us_"
         )
 
         await update.message.reply_text(message, parse_mode="Markdown")
