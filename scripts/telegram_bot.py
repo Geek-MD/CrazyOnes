@@ -313,7 +313,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
     # Send welcome message
     welcome_message = (
-        "*Welcome to _Crazy Ones_!*\n\n"
+        "*Welcome to _CrazyOnes Bot_!*\n\n"
         f"You are now subscribed with language: _{display_name}_\n\n"
         "Here are the 10 most recent Apple Updates:\n"
     )
