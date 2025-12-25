@@ -308,9 +308,6 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         parse_mode="Markdown"
     )
 
-    # Load and send updates for the user's language
-    await send_recent_updates_simple(update, context, chat_id, language_code)
-
 
 async def language_selection_callback(
     update: Update, context: ContextTypes.DEFAULT_TYPE

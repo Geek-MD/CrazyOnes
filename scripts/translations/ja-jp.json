@@ -7,7 +7,7 @@
   "new_updates_header": "🔔 *New Apple Updates*\n",
   "stop_confirmation": "✅ *Subscription stopped*\n\nYou will no longer receive Apple Updates notifications.\nSend /start anytime to subscribe again.",
   "not_subscribed": "ℹ️ You are not currently subscribed to notifications.\nSend /start to subscribe.",
-  "start_welcome": "*Welcome to _CrazyOnes Bot_!*\n\nYou are now subscribed with language: _{display_name}_\n\nHere are the 10 most recent Apple Updates:\n",
+  "start_welcome": "*Welcome to _*CrazyOnes*_ Bot!*\n\nYou are now subscribed with language: _{display_name}_",
   "about_message": "*CrazyOnes* is a _Telegram bot_ that keeps you updated on Apple's operating system and software releases.\n\nType /help for information on how to interact with the bot.\n\nDeveloped by [_Geek-MD_](https://github.com/Geek-MD/CrazyOnes)",
   "help_title": "*CrazyOnes Bot - Help*\n\n",
   "help_commands": "_Available Commands:_\n",
