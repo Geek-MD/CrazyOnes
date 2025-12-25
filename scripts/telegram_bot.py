@@ -763,7 +763,7 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
         for lang_code, _ in sorted_languages:
             display_name = LANGUAGE_NAME_MAP.get(lang_code, lang_code.upper())
-            message += f"_*{lang_code}*_ - {display_name}\n"
+            message += f"`{lang_code}` - _{display_name}_\n"
 
         message += get_translation(
             user_lang, "language_list_footer", count=len(language_urls)
