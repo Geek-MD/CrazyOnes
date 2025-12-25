@@ -308,9 +308,6 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         parse_mode="Markdown"
     )
 
-    # Load and send updates for the user's language
-    await send_recent_updates_simple(update, context, chat_id, language_code)
-
 
 async def language_selection_callback(
     update: Update, context: ContextTypes.DEFAULT_TYPE
@@ -631,26 +628,23 @@ async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         header = get_translation(
             language_code, "updates_header", display_name=display_name
         )
-        await update.message.reply_text(
-            header,
-            parse_mode="Markdown"
-        )
-
+        
         # Get the 10 most recent updates
         recent_updates = updates[:10]
 
-        # Build message with all updates
-        message = ""
+        # Build message with all updates - combining header and updates in one message
+        message = header
         for idx, update_item in enumerate(recent_updates, 1):
             date = update_item.get("date", "N/A")
             name = update_item.get("name", "Unknown")
             target = update_item.get("target", "N/A")
             url = update_item.get("url")
 
+            # Format: Name[url] - Target - Date
             if url:
-                update_line = f"{idx}. {date} - [{name}]({url}) - {target}\n"
+                update_line = f"{idx}. [{name}]({url}) - {target} - {date}\n"
             else:
-                update_line = f"{idx}. {date} - {name} - {target}\n"
+                update_line = f"{idx}. {name} - {target} - {date}\n"
 
             message += update_line
 
@@ -681,25 +675,23 @@ async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                 language_code, "updates_found_tag",
                 display_name=display_name, count=count, tag=tag, showing=showing
             )
-            await update.message.reply_text(
-                header,
-                parse_mode="Markdown"
-            )
 
             # Show up to 10 most recent filtered updates
             recent_filtered = filtered_updates[:10]
 
-            message = ""
+            # Build message with header and updates combined
+            message = header
             for idx, update_item in enumerate(recent_filtered, 1):
                 date = update_item.get("date", "N/A")
                 name = update_item.get("name", "Unknown")
                 target = update_item.get("target", "N/A")
                 url = update_item.get("url")
 
+                # Format: Name[url] - Target - Date
                 if url:
-                    update_line = f"{idx}. {date} - [{name}]({url}) - {target}\n"
+                    update_line = f"{idx}. [{name}]({url}) - {target} - {date}\n"
                 else:
-                    update_line = f"{idx}. {date} - {name} - {target}\n"
+                    update_line = f"{idx}. {name} - {target} - {date}\n"
 
                 message += update_line
 
@@ -771,7 +763,7 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
         for lang_code, _ in sorted_languages:
             display_name = LANGUAGE_NAME_MAP.get(lang_code, lang_code.upper())
-            message += f"_{lang_code}_ - {display_name}\n"
+            message += f"`{lang_code}` - _{display_name}_\n"
 
         message += get_translation(
             user_lang, "language_list_footer", count=len(language_urls)
@@ -818,7 +810,7 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
                 parse_mode="Markdown"
             )
         else:
-            # User not subscribed, just show updates without saving preference
+            # User not subscribed, just show message without saving preference
             message = get_translation(
                 language_code, "language_not_subscribed",
                 display_name=display_name
@@ -827,8 +819,6 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
                 message,
                 parse_mode="Markdown"
             )
-
-        await send_recent_updates_simple(update, context, chat_id, language_code)
 
 
 def extract_command_from_message(message_text: str) -> str:
