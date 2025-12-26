@@ -259,7 +259,7 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
     elif key == 'help_get_started':
         result = result.replace('/start', '_/start_')
     elif key == 'updates_header':
-        # Format: "*CrazyOnes - Apple Updates -*_ {display_name}_\n\n..."
+        # Format: "*CrazyOnes - Apple Updates* - _{display_name}_\n\n..."
         # The display_name is already formatted as italic from earlier processing
         lines = result.split('\n\n', 1)
         if len(lines) >= 2:
@@ -272,12 +272,12 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
                 # Successfully split and display_name appears to be italicized
                 prefix = parts[0]
                 display_name_part = parts[1]
-                result = f"*{prefix} -*{display_name_part}\n\n{lines[1]}"
+                result = f"*{prefix}* - {display_name_part}\n\n{lines[1]}"
             else:
                 # Fallback: bold the entire first line
                 result = f"*{first_line}*\n\n{lines[1]}"
     elif key == 'updates_found_tag':
-        # Format: "*CrazyOnes - Apple Updates -*_ {display_name}_\n\n..."
+        # Format: "*CrazyOnes - Apple Updates* - _{display_name}_\n\n..."
         # The display_name is already formatted as italic from earlier processing
         lines = result.split('\n\n')
         if len(lines) >= 3:
@@ -290,7 +290,7 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
                 # Successfully split and display_name appears to be italicized
                 prefix = parts[0]
                 display_name_part = parts[1]
-                result = f"*{prefix} -*{display_name_part}\n\n{lines[1]}\n\n{lines[2]}"
+                result = f"*{prefix}* - {display_name_part}\n\n{lines[1]}\n\n{lines[2]}"
             else:
                 # Fallback: bold the entire first line
                 result = f"*{first_line}*\n\n{lines[1]}\n\n{lines[2]}"
@@ -930,7 +930,7 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         footer = get_translation(
             user_lang, "language_list_footer", count=len(language_urls)
         )
-        continuation_footer = "\n\n_(continued...)_"
+        continuation_footer = "(continued...)"
 
         # Sort languages alphabetically by language code (xx-yy format)
         sorted_languages = sorted(
@@ -946,8 +946,8 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
         for idx, (lang_code, _) in enumerate(sorted_languages, 1):
             display_name = LANGUAGE_NAME_MAP.get(lang_code, lang_code.upper())
-            # Format: number. xx-yy - Language/Country
-            line = f"{idx}. {lang_code} - {display_name}\n"
+            # Format: number. `xx-yy` - Language/Country
+            line = f"{idx}. `{lang_code}` - {display_name}\n"
 
             # Check if we need to split due to item count or message length
             test_message_continued = (
