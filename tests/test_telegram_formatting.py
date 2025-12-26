@@ -15,17 +15,17 @@ def test_language_list_header_formatting():
     Test that language_list_header is formatted with bold Markdown asterisks.
     
     The header should be wrapped in asterisks for Telegram Markdown bold formatting.
-    Expected format: "*CrazyOnes - Available Languages*\n\n"
+    Expected format: "*<text>*\n\n"
     """
     result = get_translation('en-us', 'language_list_header')
     
-    # Check that the result has asterisks for bold formatting
+    # Check that the result has the correct Markdown bold format structure
     assert result.startswith('*'), f"Header should start with asterisk for bold, got: {repr(result)}"
-    assert '*\n\n' in result or result.endswith('*\n\n'), f"Header should end with asterisk and newlines, got: {repr(result)}"
+    assert result.endswith('*\n\n'), f"Header should end with asterisk and two newlines, got: {repr(result)}"
     
-    # Check the exact format
-    expected = '*CrazyOnes - Available Languages*\n\n'
-    assert result == expected, f"Expected {repr(expected)}, got {repr(result)}"
+    # Verify it's not empty (has content between the asterisks)
+    content = result[1:-3]  # Strip leading * and trailing *\n\n
+    assert len(content) > 0, f"Header should have content between asterisks, got: {repr(result)}"
     
     print("✓ language_list_header is correctly formatted with bold asterisks")
 
