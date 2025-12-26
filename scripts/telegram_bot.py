@@ -162,13 +162,14 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
         formatted_kwargs['tag'] = f"*{formatted_kwargs['tag']}*"
 
     # Apply markdown to command and suggestion if present
+    # Note: The "/" is already in the translation template, so we only add backticks
     if 'command' in formatted_kwargs and key in [
         'unknown_command_with_suggestion', 'unknown_command_no_suggestion'
     ]:
-        formatted_kwargs['command'] = f"`/{formatted_kwargs['command']}`"
+        formatted_kwargs['command'] = f"`{formatted_kwargs['command']}`"
 
     if 'suggestion' in formatted_kwargs and key == 'unknown_command_with_suggestion':
-        formatted_kwargs['suggestion'] = f"`/{formatted_kwargs['suggestion']}`"
+        formatted_kwargs['suggestion'] = f"`{formatted_kwargs['suggestion']}`"
 
     # Apply markdown to language_code if present
     if 'language_code' in formatted_kwargs and key == 'language_not_found':
@@ -251,24 +252,54 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
         # Format: "• _/command_ - Description\n"
         if ' - ' in result:
             parts = result.split(' - ', 1)
-            result = f"• _{parts[0].strip()}_ - {parts[1]}"
+            # Remove any existing bullet point before adding our own
+            command_part = parts[0].strip().lstrip('•').strip()
+            result = f"• _{command_part}_ - {parts[1]}"
     elif key == 'help_help':
         # Format: "• _/help_ - Show this help message\n\n"
         if ' - ' in result:
             parts = result.split(' - ', 1)
-            result = f"• _{parts[0].strip()}_ - {parts[1]}"
+            # Remove any existing bullet point before adding our own
+            command_part = parts[0].strip().lstrip('•').strip()
+            result = f"• _{command_part}_ - {parts[1]}"
     elif key == 'help_get_started':
         result = result.replace('/start', '_/start_')
     elif key == 'updates_header':
-        # Format: "*CrazyOnes - Apple Updates - {display_name}*\n\n..."
+        # Format: "*CrazyOnes - Apple Updates -*_ {display_name}_\n\n..."
+        # The display_name is already formatted as italic from earlier processing
         lines = result.split('\n\n', 1)
         if len(lines) >= 2:
-            result = f"*{lines[0]}*\n\n{lines[1]}"
+            # Split the first line to separate the prefix from display_name
+            first_line = lines[0]
+            # Split at the last occurrence of " - " to separate prefix from display_name
+            # The display_name part will be italicized (e.g., "_English/USA_")
+            parts = first_line.rsplit(' - ', 1)
+            if len(parts) == 2 and '_' in parts[1]:
+                # Successfully split and display_name appears to be italicized
+                prefix = parts[0]
+                display_name_part = parts[1]
+                result = f"*{prefix} -*{display_name_part}\n\n{lines[1]}"
+            else:
+                # Fallback: bold the entire first line
+                result = f"*{first_line}*\n\n{lines[1]}"
     elif key == 'updates_found_tag':
-        # Format: "*CrazyOnes - Apple Updates - {display_name}*\n\n..."
+        # Format: "*CrazyOnes - Apple Updates -*_ {display_name}_\n\n..."
+        # The display_name is already formatted as italic from earlier processing
         lines = result.split('\n\n')
         if len(lines) >= 3:
-            result = f"*{lines[0]}*\n\n{lines[1]}\n\n{lines[2]}"
+            # Split the first line to separate the prefix from display_name
+            first_line = lines[0]
+            # Split at the last occurrence of " - " to separate prefix from display_name
+            # The display_name part will be italicized (e.g., "_English/USA_")
+            parts = first_line.rsplit(' - ', 1)
+            if len(parts) == 2 and '_' in parts[1]:
+                # Successfully split and display_name appears to be italicized
+                prefix = parts[0]
+                display_name_part = parts[1]
+                result = f"*{prefix} -*{display_name_part}\n\n{lines[1]}\n\n{lines[2]}"
+            else:
+                # Fallback: bold the entire first line
+                result = f"*{first_line}*\n\n{lines[1]}\n\n{lines[2]}"
     elif key == 'language_list_header':
         # Format: "**CrazyOnes - Available Languages**\n\n"
         result = f"*{result.rstrip()}*\n\n"
@@ -277,8 +308,8 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
     elif key == 'language_not_subscribed':
         result = result.replace('/updates', '_/updates_')
     elif key == 'language_list_footer':
-        result = result.replace('/language [code]', '`/language [code]`')
-        result = result.replace('/language en-us', '`/language en-us`')
+        # Keep footer text in plain format (no code formatting)
+        pass
     elif key == 'language_invalid_format':
         result = result.replace('/language', '`/language`')
     elif key == 'updates_not_found_tag':
@@ -915,14 +946,14 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
         # Build messages, splitting if necessary
         messages = []
-        accumulated_content = f"*{header}*"  # Accumulated content for current message
+        accumulated_content = header  # Accumulated content for current message (already bolded in get_translation)
         current_lines = ""            # Current lines being added to message
         item_count = 0  # Counter for items in current message
 
         for idx, (lang_code, _) in enumerate(sorted_languages, 1):
             display_name = LANGUAGE_NAME_MAP.get(lang_code, lang_code.upper())
-            # Format: number. `xx-yy` - Language/Country
-            line = f"{idx}. `{lang_code}` - {display_name}\n"
+            # Format: number. xx-yy - Language/Country
+            line = f"{idx}. {lang_code} - {display_name}\n"
 
             # Check if we need to split due to item count or message length
             test_message_continued = (
