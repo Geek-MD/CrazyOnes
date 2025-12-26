@@ -29,7 +29,7 @@
   "updates_not_found_no_suggestions": "❌ No updates found for tag *{tag}*\n\nUse `/updates` without parameters to see all recent updates.",
   "language_not_available": "⚠️ No languages are currently available.\nPlease try again later.",
   "language_list_header": "*CrazyOnes - Available Languages:*\n\n",
-  "language_list_footer": "\nTotal: {count} languages available\n\nUse _/language [code]_ to subscribe for specific language updates.\nExample: _/language en-us_",
+  "language_list_footer": "\nTotal: {count} languages available\n\nUse `/language [code]` to subscribe for specific language updates.\nExample: `/language en-us`",
   "language_invalid_format": "❌ Invalid language code format. Only letters, numbers, and hyphens are allowed.\n\nUse /language to see all available languages.",
   "language_not_found": "❌ Language `{language_code}` ({display_name}) is not available.\n\nUse /language to see all available languages.",
   "language_updated": "✅ Language preference updated to *{display_name}*\n\nUse _/updates_ to see the most recent updates in this language.",
