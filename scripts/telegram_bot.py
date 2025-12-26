@@ -770,8 +770,9 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
         # Build messages, splitting if necessary
         messages = []
-        lang1 = header  # First part: header + language list
-        lang2 = ""      # Second part: accumulated lines for current message
+        accumulated_content = header  # Accumulated content for current message
+        current_lines = ""            # Current lines being added to message
+        is_first_message = True
 
         for lang_code, _ in sorted_languages:
             display_name = LANGUAGE_NAME_MAP.get(lang_code, lang_code.upper())
@@ -779,19 +780,19 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             
             # Check if adding this line would exceed the limit
             # Account for footer length (either continuation or final footer)
-            test_message_continued = lang1 + lang2 + line + continuation_footer
-            test_message_final = lang1 + lang2 + line + footer
+            test_message_continued = accumulated_content + current_lines + line + continuation_footer
             
-            if len(test_message_continued) > MAX_MESSAGE_LENGTH and (lang1 + lang2) != header:
+            if len(test_message_continued) > MAX_MESSAGE_LENGTH and not is_first_message:
                 # Save current message with continuation footer and start a new one
-                messages.append(lang1 + lang2 + continuation_footer)
-                lang1 = ""
-                lang2 = line
+                messages.append(accumulated_content + current_lines + continuation_footer)
+                accumulated_content = ""
+                current_lines = line
             else:
-                lang2 += line
+                current_lines += line
+                is_first_message = False
 
         # Add footer to the last message and save it
-        final_message = lang1 + lang2 + footer
+        final_message = accumulated_content + current_lines + footer
         messages.append(final_message)
 
         # Send all messages
