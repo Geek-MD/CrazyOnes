@@ -769,6 +769,9 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         )
 
         # Build messages, splitting if necessary
+        # Note: This assumes header and footer are reasonably sized. If header or footer
+        # alone exceeds MAX_MESSAGE_LENGTH, messages may exceed the limit. In practice,
+        # the header is ~40 chars and footer is ~150 chars, so this is not an issue.
         messages = []
         accumulated_content = header  # Accumulated content for current message
         current_lines = ""            # Current lines being added to message
