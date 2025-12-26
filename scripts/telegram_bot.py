@@ -295,7 +295,7 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
                 # Fallback: bold the entire first line
                 result = f"*{first_line}*\n\n{lines[1]}\n\n{lines[2]}"
     elif key == 'language_list_header':
-        # Format: "**CrazyOnes - Available Languages**\n\n"
+        # Format: "*CrazyOnes - Available Languages*\n\n"
         result = f"*{result.rstrip()}*\n\n"
     elif key == 'language_updated':
         result = result.replace('/updates', '_/updates_')
