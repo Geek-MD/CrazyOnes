@@ -162,14 +162,8 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
         formatted_kwargs['tag'] = f"*{formatted_kwargs['tag']}*"
 
     # Apply markdown to command and suggestion if present
-    # Note: The "/" is already in the translation template, so we only add backticks
-    if 'command' in formatted_kwargs and key in [
-        'unknown_command_with_suggestion', 'unknown_command_no_suggestion'
-    ]:
-        formatted_kwargs['command'] = f"`{formatted_kwargs['command']}`"
-
-    if 'suggestion' in formatted_kwargs and key == 'unknown_command_with_suggestion':
-        formatted_kwargs['suggestion'] = f"`{formatted_kwargs['suggestion']}`"
+    # Note: The "/" is already in the translation template, no additional formatting needed
+    # Commands and suggestions are shown as plain text without backticks
 
     # Apply markdown to language_code if present
     if 'language_code' in formatted_kwargs and key == 'language_not_found':
