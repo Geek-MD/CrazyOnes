@@ -752,8 +752,14 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
     if not args:
         # No parameter provided - list all available languages
+        # Telegram has a 4096 character limit per message
+        MAX_MESSAGE_LENGTH = 4000  # Leave some margin for safety
+
         # Build the list of available languages
-        message = get_translation(user_lang, "language_list_header")
+        header = get_translation(user_lang, "language_list_header")
+        footer = get_translation(
+            user_lang, "language_list_footer", count=len(language_urls)
+        )
 
         # Sort languages alphabetically by language code (xx-yy format)
         sorted_languages = sorted(
@@ -761,15 +767,31 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             key=lambda x: x[0]
         )
 
+        # Build messages, splitting if necessary
+        messages = []
+        current_message = header
+
         for lang_code, _ in sorted_languages:
             display_name = LANGUAGE_NAME_MAP.get(lang_code, lang_code.upper())
-            message += f"`{lang_code}` - _{display_name}_\n"
+            line = f"`{lang_code}` - _{display_name}_\n"
+            
+            # Check if adding this line would exceed the limit
+            # Account for footer length in the last message
+            test_message = current_message + line + footer
+            if len(test_message) > MAX_MESSAGE_LENGTH and current_message != header:
+                # Save current message and start a new one
+                messages.append(current_message)
+                current_message = line
+            else:
+                current_message += line
 
-        message += get_translation(
-            user_lang, "language_list_footer", count=len(language_urls)
-        )
+        # Add footer to the last message and save it
+        current_message += footer
+        messages.append(current_message)
 
-        await update.message.reply_text(message, parse_mode="Markdown")
+        # Send all messages
+        for msg in messages:
+            await update.message.reply_text(msg, parse_mode="Markdown")
     else:
         # Parameter provided - show updates for that language
         language_code = args[0].lower()
