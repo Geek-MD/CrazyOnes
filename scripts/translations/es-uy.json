@@ -34,8 +34,8 @@
   "language_not_found": "❌ Language {language_code} ({display_name}) is not available.\n\nUse /language to see all available languages.",
   "language_updated": "✅ Language preference updated to {display_name}\n\nUse /updates to see the most recent updates in this language.",
   "language_not_subscribed": "✅ Language set to {display_name}\n\nUse /updates to see the most recent updates in this language.\n\n💡 Use /start to subscribe and set this as your default language.",
-  "unknown_command_with_suggestion": "❌ Unknown command: /{command}\n\nDid you mean /{suggestion}?",
-  "unknown_command_no_suggestion": "❌ Unknown command: /{command}\n\nUse /help to see all available commands.",
+  "unknown_command_with_suggestion": "Unknown command: /{command}\n\nDid you mean /{suggestion}?",
+  "unknown_command_no_suggestion": "Unknown command: /{command}\n\nUse /help to see all available commands.",
   "update_format_target": "📱 Target: {target}\n",
   "update_format_date": "📅 Date: {date}\n",
   "update_format_link": "🔗 [More info]({url})"

@@ -162,13 +162,14 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
         formatted_kwargs['tag'] = f"*{formatted_kwargs['tag']}*"
 
     # Apply markdown to command and suggestion if present
+    # Note: The "/" is already in the translation template, so we only add backticks
     if 'command' in formatted_kwargs and key in [
         'unknown_command_with_suggestion', 'unknown_command_no_suggestion'
     ]:
-        formatted_kwargs['command'] = f"`/{formatted_kwargs['command']}`"
+        formatted_kwargs['command'] = f"`{formatted_kwargs['command']}`"
 
     if 'suggestion' in formatted_kwargs and key == 'unknown_command_with_suggestion':
-        formatted_kwargs['suggestion'] = f"`/{formatted_kwargs['suggestion']}`"
+        formatted_kwargs['suggestion'] = f"`{formatted_kwargs['suggestion']}`"
 
     # Apply markdown to language_code if present
     if 'language_code' in formatted_kwargs and key == 'language_not_found':
@@ -264,15 +265,43 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
     elif key == 'help_get_started':
         result = result.replace('/start', '_/start_')
     elif key == 'updates_header':
-        # Format: "*CrazyOnes - Apple Updates - {display_name}*\n\n..."
+        # Format: "*CrazyOnes - Apple Updates -*_ {display_name}_\n\n..."
+        # The display_name is already formatted as italic from earlier processing
         lines = result.split('\n\n', 1)
         if len(lines) >= 2:
-            result = f"*{lines[0]}*\n\n{lines[1]}"
+            # Split the first line to separate the prefix from display_name
+            first_line = lines[0]
+            # Find where the display_name starts (it will be italicized already)
+            if '_' in first_line:
+                # Split at the last occurrence of " - " before the italicized part
+                parts = first_line.rsplit(' - ', 1)
+                if len(parts) == 2:
+                    prefix = parts[0]
+                    display_name_part = parts[1]
+                    result = f"*{prefix} -*{display_name_part}\n\n{lines[1]}"
+                else:
+                    result = f"*{first_line}*\n\n{lines[1]}"
+            else:
+                result = f"*{first_line}*\n\n{lines[1]}"
     elif key == 'updates_found_tag':
-        # Format: "*CrazyOnes - Apple Updates - {display_name}*\n\n..."
+        # Format: "*CrazyOnes - Apple Updates -*_ {display_name}_\n\n..."
+        # The display_name is already formatted as italic from earlier processing
         lines = result.split('\n\n')
         if len(lines) >= 3:
-            result = f"*{lines[0]}*\n\n{lines[1]}\n\n{lines[2]}"
+            # Split the first line to separate the prefix from display_name
+            first_line = lines[0]
+            # Find where the display_name starts (it will be italicized already)
+            if '_' in first_line:
+                # Split at the last occurrence of " - " before the italicized part
+                parts = first_line.rsplit(' - ', 1)
+                if len(parts) == 2:
+                    prefix = parts[0]
+                    display_name_part = parts[1]
+                    result = f"*{prefix} -*{display_name_part}\n\n{lines[1]}\n\n{lines[2]}"
+                else:
+                    result = f"*{first_line}*\n\n{lines[1]}\n\n{lines[2]}"
+            else:
+                result = f"*{first_line}*\n\n{lines[1]}\n\n{lines[2]}"
     elif key == 'language_list_header':
         # Format: "**CrazyOnes - Available Languages**\n\n"
         result = f"*{result.rstrip()}*\n\n"
