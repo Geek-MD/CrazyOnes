@@ -778,11 +778,13 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             line = f"`{lang_code}` - _{display_name}_\n"
             
             # Check if adding this line would exceed the limit
-            # Account for footer length (either continuation or final footer)
+            # Test with both continuation and final footer to be safe
             test_message_continued = accumulated_content + current_lines + line + continuation_footer
+            test_message_final = accumulated_content + current_lines + line + footer
+            max_test_length = max(len(test_message_continued), len(test_message_final))
             
             # Check if we need to split (but not on the very first line)
-            if len(test_message_continued) > MAX_MESSAGE_LENGTH and current_lines != "":
+            if max_test_length > MAX_MESSAGE_LENGTH and current_lines != "":
                 # Save current message with continuation footer and start a new one
                 messages.append(accumulated_content + current_lines + continuation_footer)
                 accumulated_content = ""
