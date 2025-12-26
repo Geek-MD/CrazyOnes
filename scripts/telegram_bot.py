@@ -140,34 +140,36 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
     # Apply markdown formatting to specific placeholders before formatting
     # This ensures markdown is hardcoded in Python, not in translation files
     formatted_kwargs = kwargs.copy() if kwargs else {}
-    
+
     # Apply markdown to display_name if present
     if 'display_name' in formatted_kwargs and key in [
-        'start_welcome', 'updates_header', 'updates_found_tag', 
+        'start_welcome', 'updates_header', 'updates_found_tag',
         'language_updated', 'language_not_subscribed', 'language_selected'
     ]:
         if key == 'start_welcome':
             formatted_kwargs['display_name'] = f"_{formatted_kwargs['display_name']}_"
         elif key in ['updates_header', 'updates_found_tag']:
             formatted_kwargs['display_name'] = f"_{formatted_kwargs['display_name']}_"
-        elif key in ['language_updated', 'language_not_subscribed', 'language_selected']:
+        elif key in [
+            'language_updated', 'language_not_subscribed', 'language_selected'
+        ]:
             formatted_kwargs['display_name'] = f"*{formatted_kwargs['display_name']}*"
-    
+
     # Apply markdown to tag if present
     if 'tag' in formatted_kwargs and key in [
         'updates_found_tag', 'updates_not_found_tag', 'updates_not_found_no_suggestions'
     ]:
         formatted_kwargs['tag'] = f"*{formatted_kwargs['tag']}*"
-    
+
     # Apply markdown to command and suggestion if present
     if 'command' in formatted_kwargs and key in [
         'unknown_command_with_suggestion', 'unknown_command_no_suggestion'
     ]:
         formatted_kwargs['command'] = f"`/{formatted_kwargs['command']}`"
-    
+
     if 'suggestion' in formatted_kwargs and key == 'unknown_command_with_suggestion':
         formatted_kwargs['suggestion'] = f"`/{formatted_kwargs['suggestion']}`"
-    
+
     # Apply markdown to language_code if present
     if 'language_code' in formatted_kwargs and key == 'language_not_found':
         formatted_kwargs['language_code'] = f"`{formatted_kwargs['language_code']}`"
@@ -181,10 +183,10 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
             f"in language '{lang_code}'"
         )
         result = text
-    
+
     # Apply markdown to specific patterns in the result for certain keys
     # These patterns are language-independent and can be safely replaced
-    
+
     # Headers and titles - wrap with bold
     if key == 'welcome':
         # Split and format: "🍎 *Welcome to Apple Updates Bot!*\n\n..."
@@ -220,7 +222,8 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
         if len(lines) >= 2:
             result = f"*{lines[0]}*\n\n{lines[1]}"
     elif key == 'about_message':
-        # Format: "*CrazyOnes* is a _Telegram bot_ that keeps you updated...\n\n...Developed by [Geek-MD](url)"
+        # Format: "*CrazyOnes* is a _Telegram bot_ that keeps you updated...
+        # \n\n...Developed by [Geek-MD](url)"
         lines = result.split('\n\n')
         if len(lines) >= 3:
             # First line: "*CrazyOnes* is a _Telegram bot_ that..."
@@ -243,7 +246,7 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
     elif key == 'help_how_it_works':
         # Format: "_How it works_\n"
         result = f"_{result.rstrip()}_\n"
-    elif key in ['help_start', 'help_stop', 'help_updates', 'help_updates_tag', 
+    elif key in ['help_start', 'help_stop', 'help_updates', 'help_updates_tag',
                   'help_language', 'help_about']:
         # Format: "• _/command_ - Description\n"
         if ' - ' in result:
@@ -285,7 +288,7 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
     elif key == 'update_format_link' and 'url' in kwargs:
         # Special case: return markdown link directly
         return f"🔗 [More info]({kwargs['url']})"
-    
+
     return result
 
 
@@ -769,7 +772,7 @@ async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         header = get_translation(
             language_code, "updates_header", display_name=display_name
         )
-        
+
         # Get the 10 most recent updates
         recent_updates = updates[:10]
 
@@ -894,8 +897,8 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     if not args:
         # No parameter provided - list all available languages
         # Telegram has a 4096 character limit per message
-        MAX_MESSAGE_LENGTH = 4000  # Leave some margin for safety
-        MAX_ITEMS_PER_MESSAGE = 100  # Split messages after 100 items
+        max_message_length = 4000  # Leave some margin for safety
+        max_items_per_message = 100  # Split messages after 100 items
 
         # Build the list of available languages
         header = get_translation(user_lang, "language_list_header")
@@ -920,17 +923,25 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             display_name = LANGUAGE_NAME_MAP.get(lang_code, lang_code.upper())
             # Format: number. `xx-yy` - Language/Country
             line = f"{idx}. `{lang_code}` - {display_name}\n"
-            
+
             # Check if we need to split due to item count or message length
-            test_message_continued = accumulated_content + current_lines + line + continuation_footer
+            test_message_continued = (
+                accumulated_content + current_lines + line + continuation_footer
+            )
             test_message_final = accumulated_content + current_lines + line + footer
-            max_test_length = max(len(test_message_continued), len(test_message_final))
-            
+            max_test_length = max(
+                len(test_message_continued), len(test_message_final)
+            )
+
             # Split if: reached 100 items OR exceeds length (but not on first line)
-            if (item_count >= MAX_ITEMS_PER_MESSAGE or 
-                (max_test_length > MAX_MESSAGE_LENGTH and current_lines != "")):
+            if (
+                item_count >= max_items_per_message
+                or (max_test_length > max_message_length and current_lines != "")
+            ):
                 # Save current message with continuation footer and start a new one
-                messages.append(accumulated_content + current_lines + continuation_footer)
+                messages.append(
+                    accumulated_content + current_lines + continuation_footer
+                )
                 accumulated_content = ""
                 current_lines = line
                 item_count = 1
