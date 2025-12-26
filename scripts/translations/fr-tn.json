@@ -22,7 +22,7 @@
   "help_description": "This bot monitors Apple's software update releases and sends you notifications when new updates are available.\n\n",
   "help_get_started": "Use _/start_ to begin receiving notifications.",
   "updates_no_updates": "ℹ️ No updates available yet for your language. You'll be notified when new updates are published.",
-  "updates_header": "*CrazyOnes - Mises à jour Apple*\n_{display_name}_\n\nVoici les 10 mises à jour les plus récentes :\n\n",
+  "updates_header": "*CrazyOnes - Mises à jour Apple*\n_{display_name}_\n\nVoici les 10 mises à jour les plus récentes :\n",
   "updates_invalid_tag": "❌ Invalid tag format. Only letters, numbers, hyphens, underscores, and spaces are allowed.",
   "updates_found_tag": "*CrazyOnes - Mises à jour Apple*\n_{display_name}_\n\nTrouvé {count} mise(s) à jour pour l'étiquette *{tag}*\n\nAffichage des {showing} plus récentes :\n\n",
   "updates_not_found_tag": "❌ No updates found for tag *{tag}*\n\nDid you mean: {suggestions}?\n\nPlease reply with one of the suggested tags or use `/updates [tag]` with a different tag.",
