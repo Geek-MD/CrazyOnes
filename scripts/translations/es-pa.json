@@ -8,7 +8,7 @@
   "stop_confirmation": "*CrazyOnes - Suscripción detenida*\n\nYa no recibirás notificaciones de Actualizaciones de Apple.\nEnvía /start en cualquier momento para suscribirte de nuevo.",
   "not_subscribed": "ℹ️ You are not currently subscribed to notifications.\nSend /start to subscribe.",
   "start_welcome": "*¡Bienvenido al CrazyOnes Bot!*\n\nAhora estás suscrito con el idioma: _{display_name}_",
-  "about_message": "*CrazyOnes* is a _Telegram bot_ that keeps you updated on Apple's operating system and software releases.\n\nType /help for information on how to interact with the bot.\n\nDeveloped by _[Geek-MD](https://github.com/Geek-MD/CrazyOnes)_",
+  "about_message": "*CrazyOnes* is a _Telegram bot_ that keeps you updated on Apple's operating system and software releases.\n\nType /help for information on how to interact with the bot.\n\nDeveloped by [Geek-MD](https://github.com/Geek-MD/CrazyOnes)",
   "help_title": "*CrazyOnes - Ayuda*\n\n",
   "help_commands": "_Comandos disponibles:_\n\n",
   "help_start": "• _/start_ - Subscribe to CrazyOnes Bot\n",
