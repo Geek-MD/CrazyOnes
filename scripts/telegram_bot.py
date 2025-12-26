@@ -760,6 +760,7 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         footer = get_translation(
             user_lang, "language_list_footer", count=len(language_urls)
         )
+        continuation_footer = "\n\n_(continued...)_"
 
         # Sort languages alphabetically by language code (xx-yy format)
         sorted_languages = sorted(
@@ -768,26 +769,35 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         )
 
         # Build messages, splitting if necessary
+        # Note: This assumes header and footer are reasonably sized. If header or footer
+        # alone exceeds MAX_MESSAGE_LENGTH, messages may exceed the limit. In practice,
+        # the header is ~40 chars and footer is ~150 chars, so this is not an issue.
         messages = []
-        current_message = header
+        accumulated_content = header  # Accumulated content for current message
+        current_lines = ""            # Current lines being added to message
 
         for lang_code, _ in sorted_languages:
             display_name = LANGUAGE_NAME_MAP.get(lang_code, lang_code.upper())
             line = f"`{lang_code}` - _{display_name}_\n"
             
             # Check if adding this line would exceed the limit
-            # Account for footer length in the last message
-            test_message = current_message + line + footer
-            if len(test_message) > MAX_MESSAGE_LENGTH and current_message != header:
-                # Save current message and start a new one
-                messages.append(current_message)
-                current_message = line
+            # Test with both continuation and final footer to be safe
+            test_message_continued = accumulated_content + current_lines + line + continuation_footer
+            test_message_final = accumulated_content + current_lines + line + footer
+            max_test_length = max(len(test_message_continued), len(test_message_final))
+            
+            # Check if we need to split (but not on the very first line)
+            if max_test_length > MAX_MESSAGE_LENGTH and current_lines != "":
+                # Save current message with continuation footer and start a new one
+                messages.append(accumulated_content + current_lines + continuation_footer)
+                accumulated_content = ""
+                current_lines = line
             else:
-                current_message += line
+                current_lines += line
 
         # Add footer to the last message and save it
-        current_message += footer
-        messages.append(current_message)
+        final_message = accumulated_content + current_lines + footer
+        messages.append(final_message)
 
         # Send all messages
         for msg in messages:
