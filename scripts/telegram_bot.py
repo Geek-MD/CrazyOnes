@@ -271,17 +271,16 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
         if len(lines) >= 2:
             # Split the first line to separate the prefix from display_name
             first_line = lines[0]
-            # Find where the display_name starts (it will be italicized already)
-            if '_' in first_line:
-                # Split at the last occurrence of " - " before the italicized part
-                parts = first_line.rsplit(' - ', 1)
-                if len(parts) == 2:
-                    prefix = parts[0]
-                    display_name_part = parts[1]
-                    result = f"*{prefix} -*{display_name_part}\n\n{lines[1]}"
-                else:
-                    result = f"*{first_line}*\n\n{lines[1]}"
+            # Split at the last occurrence of " - " to separate prefix from display_name
+            # The display_name part will be italicized (e.g., "_English/USA_")
+            parts = first_line.rsplit(' - ', 1)
+            if len(parts) == 2 and '_' in parts[1]:
+                # Successfully split and display_name appears to be italicized
+                prefix = parts[0]
+                display_name_part = parts[1]
+                result = f"*{prefix} -*{display_name_part}\n\n{lines[1]}"
             else:
+                # Fallback: bold the entire first line
                 result = f"*{first_line}*\n\n{lines[1]}"
     elif key == 'updates_found_tag':
         # Format: "*CrazyOnes - Apple Updates -*_ {display_name}_\n\n..."
@@ -290,17 +289,16 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
         if len(lines) >= 3:
             # Split the first line to separate the prefix from display_name
             first_line = lines[0]
-            # Find where the display_name starts (it will be italicized already)
-            if '_' in first_line:
-                # Split at the last occurrence of " - " before the italicized part
-                parts = first_line.rsplit(' - ', 1)
-                if len(parts) == 2:
-                    prefix = parts[0]
-                    display_name_part = parts[1]
-                    result = f"*{prefix} -*{display_name_part}\n\n{lines[1]}\n\n{lines[2]}"
-                else:
-                    result = f"*{first_line}*\n\n{lines[1]}\n\n{lines[2]}"
+            # Split at the last occurrence of " - " to separate prefix from display_name
+            # The display_name part will be italicized (e.g., "_English/USA_")
+            parts = first_line.rsplit(' - ', 1)
+            if len(parts) == 2 and '_' in parts[1]:
+                # Successfully split and display_name appears to be italicized
+                prefix = parts[0]
+                display_name_part = parts[1]
+                result = f"*{prefix} -*{display_name_part}\n\n{lines[1]}\n\n{lines[2]}"
             else:
+                # Fallback: bold the entire first line
                 result = f"*{first_line}*\n\n{lines[1]}\n\n{lines[2]}"
     elif key == 'language_list_header':
         # Format: "**CrazyOnes - Available Languages**\n\n"
