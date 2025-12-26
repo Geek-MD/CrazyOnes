@@ -137,15 +137,156 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
         logger.warning(f"Translation key '{key}' not found for language '{lang_code}'")
         return key
 
+    # Apply markdown formatting to specific placeholders before formatting
+    # This ensures markdown is hardcoded in Python, not in translation files
+    formatted_kwargs = kwargs.copy() if kwargs else {}
+    
+    # Apply markdown to display_name if present
+    if 'display_name' in formatted_kwargs and key in [
+        'start_welcome', 'updates_header', 'updates_found_tag', 
+        'language_updated', 'language_not_subscribed', 'language_selected'
+    ]:
+        if key == 'start_welcome':
+            formatted_kwargs['display_name'] = f"_{formatted_kwargs['display_name']}_"
+        elif key in ['updates_header', 'updates_found_tag']:
+            formatted_kwargs['display_name'] = f"_{formatted_kwargs['display_name']}_"
+        elif key in ['language_updated', 'language_not_subscribed', 'language_selected']:
+            formatted_kwargs['display_name'] = f"*{formatted_kwargs['display_name']}*"
+    
+    # Apply markdown to tag if present
+    if 'tag' in formatted_kwargs and key in [
+        'updates_found_tag', 'updates_not_found_tag', 'updates_not_found_no_suggestions'
+    ]:
+        formatted_kwargs['tag'] = f"*{formatted_kwargs['tag']}*"
+    
+    # Apply markdown to command and suggestion if present
+    if 'command' in formatted_kwargs and key in [
+        'unknown_command_with_suggestion', 'unknown_command_no_suggestion'
+    ]:
+        formatted_kwargs['command'] = f"`/{formatted_kwargs['command']}`"
+    
+    if 'suggestion' in formatted_kwargs and key == 'unknown_command_with_suggestion':
+        formatted_kwargs['suggestion'] = f"`/{formatted_kwargs['suggestion']}`"
+    
+    # Apply markdown to language_code if present
+    if 'language_code' in formatted_kwargs and key == 'language_not_found':
+        formatted_kwargs['language_code'] = f"`{formatted_kwargs['language_code']}`"
+
     # Format with kwargs if provided
     try:
-        return text.format(**kwargs) if kwargs else text
+        result = text.format(**formatted_kwargs) if formatted_kwargs else text
     except KeyError as e:
         logger.error(
             f"Missing format argument {e} for key '{key}' "
             f"in language '{lang_code}'"
         )
-        return text
+        result = text
+    
+    # Apply markdown to specific patterns in the result for certain keys
+    # These patterns are language-independent and can be safely replaced
+    
+    # Headers and titles - wrap with bold
+    if key == 'welcome':
+        # Split and format: "🍎 *Welcome to Apple Updates Bot!*\n\n..."
+        lines = result.split('\n\n', 1)
+        if len(lines) >= 2:
+            # Bold the first line after emoji
+            first_line = lines[0]
+            if first_line.startswith('🍎 '):
+                result = f"🍎 *{first_line[3:]}*\n\n{lines[1]}"
+    elif key == 'language_selected':
+        # Split and format: "✅ *Language selected: ...*\n\n..."
+        lines = result.split('\n\n', 1)
+        if len(lines) >= 2:
+            first_line = lines[0]
+            if first_line.startswith('✅ '):
+                result = f"✅ *{first_line[3:]}*\n\n{lines[1]}"
+    elif key == 'start_welcome':
+        # Split and format: "*Welcome to CrazyOnes Bot!*\n\n..."
+        lines = result.split('\n\n', 1)
+        if len(lines) >= 2:
+            result = f"*{lines[0]}*\n\n{lines[1]}"
+    elif key == 'recent_updates_header':
+        # Format: "📱 *Here are the {count} most recent Apple Updates:*\n"
+        if result.startswith('📱 '):
+            result = f"📱 *{result[3:]}*"
+    elif key == 'new_updates_header':
+        # Format: "🔔 *New Apple Updates*\n"
+        if result.startswith('🔔 '):
+            result = f"🔔 *{result[3:]}*"
+    elif key == 'stop_confirmation':
+        # Format: "*CrazyOnes - Subscription stopped*\n\n..."
+        lines = result.split('\n\n', 1)
+        if len(lines) >= 2:
+            result = f"*{lines[0]}*\n\n{lines[1]}"
+    elif key == 'about_message':
+        # Format: "*CrazyOnes* is a _Telegram bot_ that keeps you updated...\n\n...Developed by [Geek-MD](url)"
+        lines = result.split('\n\n')
+        if len(lines) >= 3:
+            # First line: "*CrazyOnes* is a _Telegram bot_ that..."
+            words = lines[0].split(' ', 1)
+            if len(words) >= 2:
+                # Check if "is a Telegram bot"
+                remaining = words[1]
+                if 'Telegram bot' in remaining:
+                    remaining = remaining.replace('Telegram bot', '_Telegram bot_')
+                result = f"*{words[0]}* {remaining}\n\n{lines[1]}\n\n{lines[2]}"
+                # Add link to Geek-MD
+                if 'Geek-MD' in result:
+                    result = result.replace('Geek-MD', '[Geek-MD](https://github.com/Geek-MD/CrazyOnes)')
+    elif key == 'help_title':
+        # Format: "*CrazyOnes - Help*\n\n"
+        result = f"*{result.rstrip()}*\n\n"
+    elif key == 'help_commands':
+        # Format: "_Available Commands_\n"
+        result = f"_{result.rstrip()}_\n"
+    elif key == 'help_how_it_works':
+        # Format: "_How it works_\n"
+        result = f"_{result.rstrip()}_\n"
+    elif key in ['help_start', 'help_stop', 'help_updates', 'help_updates_tag', 
+                  'help_language', 'help_about']:
+        # Format: "• _/command_ - Description\n"
+        if ' - ' in result:
+            parts = result.split(' - ', 1)
+            result = f"• _{parts[0].strip()}_ - {parts[1]}"
+    elif key == 'help_help':
+        # Format: "• _/help_ - Show this help message\n\n"
+        if ' - ' in result:
+            parts = result.split(' - ', 1)
+            result = f"• _{parts[0].strip()}_ - {parts[1]}"
+    elif key == 'help_get_started':
+        result = result.replace('/start', '_/start_')
+    elif key == 'updates_header':
+        # Format: "*CrazyOnes - Apple Updates - {display_name}*\n\n..."
+        lines = result.split('\n\n', 1)
+        if len(lines) >= 2:
+            result = f"*{lines[0]}*\n\n{lines[1]}"
+    elif key == 'updates_found_tag':
+        # Format: "*CrazyOnes - Apple Updates - {display_name}*\n\n..."
+        lines = result.split('\n\n')
+        if len(lines) >= 3:
+            result = f"*{lines[0]}*\n\n{lines[1]}\n\n{lines[2]}"
+    elif key == 'language_list_header':
+        # Format: "**CrazyOnes - Available Languages**\n\n"
+        result = f"*{result.rstrip()}*\n\n"
+    elif key == 'language_updated':
+        result = result.replace('/updates', '_/updates_')
+    elif key == 'language_not_subscribed':
+        result = result.replace('/updates', '_/updates_')
+    elif key == 'language_list_footer':
+        result = result.replace('/language [code]', '`/language [code]`')
+        result = result.replace('/language en-us', '`/language en-us`')
+    elif key == 'language_invalid_format':
+        result = result.replace('/language', '`/language`')
+    elif key == 'updates_not_found_tag':
+        result = result.replace('/updates [tag]', '`/updates [tag]`')
+    elif key == 'updates_not_found_no_suggestions':
+        result = result.replace('/updates', '`/updates`')
+    elif key == 'update_format_link' and 'url' in kwargs:
+        # Special case: return markdown link directly
+        return f"🔗 [More info]({kwargs['url']})"
+    
+    return result
 
 
 def load_subscriptions() -> dict[str, dict[str, Any]]:
@@ -754,6 +895,7 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         # No parameter provided - list all available languages
         # Telegram has a 4096 character limit per message
         MAX_MESSAGE_LENGTH = 4000  # Leave some margin for safety
+        MAX_ITEMS_PER_MESSAGE = 100  # Split messages after 100 items
 
         # Build the list of available languages
         header = get_translation(user_lang, "language_list_header")
@@ -769,31 +911,32 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         )
 
         # Build messages, splitting if necessary
-        # Note: This assumes header and footer are reasonably sized. If header or footer
-        # alone exceeds MAX_MESSAGE_LENGTH, messages may exceed the limit. In practice,
-        # the header is ~40 chars and footer is ~150 chars, so this is not an issue.
         messages = []
         accumulated_content = f"*{header}*"  # Accumulated content for current message
         current_lines = ""            # Current lines being added to message
+        item_count = 0  # Counter for items in current message
 
-        for lang_code, _ in sorted_languages:
+        for idx, (lang_code, _) in enumerate(sorted_languages, 1):
             display_name = LANGUAGE_NAME_MAP.get(lang_code, lang_code.upper())
-            line = f"`{lang_code}` - _{display_name}_\n"
+            # Format: number. `xx-yy` - Language/Country
+            line = f"{idx}. `{lang_code}` - {display_name}\n"
             
-            # Check if adding this line would exceed the limit
-            # Test with both continuation and final footer to be safe
+            # Check if we need to split due to item count or message length
             test_message_continued = accumulated_content + current_lines + line + continuation_footer
             test_message_final = accumulated_content + current_lines + line + footer
             max_test_length = max(len(test_message_continued), len(test_message_final))
             
-            # Check if we need to split (but not on the very first line)
-            if max_test_length > MAX_MESSAGE_LENGTH and current_lines != "":
+            # Split if: reached 100 items OR exceeds length (but not on first line)
+            if (item_count >= MAX_ITEMS_PER_MESSAGE or 
+                (max_test_length > MAX_MESSAGE_LENGTH and current_lines != "")):
                 # Save current message with continuation footer and start a new one
                 messages.append(accumulated_content + current_lines + continuation_footer)
                 accumulated_content = ""
                 current_lines = line
+                item_count = 1
             else:
                 current_lines += line
+                item_count += 1
 
         # Add footer to the last message and save it
         final_message = accumulated_content + current_lines + footer
