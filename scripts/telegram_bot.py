@@ -772,7 +772,6 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         messages = []
         accumulated_content = header  # Accumulated content for current message
         current_lines = ""            # Current lines being added to message
-        is_first_message = True
 
         for lang_code, _ in sorted_languages:
             display_name = LANGUAGE_NAME_MAP.get(lang_code, lang_code.upper())
@@ -782,14 +781,14 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             # Account for footer length (either continuation or final footer)
             test_message_continued = accumulated_content + current_lines + line + continuation_footer
             
-            if len(test_message_continued) > MAX_MESSAGE_LENGTH and not is_first_message:
+            # Check if we need to split (but not on the very first line)
+            if len(test_message_continued) > MAX_MESSAGE_LENGTH and current_lines != "":
                 # Save current message with continuation footer and start a new one
                 messages.append(accumulated_content + current_lines + continuation_footer)
                 accumulated_content = ""
                 current_lines = line
             else:
                 current_lines += line
-                is_first_message = False
 
         # Add footer to the last message and save it
         final_message = accumulated_content + current_lines + footer
