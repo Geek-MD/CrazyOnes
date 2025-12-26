@@ -251,12 +251,16 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
         # Format: "• _/command_ - Description\n"
         if ' - ' in result:
             parts = result.split(' - ', 1)
-            result = f"• _{parts[0].strip()}_ - {parts[1]}"
+            # Remove any existing bullet point before adding our own
+            command_part = parts[0].strip().lstrip('•').strip()
+            result = f"• _{command_part}_ - {parts[1]}"
     elif key == 'help_help':
         # Format: "• _/help_ - Show this help message\n\n"
         if ' - ' in result:
             parts = result.split(' - ', 1)
-            result = f"• _{parts[0].strip()}_ - {parts[1]}"
+            # Remove any existing bullet point before adding our own
+            command_part = parts[0].strip().lstrip('•').strip()
+            result = f"• _{command_part}_ - {parts[1]}"
     elif key == 'help_get_started':
         result = result.replace('/start', '_/start_')
     elif key == 'updates_header':
@@ -277,8 +281,8 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
     elif key == 'language_not_subscribed':
         result = result.replace('/updates', '_/updates_')
     elif key == 'language_list_footer':
-        result = result.replace('/language [code]', '`/language [code]`')
-        result = result.replace('/language en-us', '`/language en-us`')
+        # Keep footer text in plain format (no code formatting)
+        pass
     elif key == 'language_invalid_format':
         result = result.replace('/language', '`/language`')
     elif key == 'updates_not_found_tag':
@@ -915,14 +919,14 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
         # Build messages, splitting if necessary
         messages = []
-        accumulated_content = f"*{header}*"  # Accumulated content for current message
+        accumulated_content = header  # Accumulated content for current message (already bolded in get_translation)
         current_lines = ""            # Current lines being added to message
         item_count = 0  # Counter for items in current message
 
         for idx, (lang_code, _) in enumerate(sorted_languages, 1):
             display_name = LANGUAGE_NAME_MAP.get(lang_code, lang_code.upper())
-            # Format: number. `xx-yy` - Language/Country
-            line = f"{idx}. `{lang_code}` - {display_name}\n"
+            # Format: number. xx-yy - Language/Country
+            line = f"{idx}. {lang_code} - {display_name}\n"
 
             # Check if we need to split due to item count or message length
             test_message_continued = (
