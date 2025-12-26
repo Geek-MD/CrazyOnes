@@ -1,11 +1,11 @@
-# Crazy Ones
+# CrazyOnes
 
 ![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)
 ![Code Style: Ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)
 ![Type Checked: mypy](https://img.shields.io/badge/type%20checked-mypy-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-_Crazy Ones_ is a Python-based service designed to automate monitoring and notifications about Apple security updates.
+**CrazyOnes** is a Python-based service designed to automate monitoring and notifications about Apple security updates.
 
 The system continuously monitors Apple's security updates page across all available languages, detecting new updates and tracking changes automatically. It runs as a daemon checking for updates four times daily (every 6 hours by default).
 
