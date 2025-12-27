@@ -162,7 +162,8 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
         formatted_kwargs['tag'] = f"*{formatted_kwargs['tag']}*"
 
     # Apply markdown to command and suggestion if present
-    # Note: The "/" is already in the translation template, no additional formatting needed
+    # Note: The "/" is already in the translation template,
+    # no additional formatting needed
     # Commands and suggestions are shown as plain text without backticks
 
     # Apply markdown to language_code if present
@@ -184,33 +185,29 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
 
     # Headers and titles - wrap with bold
     if key == 'welcome':
-        # Split and format: "🍎 *Welcome to Apple Updates Bot!*\n\n..."
+        # Split and format: "*Welcome to Apple Updates Bot!*\n\n..."
         lines = result.split('\n\n', 1)
         if len(lines) >= 2:
-            # Bold the first line after emoji
+            # Bold the first line
             first_line = lines[0]
-            if first_line.startswith('🍎 '):
-                result = f"🍎 *{first_line[3:]}*\n\n{lines[1]}"
+            result = f"*{first_line}*\n\n{lines[1]}"
     elif key == 'language_selected':
-        # Split and format: "✅ *Language selected: ...*\n\n..."
+        # Split and format: "*Language selected: ...*\n\n..."
         lines = result.split('\n\n', 1)
         if len(lines) >= 2:
             first_line = lines[0]
-            if first_line.startswith('✅ '):
-                result = f"✅ *{first_line[3:]}*\n\n{lines[1]}"
+            result = f"*{first_line}*\n\n{lines[1]}"
     elif key == 'start_welcome':
         # Split and format: "*Welcome to CrazyOnes Bot!*\n\n..."
         lines = result.split('\n\n', 1)
         if len(lines) >= 2:
             result = f"*{lines[0]}*\n\n{lines[1]}"
     elif key == 'recent_updates_header':
-        # Format: "📱 *Here are the {count} most recent Apple Updates:*\n"
-        if result.startswith('📱 '):
-            result = f"📱 *{result[3:]}*"
+        # Format: "*Here are the {count} most recent Apple Updates:*\n"
+        result = f"*{result.rstrip()}*"
     elif key == 'new_updates_header':
-        # Format: "🔔 *New Apple Updates*\n"
-        if result.startswith('🔔 '):
-            result = f"🔔 *{result[3:]}*"
+        # Format: "*New Apple Updates*\n"
+        result = f"*{result.rstrip()}*"
     elif key == 'stop_confirmation':
         # Format: "*CrazyOnes - Subscription stopped*\n\n..."
         lines = result.split('\n\n', 1)
@@ -243,19 +240,17 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
         result = f"_{result.rstrip()}_\n"
     elif key in ['help_start', 'help_stop', 'help_updates', 'help_updates_tag',
                   'help_language', 'help_about']:
-        # Format: "• _/command_ - Description\n"
+        # Format: "_/command_ - Description\n"
         if ' - ' in result:
             parts = result.split(' - ', 1)
-            # Remove any existing bullet point before adding our own
-            command_part = parts[0].strip().lstrip('•').strip()
-            result = f"• _{command_part}_ - {parts[1]}"
+            command_part = parts[0].strip()
+            result = f"_{command_part}_ - {parts[1]}"
     elif key == 'help_help':
-        # Format: "• _/help_ - Show this help message\n\n"
+        # Format: "_/help_ - Show this help message\n\n"
         if ' - ' in result:
             parts = result.split(' - ', 1)
-            # Remove any existing bullet point before adding our own
-            command_part = parts[0].strip().lstrip('•').strip()
-            result = f"• _{command_part}_ - {parts[1]}"
+            command_part = parts[0].strip()
+            result = f"_{command_part}_ - {parts[1]}"
     elif key == 'help_get_started':
         result = result.replace('/start', '_/start_')
     elif key == 'updates_header':
@@ -312,7 +307,7 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
         result = result.replace('/updates', '`/updates`')
     elif key == 'update_format_link' and 'url' in kwargs:
         # Special case: return markdown link directly
-        return f"🔗 [More info]({kwargs['url']})"
+        return f"[More info]({kwargs['url']})"
 
     return result
 
@@ -940,7 +935,8 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
         # Build messages, splitting if necessary
         messages = []
-        accumulated_content = header  # Accumulated content for current message (already bolded in get_translation)
+        # Accumulated content for current message (already bolded)
+        accumulated_content = header
         current_lines = ""            # Current lines being added to message
         item_count = 0  # Counter for items in current message
 
