@@ -319,7 +319,6 @@ def create_update_trigger(updated_languages: list[str]) -> None:
     trigger_file = get_project_root() / "data" / "new_updates_trigger.json"
     trigger_data = {
         "updated_languages": updated_languages,
-        "timestamp": int(Path(trigger_file).stat().st_mtime) if trigger_file.exists() else 0
     }
     
     with open(trigger_file, "w", encoding="utf-8") as f:

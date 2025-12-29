@@ -81,7 +81,7 @@ async def check_for_new_updates(application: Application) -> None:
     try:
         # Read and delete trigger file
         with open(trigger_path, encoding="utf-8") as f:
-            trigger_data: dict[str, list[str]] = json.load(f)
+            trigger_data: dict[str, Any] = json.load(f)
         
         trigger_path.unlink()
         
