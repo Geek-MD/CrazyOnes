@@ -7,22 +7,35 @@
 
 **CrazyOnes** is a Python-based service designed to automate monitoring and notifications about Apple security updates.
 
-The system continuously monitors Apple's security updates page across all available languages, detecting new updates and tracking changes automatically. It runs as a daemon checking for updates four times daily (every 6 hours by default).
+The system continuously monitors Apple's security updates page across all available languages, detecting new updates and tracking changes automatically. It consists of two independent services that work together:
+
+1. **Monitoring Service** - Runs every 6 hours to scrape and detect new updates
+2. **Bot Service** - Runs continuously to handle user commands and send notifications
 
 ## Key Features
 
-- 🔄 **Automatic monitoring** runs continuously in daemon mode (4x per day by default)
+- 🔄 **Dual-service architecture** - Monitoring and bot run as independent systemd services
+- 🔔 **Smart notifications** - Users receive only new updates they haven't seen before
 - 🌍 **Multi-language support** - monitors all language versions of Apple Updates
 - 🔍 **Smart change detection** - only processes new or changed information
 - 📊 **Integrated workflow**:
-  1. Scrapes language URLs from Apple Updates page
-  2. Monitors security updates from each language URL
-  3. Tracks changes using SHA256 hashing
-  4. Saves data incrementally (smart merging)
+  1. Monitoring service scrapes Apple Updates and detects changes
+  2. Creates trigger files when new updates are found
+  3. Bot service detects trigger and sends notifications to subscribers
+  4. Tracks sent updates per user to avoid duplicates
 - 🔐 **Token validation** ensures Telegram bot token is properly configured
 - 💾 **Persistent data** stored locally in JSON files
 - ⚙️ **Easy setup** with configuration wizard and systemd service support
 - 🥧 **Raspberry Pi compatible** - perfect for running on Raspberry Pi devices
+
+## Architecture (v1.0.0)
+
+CrazyOnes v1.0.0 introduces a new dual-service architecture:
+
+- **crazyones.service** - Monitoring service that scrapes Apple Updates every 6 hours
+- **crazyones-bot.service** - Telegram bot service that runs continuously
+
+Both services run independently and communicate through trigger files. When the monitoring service detects new updates, it creates a trigger file that the bot service picks up and processes.
 
 ## Usage
 
@@ -41,66 +54,86 @@ python crazyones.py --token YOUR_BOT_TOKEN
 python crazyones.py --token YOUR_BOT_TOKEN --daemon
 ```
 
-### Running as a Service
+### Running as a Service (Recommended)
 
-If you used the configuration wizard, CrazyOnes can be installed as a systemd service (Linux only):
+**v1.0.0 introduces a dual-service architecture** that runs the monitoring and bot as separate systemd services. This is the recommended way to run CrazyOnes in production.
+
+The configuration wizard will install both services:
 
 ```bash
-# Check service status
-sudo systemctl status crazyones
-
-# View service logs
-sudo journalctl -u crazyones -f
-
-# Stop the service
-sudo systemctl stop crazyones
-
-# Restart the service
-sudo systemctl restart crazyones
-
-# Disable auto-start on boot
-sudo systemctl disable crazyones
+# Run the configuration wizard
+python crazyones.py
+# or
+python crazyones.py --config
 ```
 
-### Daemon Mode (Continuous Monitoring)
+Once installed, you have two services:
 
-Run CrazyOnes in daemon mode for continuous monitoring:
+```bash
+# Monitoring service (checks for updates every 6 hours)
+sudo systemctl status crazyones          # Check status
+sudo systemctl stop crazyones            # Stop service
+sudo systemctl restart crazyones         # Restart service
+sudo journalctl -u crazyones -f          # View logs
+
+# Bot service (runs continuously)
+sudo systemctl status crazyones-bot      # Check status
+sudo systemctl stop crazyones-bot        # Stop service
+sudo systemctl restart crazyones-bot     # Restart service
+sudo journalctl -u crazyones-bot -f      # View logs
+```
+
+Both services will:
+- Start automatically on system boot
+- Restart automatically if they crash
+- Run independently without blocking each other
+
+### Daemon Mode (Manual Running)
+
+You can also run the monitoring service manually in daemon mode:
 
 ```bash
 # Run as daemon with default 6-hour interval (4x per day)
 python crazyones.py --token YOUR_BOT_TOKEN --daemon
-
-# Run as daemon with Telegram bot enabled
-python crazyones.py --token YOUR_BOT_TOKEN --daemon --bot
 
 # Run as daemon with custom interval (e.g., every 3 hours)
 python crazyones.py --token YOUR_BOT_TOKEN --daemon --interval 10800
 
 # Run as daemon with custom URL
 python crazyones.py --token YOUR_BOT_TOKEN --url https://support.apple.com/es-es/100100 --daemon
-
-# Run with bot and custom interval
-python crazyones.py --token YOUR_BOT_TOKEN --daemon --bot --interval 21600
 ```
 
-In daemon mode, the system will:
-1. Scrape language URLs from Apple Updates page
-2. Monitor security updates from each language URL
-3. Save all changes to JSON files
-4. Send notifications to Telegram subscribers (if --bot is enabled)
-5. Wait for the specified interval
-6. Repeat the cycle indefinitely
+**Note:** In v1.0.0, the bot runs as a separate service. To run the bot manually, use:
+
+```bash
+# Run bot service manually (requires config.json with token)
+python -m scripts.bot_service
+```
+
+### How It Works (v1.0.0)
+
+The monitoring and notification system works as follows:
+
+1. **Monitoring service** scrapes language URLs from Apple Updates page
+2. **Monitoring service** detects security updates from each language URL
+3. If new updates are found, creates a trigger file (`data/new_updates_trigger.json`)
+4. **Bot service** checks for trigger files every 30 seconds
+5. **Bot service** reads trigger and sends notifications to subscribers
+6. Only sends updates that users haven't received before (tracked by update ID)
+7. Users can also manually request latest updates using `/updates` command
 
 **Telegram Bot Features:**
 - Users can subscribe by sending `/start` to the bot
 - Select their preferred Apple Updates language
 - **Automatic UI language detection** - bot interface adapts to user's selected language
 - **157 languages supported** - full translation system with JSON-based string management
-- First-time subscribers receive the 10 most recent updates
-- Subsequently, only new updates are sent
+- **Two ways to receive updates:**
+  1. **Automatic notifications** - Receive new updates as they're detected (only unseen updates)
+  2. **Manual request** - Use `/updates` command to get the latest 10 updates anytime
 - Notifications are formatted in the user's selected language
 - Users can unsubscribe anytime by sending `/stop`
 - Automatically unsubscribes when bot is removed from channels/groups
+- **Update tracking** - System remembers which updates were sent to each user to avoid duplicates
 
 **Supported Languages:**
 The bot supports 157 languages with automatic interface translation:
