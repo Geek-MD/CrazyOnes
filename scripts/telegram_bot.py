@@ -319,9 +319,9 @@ def load_subscriptions() -> dict[str, dict[str, Any]]:
     Returns:
         Dictionary with chat_id as keys and subscription data as values.
         Each subscription contains:
-        - language_code: Language preference (default: en-us)
-        - active: Whether the subscription is active (True/False)
-        - last_update_id: ID of the last update sent (None if never sent)
+            language_code: Language preference (default: en-us)
+            active: Whether the subscription is active (True/False)
+            last_update_id: ID of the last update sent (None if never sent)
     """
     path = Path(SUBSCRIPTIONS_FILE)
     if not path.exists():
@@ -341,9 +341,9 @@ def save_subscriptions(subscriptions: dict[str, dict[str, Any]]) -> None:
     Args:
         subscriptions: Dictionary with chat_id as keys and subscription data.
             Each subscription should contain:
-            - language_code: Language preference
-            - active: Whether the subscription is active
-            - last_update_id: ID of last update sent (optional, None if never sent)
+                language_code: Language preference
+                active: Whether the subscription is active
+                last_update_id: ID of last update sent (optional, None if never sent)
     """
     path = Path(SUBSCRIPTIONS_FILE)
     path.parent.mkdir(parents=True, exist_ok=True)

@@ -133,7 +133,6 @@ async def send_new_updates_to_subscribers(
         if not language_code or language_code not in updated_languages:
             continue
         
-        # Get last_update_id (uses update ID instead of index)
         last_update_id = subscription_data.get("last_update_id", None)
         
         # Load updates for this language
