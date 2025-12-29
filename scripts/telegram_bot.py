@@ -319,9 +319,9 @@ def load_subscriptions() -> dict[str, dict[str, Any]]:
     Returns:
         Dictionary with chat_id as keys and subscription data as values.
         Each subscription contains:
-        - language_code: Language preference (default: en-us)
-        - active: Whether the subscription is active (True/False)
-        - last_update_index: Last update index sent (for future use)
+            language_code: Language preference (default: en-us)
+            active: Whether the subscription is active (True/False)
+            last_update_id: ID of the last update sent (None if never sent)
     """
     path = Path(SUBSCRIPTIONS_FILE)
     if not path.exists():
@@ -341,9 +341,9 @@ def save_subscriptions(subscriptions: dict[str, dict[str, Any]]) -> None:
     Args:
         subscriptions: Dictionary with chat_id as keys and subscription data.
             Each subscription should contain:
-            - language_code: Language preference
-            - active: Whether the subscription is active
-            - last_update_index: Last update index (optional)
+                language_code: Language preference
+                active: Whether the subscription is active
+                last_update_id: ID of last update sent (optional, None if never sent)
     """
     path = Path(SUBSCRIPTIONS_FILE)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -452,7 +452,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         subscriptions[chat_id] = {
             "language_code": DEFAULT_LANGUAGE,
             "active": True,
-            "last_update_index": -1
+            "last_update_id": None  # Changed from last_update_index to last_update_id
         }
         language_code = DEFAULT_LANGUAGE
 
@@ -502,14 +502,15 @@ async def language_selection_callback(
     is_first_time = chat_id not in subscriptions
 
     # Save subscription with language, active status, and initial tracking
-    last_idx = (
-        -1 if is_first_time
-        else subscriptions[chat_id].get("last_update_index", -1)
+    # Changed from last_update_index to last_update_id (None = never sent updates)
+    last_id = (
+        None if is_first_time
+        else subscriptions[chat_id].get("last_update_id", None)
     )
     subscriptions[chat_id] = {
         "language_code": language_code,
         "active": True,
-        "last_update_index": last_idx,
+        "last_update_id": last_id,
     }
     save_subscriptions(subscriptions)
 
@@ -1262,12 +1263,14 @@ async def send_recent_updates(
     # Get the 10 most recent updates
     recent_updates = updates[:10]
 
-    # Update the last_update_index to mark these as sent
+    # Update the last_update_id to mark these as sent
     subscriptions = load_subscriptions()
     if chat_id in subscriptions:
-        last_idx = 9 if len(updates) >= 10 else len(updates) - 1
-        subscriptions[chat_id]["last_update_index"] = last_idx
-        save_subscriptions(subscriptions)
+        # Get the highest ID from the recent updates
+        if recent_updates:
+            highest_id = max(u.get("id", 0) for u in recent_updates)
+            subscriptions[chat_id]["last_update_id"] = highest_id
+            save_subscriptions(subscriptions)
 
     # Send header message
     header = get_translation(
@@ -1405,53 +1408,3 @@ def create_application(token: str) -> Application:  # type: ignore[type-arg]
     )
 
     return application
-
-
-async def send_new_updates_to_subscribers() -> None:
-    """
-    Check for new updates and send them to subscribers.
-
-    NOTE: This function is a placeholder for future implementation.
-    Currently, notifications are triggered by the monitoring cycle in
-    crazyones.py when new updates are detected. This function will be
-    used to implement periodic checks for new updates independent of
-    the monitoring cycle.
-    """
-    subscriptions = load_subscriptions()
-
-    if not subscriptions:
-        logger.info("No subscriptions found, skipping update notifications")
-        return
-
-    for chat_id, subscription_data in subscriptions.items():
-        language_code = subscription_data.get("language_code")
-        last_update_index = subscription_data.get("last_update_index", -1)
-
-        if not language_code:
-            continue
-
-        # Load updates for this language
-        updates = load_updates_for_language(language_code)
-
-        if not updates:
-            continue
-
-        # Check if there are new updates (updates are ordered from newest to oldest)
-        # If last_update_index is -1, user has already received initial updates
-        # We need to find updates that are newer than what the user has seen
-        if last_update_index == -1:
-            # User has received initial updates, no new ones yet
-            continue
-
-        # Get new updates (indices 0 to last_update_index - 1)
-        if last_update_index == 0:
-            # User has seen the most recent update, check if there are
-            # new ones at the beginning (after a new monitoring cycle)
-            continue
-
-        # TODO: This logic needs to be integrated with the bot's event loop
-        # For now, we'll leave this as a placeholder for future integration
-        logger.info(
-            f"Would send updates to chat {chat_id} for "
-            f"language {language_code}"
-        )

@@ -46,7 +46,7 @@ from scripts.scrape_apple_updates import (
 )
 
 # Version from pyproject.toml
-__version__ = "0.17.2"
+__version__ = "1.0.0"
 
 # PID file location
 PID_FILE = "/tmp/crazyones.pid"
@@ -432,7 +432,7 @@ def generate_systemd_service_content(
     user: str,
 ) -> str:
     """
-    Generate systemd service file content.
+    Generate systemd service file content for monitoring service.
 
     Args:
         python_path: Path to Python interpreter
@@ -464,9 +464,162 @@ WantedBy=multi-user.target
     return service_content
 
 
+def generate_bot_service_content(
+    python_path: str,
+    work_dir: str,
+    user: str,
+) -> str:
+    """
+    Generate systemd service file content for bot service.
+
+    Args:
+        python_path: Path to Python interpreter
+        work_dir: Working directory for the service
+        user: User to run the service as
+
+    Returns:
+        Systemd service file content for bot
+    """
+    service_content = f"""[Unit]
+Description=CrazyOnes - Telegram Bot Service
+After=network.target
+
+[Service]
+Type=simple
+User={user}
+WorkingDirectory={work_dir}
+ExecStart={python_path} -m scripts.bot_service
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=crazyones-bot
+
+[Install]
+WantedBy=multi-user.target
+"""
+    return service_content
+
+
+def install_single_service(
+    service_name: str,
+    service_content: str,
+    is_root: bool = False
+) -> bool:
+    """
+    Install a single systemd service.
+    
+    Args:
+        service_name: Name of the service (e.g., "crazyones.service")
+        service_content: Content of the service file
+        is_root: Whether running as root
+    
+    Returns:
+        True if successful, False otherwise
+    """
+    import subprocess
+    import tempfile
+    
+    service_path = Path(f"/etc/systemd/system/{service_name}")
+    
+    try:
+        # Write service file
+        if not is_root:
+            # Create temporary file with secure permissions
+            tmp_fd, tmp_service_path_str = tempfile.mkstemp(
+                suffix=".service",
+                prefix=f"{service_name.replace('.service', '')}_",
+            )
+            tmp_service_path = Path(tmp_service_path_str)
+            
+            try:
+                os.fchmod(tmp_fd, 0o600)
+                
+                with os.fdopen(tmp_fd, "w", encoding="utf-8") as f:
+                    f.write(service_content)
+                
+                # Copy with sudo
+                result = subprocess.run(
+                    ["sudo", "cp", str(tmp_service_path), str(service_path)],
+                    capture_output=True,
+                    text=True,
+                    timeout=60,
+                )
+                
+                if result.returncode != 0:
+                    print(f"✗ Error copying {service_name}: {result.stderr}")
+                    return False
+                
+                # Set permissions
+                result = subprocess.run(
+                    ["sudo", "chmod", "644", str(service_path)],
+                    capture_output=True,
+                    text=True,
+                    timeout=30,
+                )
+                
+                if result.returncode != 0:
+                    print(f"✗ Error setting permissions on {service_name}: {result.stderr}")
+                    return False
+                    
+            finally:
+                try:
+                    tmp_service_path.unlink()
+                except (FileNotFoundError, PermissionError, OSError):
+                    pass
+        else:
+            # Write directly as root
+            with open(service_path, "w", encoding="utf-8") as f:
+                f.write(service_content)
+            os.chmod(service_path, 0o644)
+        
+        print(f"✓ Service file created: {service_path}")
+        
+        # Enable service
+        cmd = (
+            ["systemctl", "enable", service_name]
+            if is_root
+            else ["sudo", "systemctl", "enable", service_name]
+        )
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, timeout=30
+        )
+        
+        if result.returncode != 0:
+            print(f"✗ Error enabling {service_name}: {result.stderr}")
+            return False
+        
+        print(f"✓ Service {service_name} enabled")
+        
+        # Start service
+        cmd = (
+            ["systemctl", "start", service_name]
+            if is_root
+            else ["sudo", "systemctl", "start", service_name]
+        )
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, timeout=30
+        )
+        
+        if result.returncode != 0:
+            print(f"✗ Error starting {service_name}: {result.stderr}")
+            return False
+        
+        print(f"✓ Service {service_name} started")
+        
+        return True
+        
+    except subprocess.TimeoutExpired:
+        print(f"✗ Error: Timeout while installing {service_name}")
+        return False
+    except Exception as e:
+        print(f"✗ Error installing {service_name}: {e}")
+        return False
+
+
 def install_systemd_service() -> bool:
     """
-    Generate and install systemd service file.
+    Generate and install both monitoring and bot systemd services.
 
     Returns:
         True if successful, False otherwise
@@ -489,7 +642,7 @@ def install_systemd_service() -> bool:
 
         print()
         print("=" * 60)
-        print("Systemd Service Installation")
+        print("Systemd Services Installation")
         print("=" * 60)
         print()
         print(f"Python interpreter: {python_path}")
@@ -498,95 +651,46 @@ def install_systemd_service() -> bool:
         print(f"Service user:       {current_user}")
         print()
 
-        # Generate service content
-        service_content = generate_systemd_service_content(
+        # Generate service contents
+        monitoring_service_content = generate_systemd_service_content(
             python_path=python_path,
             script_path=str(script_path),
             work_dir=str(work_dir),
             user=current_user,
         )
+        
+        bot_service_content = generate_bot_service_content(
+            python_path=python_path,
+            work_dir=str(work_dir),
+            user=current_user,
+        )
 
-        # Service file path
-        service_name = "crazyones.service"
-        service_path = Path(f"/etc/systemd/system/{service_name}")
-
-        print("This will create a systemd service that:")
-        print("  - Runs in daemon mode with 12-hour intervals")
-        print("  - Starts automatically on system boot")
-        print("  - Restarts automatically if it crashes")
+        print("This will create two systemd services:")
+        print("  1. crazyones.service - Monitoring and scraping service")
+        print("     - Runs every 6 hours (4x per day)")
+        print("     - Scrapes Apple Updates and detects changes")
+        print()
+        print("  2. crazyones-bot.service - Telegram bot service")
+        print("     - Runs continuously")
+        print("     - Handles user commands")
+        print("     - Sends notifications about new updates")
+        print()
+        print("Both services will:")
+        print("  - Start automatically on system boot")
+        print("  - Restart automatically if they crash")
         print()
         print("⚠ Note: This requires sudo/root privileges.")
         print()
 
-        # Check if running as root
-        if os.geteuid() != 0:
-            print("Attempting to install service with sudo...")
+        is_root = os.geteuid() == 0
+        
+        if not is_root:
+            print("Attempting to install services with sudo...")
             print("You may be prompted for your password.")
             print()
 
-            # Write service content to temporary file with secure permissions
-            import tempfile
-
-            # Create a temporary file with secure permissions
-            # (0o600 = owner read/write only)
-            # Use system's secure temporary directory
-            tmp_fd, tmp_service_path_str = tempfile.mkstemp(
-                suffix=".service",
-                prefix="crazyones_",
-            )
-            tmp_service_path = Path(tmp_service_path_str)
-
-            try:
-                # Explicitly set secure permissions on the file descriptor
-                os.fchmod(tmp_fd, 0o600)
-
-                # Write to the file descriptor with secure permissions
-                with os.fdopen(tmp_fd, "w", encoding="utf-8") as f:
-                    f.write(service_content)
-
-                # Copy service file with sudo
-                result = subprocess.run(
-                    ["sudo", "cp", str(tmp_service_path), str(service_path)],
-                    capture_output=True,
-                    text=True,
-                    timeout=60,  # 60 second timeout for sudo password prompt
-                )
-
-                if result.returncode != 0:
-                    print(f"✗ Error copying service file: {result.stderr}")
-                    return False
-
-                # Set proper permissions
-                result = subprocess.run(
-                    ["sudo", "chmod", "644", str(service_path)],
-                    capture_output=True,
-                    text=True,
-                    timeout=30,
-                )
-
-                if result.returncode != 0:
-                    print(f"✗ Error setting permissions: {result.stderr}")
-                    return False
-
-            finally:
-                # Clean up temporary file
-                try:
-                    tmp_service_path.unlink()
-                except (FileNotFoundError, PermissionError, OSError):
-                    # Silently ignore cleanup errors
-                    pass
-
-        else:
-            # Running as root, write directly
-            with open(service_path, "w", encoding="utf-8") as f:
-                f.write(service_content)
-            os.chmod(service_path, 0o644)
-
-        print(f"✓ Service file created: {service_path}")
-
-        # Reload systemd daemon
+        # Reload systemd daemon first
         print("Reloading systemd daemon...")
-        is_root = os.geteuid() == 0
         cmd = (
             ["systemctl", "daemon-reload"]
             if is_root
@@ -598,8 +702,6 @@ def install_systemd_service() -> bool:
             )
         except subprocess.TimeoutExpired:
             print("✗ Error: systemctl daemon-reload timed out")
-            print("   This may indicate system overload or systemd issues.")
-            print("   Try running manually: sudo systemctl daemon-reload")
             return False
 
         if result.returncode != 0:
@@ -607,61 +709,36 @@ def install_systemd_service() -> bool:
             return False
 
         print("✓ Systemd daemon reloaded")
+        print()
 
-        # Enable service
-        print("Enabling service to start on boot...")
-        cmd = (
-            ["systemctl", "enable", service_name]
-            if is_root
-            else ["sudo", "systemctl", "enable", service_name]
-        )
-        try:
-            result = subprocess.run(
-                cmd, capture_output=True, text=True, timeout=30
-            )
-        except subprocess.TimeoutExpired:
-            print("✗ Error: systemctl enable timed out")
-            print(f"   Try running manually: sudo systemctl enable {service_name}")
+        # Install monitoring service
+        print("Installing monitoring service...")
+        if not install_single_service("crazyones.service", monitoring_service_content, is_root):
             return False
+        print()
 
-        if result.returncode != 0:
-            print(f"✗ Error enabling service: {result.stderr}")
+        # Install bot service
+        print("Installing bot service...")
+        if not install_single_service("crazyones-bot.service", bot_service_content, is_root):
             return False
-
-        print("✓ Service enabled")
-
-        # Start service
-        print("Starting service...")
-        cmd = (
-            ["systemctl", "start", service_name]
-            if is_root
-            else ["sudo", "systemctl", "start", service_name]
-        )
-        try:
-            result = subprocess.run(
-                cmd, capture_output=True, text=True, timeout=30
-            )
-        except subprocess.TimeoutExpired:
-            print("✗ Error: systemctl start timed out")
-            print(f"   Try running manually: sudo systemctl start {service_name}")
-            return False
-
-        if result.returncode != 0:
-            print(f"✗ Error starting service: {result.stderr}")
-            return False
-
-        print("✓ Service started")
 
         print()
         print("=" * 60)
-        print("Service Installation Complete!")
+        print("Services Installation Complete!")
         print("=" * 60)
         print()
         print("Useful commands:")
-        print(f"  sudo systemctl status {service_name}   # Check service status")
-        print(f"  sudo systemctl stop {service_name}     # Stop the service")
-        print(f"  sudo systemctl restart {service_name}  # Restart the service")
-        print(f"  sudo journalctl -u {service_name} -f   # View service logs")
+        print("  # Monitoring service")
+        print("  sudo systemctl status crazyones          # Check status")
+        print("  sudo systemctl stop crazyones            # Stop service")
+        print("  sudo systemctl restart crazyones         # Restart service")
+        print("  sudo journalctl -u crazyones -f          # View logs")
+        print()
+        print("  # Bot service")
+        print("  sudo systemctl status crazyones-bot      # Check status")
+        print("  sudo systemctl stop crazyones-bot        # Stop service")
+        print("  sudo systemctl restart crazyones-bot     # Restart service")
+        print("  sudo journalctl -u crazyones-bot -f      # View logs")
         print()
 
         return True
@@ -670,7 +747,7 @@ def install_systemd_service() -> bool:
         print(f"\n✗ Error: Command timed out: {e}")
         return False
     except Exception as e:
-        print(f"\n✗ Error installing systemd service: {e}")
+        print(f"\n✗ Error installing systemd services: {e}")
         return False
 
 
@@ -820,13 +897,6 @@ Examples:
             "default: 21600 = 6 hours)"
         ),
         metavar="SECONDS",
-    )
-
-    parser.add_argument(
-        "-b",
-        "--bot",
-        action="store_true",
-        help="Start Telegram bot (requires daemon mode)",
     )
 
     parser.add_argument(
@@ -1056,14 +1126,7 @@ def main() -> None:
     daemon_mode = args.daemon or args.interval is not None
     # Default 6 hours (4 times per day)
     interval = args.interval if args.interval else 21600
-    bot_mode = args.bot
     once_mode = args.once  # Hidden parameter for testing
-
-    # Validate bot mode
-    if bot_mode and not daemon_mode:
-        log_and_print("Error: --bot requires --daemon mode")
-        log_and_print("Use --help for usage information")
-        sys.exit(1)
 
     # Check if another instance is already running
     existing_pid = read_pid_file()
@@ -1190,53 +1253,6 @@ def main() -> None:
             sys.exit(1)
 
     log_and_print("")
-
-    # Start Telegram bot if requested
-    bot_application = None
-    bot_thread = None
-    if bot_mode:
-        log_and_print("Starting Telegram bot...")
-        from scripts.telegram_bot import create_application
-
-        bot_application = create_application(token_to_use)
-
-        # Run bot in a separate thread with its own event loop
-        def run_bot_in_thread() -> None:
-            """Run bot in a separate thread with its own async event loop."""
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-
-            async def start_bot_async() -> None:
-                try:
-                    await bot_application.initialize()
-                    await bot_application.start()
-                    if bot_application.updater:
-                        await bot_application.updater.start_polling()
-                        log_and_print("✓ Telegram bot started successfully")
-                        log_and_print("")
-
-                        # Keep bot running until shutdown
-                        while not _shutdown_event.is_set():
-                            await asyncio.sleep(1)
-
-                        # Cleanup
-                        await bot_application.updater.stop()
-                    await bot_application.stop()
-                    await bot_application.shutdown()
-                except Exception as e:
-                    log_and_print(f"✗ Error in bot thread: {e}")
-                    logging.exception("Full traceback:")
-
-            try:
-                loop.run_until_complete(start_bot_async())
-            finally:
-                loop.close()
-
-        bot_thread = threading.Thread(target=run_bot_in_thread, daemon=True)
-        bot_thread.start()
-
-        # Give bot a moment to start
-        time.sleep(2)
 
     # Main execution loop
     if daemon_mode:
