@@ -306,6 +306,26 @@ def save_updates_to_json(
         json.dump(sorted_updates, f, indent=2, ensure_ascii=False)
 
 
+def create_update_trigger(updated_languages: list[str]) -> None:
+    """
+    Create a trigger file to notify the bot service of new updates.
+    
+    Args:
+        updated_languages: List of language codes that have new updates
+    """
+    if not updated_languages:
+        return
+    
+    trigger_file = get_project_root() / "data" / "new_updates_trigger.json"
+    trigger_data = {
+        "updated_languages": updated_languages,
+        "timestamp": int(Path(trigger_file).stat().st_mtime) if trigger_file.exists() else 0
+    }
+    
+    with open(trigger_file, "w", encoding="utf-8") as f:
+        json.dump(trigger_data, f, indent=2, ensure_ascii=False)
+
+
 def detect_changes(
     language_urls: dict[str, str], tracking_data: dict[str, dict[str, str]]
 ) -> list[str]:
@@ -436,13 +456,20 @@ def main() -> None:
 
     # Process each language URL
     successful_count = 0
+    updated_languages = []  # Track languages with new/updated content
     for lang_code in languages_to_process:
         url = language_urls[lang_code]
         if process_language_url(lang_code, url, tracking_data, force_update):
             successful_count += 1
+            updated_languages.append(lang_code)
 
     # Save updated tracking data
     save_tracking_data(tracking_data)
+    
+    # Create trigger file for bot service if there are updates
+    if updated_languages:
+        create_update_trigger(updated_languages)
+        print(f"\n✓ Created notification trigger for {len(updated_languages)} languages")
 
     print("\n=== Summary ===")
     print(f"Processed: {len(languages_to_process)} languages")
