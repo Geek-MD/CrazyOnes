@@ -37,6 +37,8 @@ cat > "${APP_HOME}/config.json" <<EOF
 }
 EOF
 
+# The monitor service runs `python crazyones.py` and needs --token.
+# The bot service (`python -m scripts.bot_service`) reads token from config.json.
 if [[ $# -ge 2 && "$1" == "python" && "$2" == "crazyones.py" ]]; then
     has_token_arg=false
     for arg in "$@"; do
