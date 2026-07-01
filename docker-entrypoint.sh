@@ -17,15 +17,15 @@ log_and_tui() {
 }
 
 if [[ -z "${TOKEN}" ]]; then
-    log_and_tui "ERROR: TELEGRAM_BOT_TOKEN no está configurado."
-    log_and_tui "Configura un token válido en el archivo .env antes de iniciar Docker."
+    log_and_tui "ERROR: TELEGRAM_BOT_TOKEN is not configured."
+    log_and_tui "Set a valid token in .env before starting Docker."
     exit 1
 fi
 
 if [[ "${TOKEN}" == "${EXAMPLE_TOKEN}" ]]; then
-    log_and_tui "ERROR: Se detectó el token de ejemplo en TELEGRAM_BOT_TOKEN."
-    log_and_tui "La instalación se detiene por seguridad."
-    log_and_tui "Edita el archivo .env con tu token real y vuelve a ejecutar docker compose up."
+    log_and_tui "ERROR: Example token detected in TELEGRAM_BOT_TOKEN."
+    log_and_tui "Installation stopped for safety."
+    log_and_tui "Update .env with your real token and run docker compose up again."
     exit 1
 fi
 
