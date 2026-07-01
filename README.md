@@ -24,6 +24,7 @@ The system continuously monitors Apple's security updates page across all availa
   3. Bot service detects trigger and sends notifications to subscribers
   4. Tracks sent updates per user to avoid duplicates
 - 🔐 **Token validation** ensures Telegram bot token is properly configured
+- 🐳 **Docker-ready deployment** with `Dockerfile` and `docker-compose.yml`
 - 💾 **Persistent data** stored locally in JSON files
 - ⚙️ **Easy setup** with configuration wizard and systemd service support
 - 🥧 **Raspberry Pi compatible** - perfect for running on Raspberry Pi devices
@@ -87,6 +88,49 @@ Both services will:
 - Start automatically on system boot
 - Restart automatically if they crash
 - Run independently without blocking each other
+
+### Docker Installation (v1.1.0)
+
+CrazyOnes v1.1.0 adds container support with Docker and Docker Compose.
+
+#### 1) Prepare environment variables
+
+```bash
+cp .env.example .env
+```
+
+Open `.env` and replace the token:
+
+```env
+TELEGRAM_BOT_TOKEN=123456789:ABCdefGHIjklMNOpqrsTUVwxyz-1234567890
+APPLE_UPDATES_URL=https://support.apple.com/en-us/100100
+CRAZYONES_INTERVAL=21600
+```
+
+> ⚠️ Important: If `TELEGRAM_BOT_TOKEN` keeps the example value, container startup stops automatically and shows the error in terminal output and in `crazyones.log`.
+
+#### 2) Build and run
+
+```bash
+docker compose up --build -d
+```
+
+This starts two containers:
+- `crazyones-monitor` (daemon monitoring cycle)
+- `crazyones-bot` (Telegram bot service)
+
+#### 3) View logs
+
+```bash
+docker compose logs -f crazyones-monitor
+docker compose logs -f crazyones-bot
+```
+
+#### 4) Stop
+
+```bash
+docker compose down
+```
 
 ### Daemon Mode (Manual Running)
 

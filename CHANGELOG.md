@@ -5,6 +5,17 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-07-01
+
+### Added
+- Docker container support with a production-ready `Dockerfile`.
+- `docker-compose.yml` with dedicated monitor and bot services.
+- `.env.example` template for container configuration.
+
+### Changed
+- Container startup now generates `config.json` from environment variables.
+- Docker startup halts when it detects the example Telegram token and reports the issue in terminal output and logs.
+
 ## [1.0.0] - 2025-12-29
 
 ### Added

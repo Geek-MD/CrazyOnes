@@ -1,0 +1,41 @@
+services:
+  crazyones-monitor:
+    build:
+      context: .
+    container_name: crazyones-monitor
+    env_file:
+      - .env
+    command:
+      - python
+      - crazyones.py
+      - --daemon
+      - --url
+      - ${APPLE_UPDATES_URL}
+      - --interval
+      - ${CRAZYONES_INTERVAL:-21600}
+    volumes:
+      - ./data:/app/data
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f 'python crazyones.py' >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    restart: unless-stopped
+
+  crazyones-bot:
+    build:
+      context: .
+    container_name: crazyones-bot
+    env_file:
+      - .env
+    command:
+      - python
+      - -m
+      - scripts.bot_service
+    depends_on:
+      crazyones-monitor:
+        condition: service_healthy
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
