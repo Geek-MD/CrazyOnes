@@ -42,7 +42,7 @@ EOF
 if [[ $# -ge 2 && "$1" == "python" && "$2" == "crazyones.py" ]]; then
     has_token_arg=false
     for arg in "$@"; do
-        if [[ "${arg}" == "--token" || "${arg}" == "-t" ]]; then
+        if [[ "${arg}" == "--token" ]]; then
             has_token_arg=true
             break
         fi
