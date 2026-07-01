@@ -1,0 +1,36 @@
+services:
+  crazyones-monitor:
+    build:
+      context: .
+    container_name: crazyones-monitor
+    env_file:
+      - .env
+    command:
+      - python
+      - crazyones.py
+      - --daemon
+      - --token
+      - ${TELEGRAM_BOT_TOKEN}
+      - --url
+      - ${APPLE_UPDATES_URL}
+      - --interval
+      - ${CRAZYONES_INTERVAL:-21600}
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+
+  crazyones-bot:
+    build:
+      context: .
+    container_name: crazyones-bot
+    env_file:
+      - .env
+    command:
+      - python
+      - -m
+      - scripts.bot_service
+    depends_on:
+      - crazyones-monitor
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
