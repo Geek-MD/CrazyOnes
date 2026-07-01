@@ -37,4 +37,17 @@ cat > "${APP_HOME}/config.json" <<EOF
 }
 EOF
 
+if [[ $# -ge 2 && "$1" == "python" && "$2" == "crazyones.py" ]]; then
+    has_token_arg=false
+    for arg in "$@"; do
+        if [[ "${arg}" == "--token" || "${arg}" == "-t" ]]; then
+            has_token_arg=true
+            break
+        fi
+    done
+    if [[ "${has_token_arg}" == "false" ]]; then
+        set -- "$@" --token "${TOKEN}"
+    fi
+fi
+
 exec "$@"

@@ -9,8 +9,6 @@ services:
       - python
       - crazyones.py
       - --daemon
-      - --token
-      - ${TELEGRAM_BOT_TOKEN}
       - --url
       - ${APPLE_UPDATES_URL}
       - --interval
