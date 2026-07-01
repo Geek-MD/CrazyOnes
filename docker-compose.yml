@@ -15,6 +15,12 @@ services:
       - ${CRAZYONES_INTERVAL:-21600}
     volumes:
       - ./data:/app/data
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f 'python crazyones.py' >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
     restart: unless-stopped
 
   crazyones-bot:
@@ -28,7 +34,8 @@ services:
       - -m
       - scripts.bot_service
     depends_on:
-      - crazyones-monitor
+      crazyones-monitor:
+        condition: service_healthy
     volumes:
       - ./data:/app/data
     restart: unless-stopped
