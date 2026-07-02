@@ -5,6 +5,12 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-07-02
+
+### Fixed
+- `AttributeError: 'Namespace' object has no attribute 'bot'` in `main()` caused by a stale reference to a removed `--bot` argument that prevented the monitor container from starting.
+- Docker healthcheck replaced `pgrep` (unavailable in `python:slim`) with a PID-file check (`kill -0`) so the monitor container is correctly reported as healthy.
+
 ## [1.1.0] - 2026-07-01
 
 ### Added

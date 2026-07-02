@@ -46,7 +46,7 @@ from scripts.scrape_apple_updates import (
 )
 
 # Version from pyproject.toml
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 # PID file location
 PID_FILE = "/tmp/crazyones.pid"
@@ -1097,7 +1097,7 @@ def main() -> None:
     # Check if user wants config wizard: explicit --config flag,
     # or no execution flags provided
     should_run_config = not any(
-        [args.token, args.daemon, args.interval, args.bot, args.once]
+        [args.token, args.daemon, args.interval, args.once]
     )
     if args.config or should_run_config:
         success = run_configuration_routine()
