@@ -15,7 +15,6 @@ Note: Starting a new instance automatically stops any existing instance.
 """
 
 import argparse
-import asyncio
 import json
 import logging
 import os
@@ -508,20 +507,20 @@ def install_single_service(
 ) -> bool:
     """
     Install a single systemd service.
-    
+
     Args:
         service_name: Name of the service (e.g., "crazyones.service")
         service_content: Content of the service file
         is_root: Whether running as root
-    
+
     Returns:
         True if successful, False otherwise
     """
     import subprocess
     import tempfile
-    
+
     service_path = Path(f"/etc/systemd/system/{service_name}")
-    
+
     try:
         # Write service file
         if not is_root:
@@ -531,13 +530,13 @@ def install_single_service(
                 prefix=f"{service_name.replace('.service', '')}_",
             )
             tmp_service_path = Path(tmp_service_path_str)
-            
+
             try:
                 os.fchmod(tmp_fd, 0o600)
-                
+
                 with os.fdopen(tmp_fd, "w", encoding="utf-8") as f:
                     f.write(service_content)
-                
+
                 # Copy with sudo
                 result = subprocess.run(
                     ["sudo", "cp", str(tmp_service_path), str(service_path)],
@@ -545,11 +544,11 @@ def install_single_service(
                     text=True,
                     timeout=60,
                 )
-                
+
                 if result.returncode != 0:
                     print(f"✗ Error copying {service_name}: {result.stderr}")
                     return False
-                
+
                 # Set permissions
                 result = subprocess.run(
                     ["sudo", "chmod", "644", str(service_path)],
@@ -557,11 +556,14 @@ def install_single_service(
                     text=True,
                     timeout=30,
                 )
-                
+
                 if result.returncode != 0:
-                    print(f"✗ Error setting permissions on {service_name}: {result.stderr}")
+                    print(
+                        "✗ Error setting permissions on "
+                        f"{service_name}: {result.stderr}"
+                    )
                     return False
-                    
+
             finally:
                 try:
                     tmp_service_path.unlink()
@@ -572,9 +574,9 @@ def install_single_service(
             with open(service_path, "w", encoding="utf-8") as f:
                 f.write(service_content)
             os.chmod(service_path, 0o644)
-        
+
         print(f"✓ Service file created: {service_path}")
-        
+
         # Enable service
         cmd = (
             ["systemctl", "enable", service_name]
@@ -584,13 +586,13 @@ def install_single_service(
         result = subprocess.run(
             cmd, capture_output=True, text=True, timeout=30
         )
-        
+
         if result.returncode != 0:
             print(f"✗ Error enabling {service_name}: {result.stderr}")
             return False
-        
+
         print(f"✓ Service {service_name} enabled")
-        
+
         # Start service
         cmd = (
             ["systemctl", "start", service_name]
@@ -600,15 +602,15 @@ def install_single_service(
         result = subprocess.run(
             cmd, capture_output=True, text=True, timeout=30
         )
-        
+
         if result.returncode != 0:
             print(f"✗ Error starting {service_name}: {result.stderr}")
             return False
-        
+
         print(f"✓ Service {service_name} started")
-        
+
         return True
-        
+
     except subprocess.TimeoutExpired:
         print(f"✗ Error: Timeout while installing {service_name}")
         return False
@@ -658,7 +660,7 @@ def install_systemd_service() -> bool:
             work_dir=str(work_dir),
             user=current_user,
         )
-        
+
         bot_service_content = generate_bot_service_content(
             python_path=python_path,
             work_dir=str(work_dir),
@@ -683,7 +685,7 @@ def install_systemd_service() -> bool:
         print()
 
         is_root = os.geteuid() == 0
-        
+
         if not is_root:
             print("Attempting to install services with sudo...")
             print("You may be prompted for your password.")
@@ -713,13 +715,17 @@ def install_systemd_service() -> bool:
 
         # Install monitoring service
         print("Installing monitoring service...")
-        if not install_single_service("crazyones.service", monitoring_service_content, is_root):
+        if not install_single_service(
+            "crazyones.service", monitoring_service_content, is_root
+        ):
             return False
         print()
 
         # Install bot service
         print("Installing bot service...")
-        if not install_single_service("crazyones-bot.service", bot_service_content, is_root):
+        if not install_single_service(
+            "crazyones-bot.service", bot_service_content, is_root
+        ):
             return False
 
         print()
