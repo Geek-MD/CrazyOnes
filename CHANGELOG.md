@@ -5,6 +5,11 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2] - 2026-07-03
+
+### Fixed
+- `/version` command was reporting stale version `1.1.1` due to outdated hardcoded values in `Dockerfile` and `docker-entrypoint.sh`.
+
 ## [1.2.1] - 2026-07-03
 
 ### Changed
