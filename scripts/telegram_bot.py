@@ -365,6 +365,7 @@ def load_subscriptions() -> dict[str, dict[str, Any]]:
             language_code: Language preference (default: en-us)
             active: Whether the subscription is active (True/False)
             last_update_id: ID of the last update sent (None if never sent)
+            last_update_signature: Signature of latest delivered update
     """
     path = Path(SUBSCRIPTIONS_FILE)
     if not path.exists():
@@ -387,6 +388,7 @@ def save_subscriptions(subscriptions: dict[str, dict[str, Any]]) -> None:
                 language_code: Language preference
                 active: Whether the subscription is active
                 last_update_id: ID of last update sent (optional, None if never sent)
+                last_update_signature: Signature marker for new-update detection
     """
     path = Path(SUBSCRIPTIONS_FILE)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -520,6 +522,23 @@ def load_updates_for_language(language_code: str) -> list[dict[str, Any]]:
         return data
 
 
+def build_update_signature(update_item: dict[str, Any]) -> str:
+    """
+    Build a stable signature for a security update item.
+
+    Args:
+        update_item: Update dictionary loaded from JSON.
+
+    Returns:
+        Deterministic signature string for the update.
+    """
+    name = str(update_item.get("name", "")).strip()
+    target = str(update_item.get("target", "")).strip()
+    date = str(update_item.get("date", "")).strip()
+    url = str(update_item.get("url", "")).strip()
+    return f"{name}|{target}|{date}|{url}"
+
+
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
     Handle /start command. Subscribe user with default language (en-us).
@@ -550,6 +569,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
             "language_code": DEFAULT_LANGUAGE,
             "active": True,
             "last_update_id": None,  # Changed from last_update_index to last_update_id
+            "last_update_signature": None,
         }
         language_code = DEFAULT_LANGUAGE
 
@@ -604,6 +624,9 @@ async def language_selection_callback(
         "language_code": language_code,
         "active": True,
         "last_update_id": last_id,
+        "last_update_signature": subscriptions.get(chat_id, {}).get(
+            "last_update_signature", None
+        ),
     }
     save_subscriptions(subscriptions)
 
@@ -1333,6 +1356,9 @@ async def send_recent_updates(
         if recent_updates:
             highest_id = max(u.get("id", 0) for u in recent_updates)
             subscriptions[chat_id]["last_update_id"] = highest_id
+            subscriptions[chat_id]["last_update_signature"] = build_update_signature(
+                recent_updates[0]
+            )
             save_subscriptions(subscriptions)
 
     # Send header message
