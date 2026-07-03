@@ -5,6 +5,15 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-07-03
+
+### Changed
+- Translation lookup now falls back by base language (for example, `es-cl` uses `es-es` when locale-specific strings are incomplete), improving Spanish help and updates coverage.
+- Help command entries are now rendered in plain command format (without italicized command names), including `/version`.
+
+### Fixed
+- Update name extraction for rows without links now ignores extra helper/CVE text in the same table cell.
+
 ## [1.2.0] - 2026-07-03
 
 ### Added
