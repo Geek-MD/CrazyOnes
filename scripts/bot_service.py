@@ -24,6 +24,7 @@ try:
     # Try relative import (when used as a module)
     from .generate_language_names import LANGUAGE_NAME_MAP
     from .telegram_bot import (
+        build_update_signature,
         create_application,
         get_translation,
         load_bot_version,
@@ -40,6 +41,7 @@ except ImportError:
         LANGUAGE_NAME_MAP,
     )
     from telegram_bot import (  # type: ignore[import-not-found,no-redef]
+        build_update_signature,
         create_application,
         get_translation,
         load_bot_version,
@@ -195,23 +197,8 @@ async def send_new_updates_to_subscribers(
         save_subscriptions(subscriptions)
     if notification_count > 0:
         logger.info(f"Sent notifications to {notification_count} subscribers")
-
-
-def build_update_signature(update_item: dict[str, Any]) -> str:
-    """
-    Build a stable signature for a security update.
-
-    Args:
-        update_item: Update dictionary loaded from JSON.
-
-    Returns:
-        Deterministic signature string for the update.
-    """
-    name = str(update_item.get("name", "")).strip()
-    target = str(update_item.get("target", "")).strip()
-    date = str(update_item.get("date", "")).strip()
-    url = str(update_item.get("url", "")).strip()
-    return f"{name}|{target}|{date}|{url}"
+    elif subscriptions_changed:
+        logger.info("Updated subscription markers without sending notifications")
 
 
 def get_last_update_signature(

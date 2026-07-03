@@ -522,6 +522,23 @@ def load_updates_for_language(language_code: str) -> list[dict[str, Any]]:
         return data
 
 
+def build_update_signature(update_item: dict[str, Any]) -> str:
+    """
+    Build a stable signature for a security update item.
+
+    Args:
+        update_item: Update dictionary loaded from JSON.
+
+    Returns:
+        Deterministic signature string for the update.
+    """
+    name = str(update_item.get("name", "")).strip()
+    target = str(update_item.get("target", "")).strip()
+    date = str(update_item.get("date", "")).strip()
+    url = str(update_item.get("url", "")).strip()
+    return f"{name}|{target}|{date}|{url}"
+
+
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
     Handle /start command. Subscribe user with default language (en-us).
@@ -1339,13 +1356,8 @@ async def send_recent_updates(
         if recent_updates:
             highest_id = max(u.get("id", 0) for u in recent_updates)
             subscriptions[chat_id]["last_update_id"] = highest_id
-            latest_update = recent_updates[0]
-            name = str(latest_update.get("name", "")).strip()
-            target = str(latest_update.get("target", "")).strip()
-            date = str(latest_update.get("date", "")).strip()
-            latest_url = str(latest_update.get("url", "")).strip()
-            subscriptions[chat_id]["last_update_signature"] = (
-                f"{name}|{target}|{date}|{latest_url}"
+            subscriptions[chat_id]["last_update_signature"] = build_update_signature(
+                recent_updates[0]
             )
             save_subscriptions(subscriptions)
 
