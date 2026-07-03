@@ -72,6 +72,11 @@ logger = logging.getLogger(__name__)
 # Cache for loaded translation files
 _TRANSLATION_CACHE: dict[str, dict[str, str]] = {}
 
+# Fallback locale by base language when a region file is incomplete/untranslated
+BASE_LANGUAGE_FALLBACKS = {
+    "es": "es-es",
+}
+
 
 def load_translation_file(lang_code: str) -> dict[str, str]:
     """
@@ -126,14 +131,36 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
         Translated and formatted string
     """
     # Try to load translations for the exact language code first
-    translations = load_translation_file(lang_code)
+    exact_translations = load_translation_file(lang_code)
+    default_translations = load_translation_file("strings")
 
-    # If key not found or translations empty, try strings.json as fallback
-    if not translations or key not in translations:
-        translations = load_translation_file("strings")
+    base_lang = lang_code.split("-", 1)[0].lower()
+    fallback_lang_code = BASE_LANGUAGE_FALLBACKS.get(base_lang)
+    fallback_translations: dict[str, str] = {}
+    if fallback_lang_code and fallback_lang_code != lang_code:
+        fallback_translations = load_translation_file(fallback_lang_code)
 
-    # Get the text, default to empty string if not found
-    text = translations.get(key, "")
+    # Pick best text by priority:
+    # 1) Exact locale
+    # 2) Base-language fallback locale (e.g., es-es for es-cl)
+    # 3) Default strings
+    text = exact_translations.get(key, "")
+    if not text:
+        text = fallback_translations.get(key, "")
+    if not text:
+        text = default_translations.get(key, "")
+
+    # If exact locale value is effectively untranslated (same as default),
+    # prefer the base-language fallback when it has a localized value.
+    default_text = default_translations.get(key, "")
+    fallback_text = fallback_translations.get(key, "")
+    if (
+        text
+        and text == default_text
+        and fallback_text
+        and fallback_text != default_text
+    ):
+        text = fallback_text
 
     # If still not found, log warning and return key
     if not text:
@@ -257,20 +284,12 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
         "help_updates_tag",
         "help_language",
         "help_about",
+        "help_version",
+        "help_help",
+        "help_get_started",
     ]:
-        # Format: "_/command_ - Description\n"
-        if " - " in result:
-            parts = result.split(" - ", 1)
-            command_part = parts[0].strip()
-            result = f"_{command_part}_ - {parts[1]}"
-    elif key == "help_help":
-        # Format: "_/help_ - Show this help message\n\n"
-        if " - " in result:
-            parts = result.split(" - ", 1)
-            command_part = parts[0].strip()
-            result = f"_{command_part}_ - {parts[1]}"
-    elif key == "help_get_started":
-        result = result.replace("/start", "_/start_")
+        # Keep command text in plain format (no italics)
+        pass
     elif key == "updates_header":
         # Format: "*CrazyOnes - Apple Updates* - _{display_name}_\n\n..."
         # The display_name is already formatted as italic from earlier processing

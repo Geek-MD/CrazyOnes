@@ -115,6 +115,17 @@ def test_help_version_key_present():
     print("✓ help_version key is present and contains '/version'")
 
 
+def test_help_version_formatting():
+    """Test that /version command is not italicized in help output."""
+    result = get_translation("en-us", "help_version")
+
+    assert result.startswith("/version - "), (
+        f"help_version should not be italicized, got: {repr(result)}"
+    )
+
+    print("✓ help_version command formatting is correct")
+
+
 def test_version_changes_key_present():
     """Test that version_changes key exists for English and Spanish locales."""
     en_result = get_translation("en-us", "version_changes")
@@ -135,5 +146,6 @@ if __name__ == "__main__":
     test_version_message_formatting()
     test_version_notification_header_formatting()
     test_help_version_key_present()
+    test_help_version_formatting()
     test_version_changes_key_present()
     print("\nAll formatting tests passed!")

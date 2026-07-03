@@ -248,9 +248,15 @@ def extract_security_updates_table(
         # Extract data from the three columns
         # Column 0: Name (and URL if available)
         name_col = cols[0]
-        name = name_col.get_text(strip=True)
         url = None
         link = name_col.find("a")
+        if link:
+            name = link.get_text(strip=True)
+        else:
+            # Some rows without links include extra helper/CVE text in the same cell.
+            # Use only the first visible text fragment as the update name.
+            name = next(name_col.stripped_strings, "")
+
         if link and link.get("href"):
             url = str(link["href"])
             # Convert relative URLs to absolute

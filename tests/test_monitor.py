@@ -249,6 +249,42 @@ def test_extract_with_alternative_html():
     print("  ✓ Spanish date format parsed correctly to ISO format")
 
 
+def test_extract_update_name_without_link_ignores_extra_cell_text():
+    """
+    Test that rows without link use only the update name and not extra CVE/helper text.
+    """
+    print("\nTesting extraction for no-link update names with extra text...")
+
+    mock_html = """
+    <html>
+    <body>
+        <h2 class="gb-header">Actualizaciones de seguridad de Apple</h2>
+        <table>
+            <tr><th>Nombre</th><th>Disponible para</th><th>Fecha</th></tr>
+            <tr>
+                <td>
+                    iOS 26.5.1
+                    <p>Esta actualización no tiene entradas de CVE publicadas.</p>
+                </td>
+                <td>iPhone 17</td>
+                <td>1 de junio de 2026</td>
+            </tr>
+        </table>
+    </body>
+    </html>
+    """
+
+    base_url = "https://support.apple.com/es-cl/100100"
+    updates = extract_security_updates_table(mock_html, base_url)
+
+    assert len(updates) == 1
+    assert updates[0]["name"] == "iOS 26.5.1"
+    assert "CVE" not in updates[0]["name"]
+    assert "url" not in updates[0]
+
+    print("  ✓ No-link update names ignore extra helper text")
+
+
 def test_load_language_urls_missing_file():
     """Test loading language URLs when file doesn't exist."""
     print("\nTesting missing language URLs file handling...")
@@ -341,6 +377,7 @@ def main():
     test_save_and_load_tracking_data()
     test_save_updates_to_json()
     test_extract_with_alternative_html()
+    test_extract_update_name_without_link_ignores_extra_cell_text()
     test_load_language_urls_missing_file()
     test_content_hash_change_detection()
 
