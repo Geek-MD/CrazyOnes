@@ -134,6 +134,7 @@ async def send_new_updates_to_subscribers(
         return
 
     notification_count = 0
+    subscriptions_changed = False
 
     for chat_id, subscription_data in subscriptions.items():
         if not subscription_data.get("active", False):
@@ -143,33 +144,31 @@ async def send_new_updates_to_subscribers(
         if not language_code or language_code not in updated_languages:
             continue
 
-        last_update_id = subscription_data.get("last_update_id", None)
-
         # Load updates for this language
         updates = load_updates_for_language(language_code)
 
         if not updates:
             continue
 
-        # Find new updates (those with IDs not seen before)
-        new_updates = []
-        highest_id = last_update_id
+        last_update_signature = get_last_update_signature(subscription_data, updates)
+        new_updates, latest_signature, marker_found = get_new_updates_since_signature(
+            updates, last_update_signature
+        )
 
-        for update in updates:
-            update_id = update.get("id")
-            if update_id is None:
-                continue
-
-            # Track highest ID seen
-            if highest_id is None or update_id > highest_id:
-                highest_id = update_id
-
-            # Add to new updates if we haven't sent it before
-            if last_update_id is None or update_id > last_update_id:
-                new_updates.append(update)
+        if latest_signature is None:
+            continue
 
         if not new_updates:
-            logger.debug(f"No new updates for chat {chat_id} (lang: {language_code})")
+            if not marker_found:
+                logger.warning(
+                    f"Previous update marker missing for chat {chat_id} "
+                    f"(lang: {language_code}); resetting baseline"
+                )
+            subscriptions[chat_id]["last_update_signature"] = latest_signature
+            latest_id = updates[0].get("id")
+            if isinstance(latest_id, int):
+                subscriptions[chat_id]["last_update_id"] = latest_id
+            subscriptions_changed = True
             continue
 
         # Sort new updates by ID (oldest first)
@@ -181,17 +180,97 @@ async def send_new_updates_to_subscribers(
                 application, chat_id, language_code, new_updates
             )
 
-            # Update last_update_id
-            subscriptions[chat_id]["last_update_id"] = highest_id
+            subscriptions[chat_id]["last_update_signature"] = latest_signature
+            latest_id = updates[0].get("id")
+            if isinstance(latest_id, int):
+                subscriptions[chat_id]["last_update_id"] = latest_id
             notification_count += 1
+            subscriptions_changed = True
 
         except Exception as e:
             logger.error(f"Error sending notification to {chat_id}: {e}")
 
     # Save updated subscriptions
-    if notification_count > 0:
+    if subscriptions_changed:
         save_subscriptions(subscriptions)
+    if notification_count > 0:
         logger.info(f"Sent notifications to {notification_count} subscribers")
+
+
+def build_update_signature(update_item: dict[str, Any]) -> str:
+    """
+    Build a stable signature for a security update.
+
+    Args:
+        update_item: Update dictionary loaded from JSON.
+
+    Returns:
+        Deterministic signature string for the update.
+    """
+    name = str(update_item.get("name", "")).strip()
+    target = str(update_item.get("target", "")).strip()
+    date = str(update_item.get("date", "")).strip()
+    url = str(update_item.get("url", "")).strip()
+    return f"{name}|{target}|{date}|{url}"
+
+
+def get_last_update_signature(
+    subscription_data: dict[str, Any], updates: list[dict[str, Any]]
+) -> str | None:
+    """
+    Resolve the last delivered update signature for a subscription.
+
+    Args:
+        subscription_data: Per-user subscription dictionary.
+        updates: Current update list for the selected language.
+
+    Returns:
+        Last known update signature, if available.
+    """
+    signature = subscription_data.get("last_update_signature")
+    if isinstance(signature, str) and signature:
+        return signature
+
+    legacy_id = subscription_data.get("last_update_id")
+    if isinstance(legacy_id, int):
+        for update_item in updates:
+            if update_item.get("id") == legacy_id:
+                return build_update_signature(update_item)
+
+    return None
+
+
+def get_new_updates_since_signature(
+    updates: list[dict[str, Any]], last_signature: str | None
+) -> tuple[list[dict[str, Any]], str | None, bool]:
+    """
+    Compute unseen updates using a content-based marker.
+
+    Args:
+        updates: Current language updates ordered from newest to oldest.
+        last_signature: Previously delivered update signature.
+
+    Returns:
+        Tuple with:
+        - unseen updates to notify (oldest first),
+        - latest update signature for persistence,
+        - whether the previous marker was found (or not needed).
+    """
+    if not updates:
+        return [], None, True
+
+    latest_signature = build_update_signature(updates[0])
+    if not last_signature:
+        return [], latest_signature, True
+
+    new_updates: list[dict[str, Any]] = []
+    for update_item in updates:
+        if build_update_signature(update_item) == last_signature:
+            new_updates.reverse()
+            return new_updates, latest_signature, True
+        new_updates.append(update_item)
+
+    return [], latest_signature, False
 
 
 async def send_update_notification(

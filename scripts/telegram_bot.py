@@ -365,6 +365,7 @@ def load_subscriptions() -> dict[str, dict[str, Any]]:
             language_code: Language preference (default: en-us)
             active: Whether the subscription is active (True/False)
             last_update_id: ID of the last update sent (None if never sent)
+            last_update_signature: Signature of latest delivered update
     """
     path = Path(SUBSCRIPTIONS_FILE)
     if not path.exists():
@@ -387,6 +388,7 @@ def save_subscriptions(subscriptions: dict[str, dict[str, Any]]) -> None:
                 language_code: Language preference
                 active: Whether the subscription is active
                 last_update_id: ID of last update sent (optional, None if never sent)
+                last_update_signature: Signature marker for new-update detection
     """
     path = Path(SUBSCRIPTIONS_FILE)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -550,6 +552,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
             "language_code": DEFAULT_LANGUAGE,
             "active": True,
             "last_update_id": None,  # Changed from last_update_index to last_update_id
+            "last_update_signature": None,
         }
         language_code = DEFAULT_LANGUAGE
 
@@ -604,6 +607,9 @@ async def language_selection_callback(
         "language_code": language_code,
         "active": True,
         "last_update_id": last_id,
+        "last_update_signature": subscriptions.get(chat_id, {}).get(
+            "last_update_signature", None
+        ),
     }
     save_subscriptions(subscriptions)
 
@@ -1333,6 +1339,14 @@ async def send_recent_updates(
         if recent_updates:
             highest_id = max(u.get("id", 0) for u in recent_updates)
             subscriptions[chat_id]["last_update_id"] = highest_id
+            latest_update = recent_updates[0]
+            name = str(latest_update.get("name", "")).strip()
+            target = str(latest_update.get("target", "")).strip()
+            date = str(latest_update.get("date", "")).strip()
+            url = str(latest_update.get("url", "")).strip()
+            subscriptions[chat_id]["last_update_signature"] = (
+                f"{name}|{target}|{date}|{url}"
+            )
             save_subscriptions(subscriptions)
 
     # Send header message
