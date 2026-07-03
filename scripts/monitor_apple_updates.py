@@ -252,7 +252,7 @@ def extract_security_updates_table(
         url = None
         link = name_col.find("a")
         if link and link.get("href"):
-            url = link["href"]
+            url = str(link["href"])
             # Convert relative URLs to absolute
             if url and not url.startswith("http"):
                 url = urljoin(base_url, url)
@@ -309,18 +309,18 @@ def save_updates_to_json(
 def create_update_trigger(updated_languages: list[str]) -> None:
     """
     Create a trigger file to notify the bot service of new updates.
-    
+
     Args:
         updated_languages: List of language codes that have new updates
     """
     if not updated_languages:
         return
-    
+
     trigger_file = get_project_root() / "data" / "new_updates_trigger.json"
     trigger_data = {
         "updated_languages": updated_languages,
     }
-    
+
     with open(trigger_file, "w", encoding="utf-8") as f:
         json.dump(trigger_data, f, indent=2, ensure_ascii=False)
 
@@ -464,11 +464,13 @@ def main() -> None:
 
     # Save updated tracking data
     save_tracking_data(tracking_data)
-    
+
     # Create trigger file for bot service if there are updates
     if updated_languages:
         create_update_trigger(updated_languages)
-        print(f"\n✓ Created notification trigger for {len(updated_languages)} languages")
+        print(
+            f"\n✓ Created notification trigger for {len(updated_languages)} languages"
+        )
 
     print("\n=== Summary ===")
     print(f"Processed: {len(languages_to_process)} languages")

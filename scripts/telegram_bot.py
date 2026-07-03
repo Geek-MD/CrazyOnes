@@ -56,7 +56,7 @@ APPLE_OS_PATTERNS = ["ios", "ipados", "macos", "watchos", "tvos", "visionos"]
 # Compiled once at module import time, then reused for all extractions
 # Using word boundaries (\b) to prevent false positives (e.g., "notmacos")
 APPLE_OS_REGEX_PATTERNS = {
-    pattern: re.compile(r'\b' + re.escape(pattern) + r'\b')
+    pattern: re.compile(r"\b" + re.escape(pattern) + r"\b")
     for pattern in APPLE_OS_PATTERNS
 }
 
@@ -145,24 +145,32 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
     formatted_kwargs = kwargs.copy() if kwargs else {}
 
     # Apply markdown to display_name if present
-    if 'display_name' in formatted_kwargs and key in [
-        'start_welcome', 'updates_header', 'updates_found_tag',
-        'language_updated', 'language_not_subscribed', 'language_selected'
+    if "display_name" in formatted_kwargs and key in [
+        "start_welcome",
+        "updates_header",
+        "updates_found_tag",
+        "language_updated",
+        "language_not_subscribed",
+        "language_selected",
     ]:
-        if key == 'start_welcome':
-            formatted_kwargs['display_name'] = f"_{formatted_kwargs['display_name']}_"
-        elif key in ['updates_header', 'updates_found_tag']:
-            formatted_kwargs['display_name'] = f"_{formatted_kwargs['display_name']}_"
+        if key == "start_welcome":
+            formatted_kwargs["display_name"] = f"_{formatted_kwargs['display_name']}_"
+        elif key in ["updates_header", "updates_found_tag"]:
+            formatted_kwargs["display_name"] = f"_{formatted_kwargs['display_name']}_"
         elif key in [
-            'language_updated', 'language_not_subscribed', 'language_selected'
+            "language_updated",
+            "language_not_subscribed",
+            "language_selected",
         ]:
-            formatted_kwargs['display_name'] = f"*{formatted_kwargs['display_name']}*"
+            formatted_kwargs["display_name"] = f"*{formatted_kwargs['display_name']}*"
 
     # Apply markdown to tag if present
-    if 'tag' in formatted_kwargs and key in [
-        'updates_found_tag', 'updates_not_found_tag', 'updates_not_found_no_suggestions'
+    if "tag" in formatted_kwargs and key in [
+        "updates_found_tag",
+        "updates_not_found_tag",
+        "updates_not_found_no_suggestions",
     ]:
-        formatted_kwargs['tag'] = f"*{formatted_kwargs['tag']}*"
+        formatted_kwargs["tag"] = f"*{formatted_kwargs['tag']}*"
 
     # Apply markdown to command and suggestion if present
     # Note: The "/" is already in the translation template,
@@ -170,16 +178,15 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
     # Commands and suggestions are shown as plain text without backticks
 
     # Apply markdown to language_code if present
-    if 'language_code' in formatted_kwargs and key == 'language_not_found':
-        formatted_kwargs['language_code'] = f"`{formatted_kwargs['language_code']}`"
+    if "language_code" in formatted_kwargs and key == "language_not_found":
+        formatted_kwargs["language_code"] = f"`{formatted_kwargs['language_code']}`"
 
     # Format with kwargs if provided
     try:
         result = text.format(**formatted_kwargs) if formatted_kwargs else text
     except KeyError as e:
         logger.error(
-            f"Missing format argument {e} for key '{key}' "
-            f"in language '{lang_code}'"
+            f"Missing format argument {e} for key '{key}' in language '{lang_code}'"
         )
         result = text
 
@@ -187,86 +194,94 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
     # These patterns are language-independent and can be safely replaced
 
     # Headers and titles - wrap with bold
-    if key == 'welcome':
+    if key == "welcome":
         # Split and format: "*Welcome to Apple Updates Bot!*\n\n..."
-        lines = result.split('\n\n', 1)
+        lines = result.split("\n\n", 1)
         if len(lines) >= 2:
             # Bold the first line
             first_line = lines[0]
             result = f"*{first_line}*\n\n{lines[1]}"
-    elif key == 'language_selected':
+    elif key == "language_selected":
         # Split and format: "*Language selected: ...*\n\n..."
-        lines = result.split('\n\n', 1)
+        lines = result.split("\n\n", 1)
         if len(lines) >= 2:
             first_line = lines[0]
             result = f"*{first_line}*\n\n{lines[1]}"
-    elif key == 'start_welcome':
+    elif key == "start_welcome":
         # Split and format: "*Welcome to CrazyOnes Bot!*\n\n..."
-        lines = result.split('\n\n', 1)
+        lines = result.split("\n\n", 1)
         if len(lines) >= 2:
             result = f"*{lines[0]}*\n\n{lines[1]}"
-    elif key == 'recent_updates_header':
+    elif key == "recent_updates_header":
         # Format: "*Here are the {count} most recent Apple Updates:*\n"
         result = f"*{result.rstrip()}*"
-    elif key == 'new_updates_header':
+    elif key == "new_updates_header":
         # Format: "*New Apple Updates*\n"
         result = f"*{result.rstrip()}*"
-    elif key == 'stop_confirmation':
+    elif key == "stop_confirmation":
         # Format: "*CrazyOnes - Subscription stopped*\n\n..."
-        lines = result.split('\n\n', 1)
+        lines = result.split("\n\n", 1)
         if len(lines) >= 2:
             result = f"*{lines[0]}*\n\n{lines[1]}"
-    elif key == 'about_message':
+    elif key == "about_message":
         # Format: "*CrazyOnes* is a _Telegram bot_ that keeps you updated...
         # \n\n...Developed by [Geek-MD](url)"
-        lines = result.split('\n\n')
+        lines = result.split("\n\n")
         if len(lines) >= 3:
             # First line: "*CrazyOnes* is a _Telegram bot_ that..."
-            words = lines[0].split(' ', 1)
+            words = lines[0].split(" ", 1)
             if len(words) >= 2:
                 # Check if "is a Telegram bot"
                 remaining = words[1]
-                if 'Telegram bot' in remaining:
-                    remaining = remaining.replace('Telegram bot', '_Telegram bot_')
+                if "Telegram bot" in remaining:
+                    remaining = remaining.replace("Telegram bot", "_Telegram bot_")
                 result = f"*{words[0]}* {remaining}\n\n{lines[1]}\n\n{lines[2]}"
                 # Add link to Geek-MD
-                if 'Geek-MD' in result:
-                    result = result.replace('Geek-MD', '[Geek-MD](https://github.com/Geek-MD/CrazyOnes)')
-    elif key == 'help_title':
+                if "Geek-MD" in result:
+                    result = result.replace(
+                        "Geek-MD", "[Geek-MD](https://github.com/Geek-MD/CrazyOnes)"
+                    )
+    elif key == "help_title":
         # Format: "*CrazyOnes - Help*\n\n"
         result = f"*{result.rstrip()}*\n\n"
-    elif key == 'help_commands':
+    elif key == "help_commands":
         # Format: "_Available Commands_\n"
         result = f"_{result.rstrip()}_\n"
-    elif key == 'help_how_it_works':
+    elif key == "help_how_it_works":
         # Format: "_How it works_\n"
         result = f"_{result.rstrip()}_\n"
-    elif key in ['help_start', 'help_stop', 'help_updates', 'help_updates_tag',
-                  'help_language', 'help_about']:
+    elif key in [
+        "help_start",
+        "help_stop",
+        "help_updates",
+        "help_updates_tag",
+        "help_language",
+        "help_about",
+    ]:
         # Format: "_/command_ - Description\n"
-        if ' - ' in result:
-            parts = result.split(' - ', 1)
+        if " - " in result:
+            parts = result.split(" - ", 1)
             command_part = parts[0].strip()
             result = f"_{command_part}_ - {parts[1]}"
-    elif key == 'help_help':
+    elif key == "help_help":
         # Format: "_/help_ - Show this help message\n\n"
-        if ' - ' in result:
-            parts = result.split(' - ', 1)
+        if " - " in result:
+            parts = result.split(" - ", 1)
             command_part = parts[0].strip()
             result = f"_{command_part}_ - {parts[1]}"
-    elif key == 'help_get_started':
-        result = result.replace('/start', '_/start_')
-    elif key == 'updates_header':
+    elif key == "help_get_started":
+        result = result.replace("/start", "_/start_")
+    elif key == "updates_header":
         # Format: "*CrazyOnes - Apple Updates* - _{display_name}_\n\n..."
         # The display_name is already formatted as italic from earlier processing
-        lines = result.split('\n\n', 1)
+        lines = result.split("\n\n", 1)
         if len(lines) >= 2:
             # Split the first line to separate the prefix from display_name
             first_line = lines[0]
             # Split at the last occurrence of " - " to separate prefix from display_name
             # The display_name part will be italicized (e.g., "_English/USA_")
-            parts = first_line.rsplit(' - ', 1)
-            if len(parts) == 2 and '_' in parts[1]:
+            parts = first_line.rsplit(" - ", 1)
+            if len(parts) == 2 and "_" in parts[1]:
                 # Successfully split and display_name appears to be italicized
                 prefix = parts[0]
                 display_name_part = parts[1]
@@ -274,17 +289,17 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
             else:
                 # Fallback: bold the entire first line
                 result = f"*{first_line}*\n\n{lines[1]}"
-    elif key == 'updates_found_tag':
+    elif key == "updates_found_tag":
         # Format: "*CrazyOnes - Apple Updates* - _{display_name}_\n\n..."
         # The display_name is already formatted as italic from earlier processing
-        lines = result.split('\n\n')
+        lines = result.split("\n\n")
         if len(lines) >= 3:
             # Split the first line to separate the prefix from display_name
             first_line = lines[0]
             # Split at the last occurrence of " - " to separate prefix from display_name
             # The display_name part will be italicized (e.g., "_English/USA_")
-            parts = first_line.rsplit(' - ', 1)
-            if len(parts) == 2 and '_' in parts[1]:
+            parts = first_line.rsplit(" - ", 1)
+            if len(parts) == 2 and "_" in parts[1]:
                 # Successfully split and display_name appears to be italicized
                 prefix = parts[0]
                 display_name_part = parts[1]
@@ -292,29 +307,29 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
             else:
                 # Fallback: bold the entire first line
                 result = f"*{first_line}*\n\n{lines[1]}\n\n{lines[2]}"
-    elif key == 'language_list_header':
+    elif key == "language_list_header":
         # Format: "*CrazyOnes - Available Languages*\n\n"
         result = f"*{result.rstrip()}*\n\n"
-    elif key == 'language_updated':
-        result = result.replace('/updates', '_/updates_')
-    elif key == 'language_not_subscribed':
-        result = result.replace('/updates', '_/updates_')
-    elif key == 'language_list_footer':
+    elif key == "language_updated":
+        result = result.replace("/updates", "_/updates_")
+    elif key == "language_not_subscribed":
+        result = result.replace("/updates", "_/updates_")
+    elif key == "language_list_footer":
         # Keep footer text in plain format (no code formatting)
         pass
-    elif key == 'language_invalid_format':
-        result = result.replace('/language', '`/language`')
-    elif key == 'updates_not_found_tag':
-        result = result.replace('/updates [tag]', '`/updates [tag]`')
-    elif key == 'updates_not_found_no_suggestions':
-        result = result.replace('/updates', '`/updates`')
-    elif key == 'version_message':
+    elif key == "language_invalid_format":
+        result = result.replace("/language", "`/language`")
+    elif key == "updates_not_found_tag":
+        result = result.replace("/updates [tag]", "`/updates [tag]`")
+    elif key == "updates_not_found_no_suggestions":
+        result = result.replace("/updates", "`/updates`")
+    elif key == "version_message":
         # Format: "*CrazyOnes v{version}*"
         result = f"*{result.rstrip()}*"
-    elif key == 'version_notification_header':
+    elif key == "version_notification_header":
         # Format: "*CrazyOnes v{version} is now running*\n"
         result = f"*{result.rstrip()}*\n"
-    elif key == 'update_format_link' and 'url' in kwargs:
+    elif key == "update_format_link" and "url" in kwargs:
         # Special case: return markdown link directly
         return f"[More info]({kwargs['url']})"
 
@@ -515,7 +530,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         subscriptions[chat_id] = {
             "language_code": DEFAULT_LANGUAGE,
             "active": True,
-            "last_update_id": None  # Changed from last_update_index to last_update_id
+            "last_update_id": None,  # Changed from last_update_index to last_update_id
         }
         language_code = DEFAULT_LANGUAGE
 
@@ -530,10 +545,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         language_code, "start_welcome", display_name=display_name
     )
 
-    await update.message.reply_text(
-        welcome_message,
-        parse_mode="Markdown"
-    )
+    await update.message.reply_text(welcome_message, parse_mode="Markdown")
 
 
 async def language_selection_callback(
@@ -567,8 +579,7 @@ async def language_selection_callback(
     # Save subscription with language, active status, and initial tracking
     # Changed from last_update_index to last_update_id (None = never sent updates)
     last_id = (
-        None if is_first_time
-        else subscriptions[chat_id].get("last_update_id", None)
+        None if is_first_time else subscriptions[chat_id].get("last_update_id", None)
     )
     subscriptions[chat_id] = {
         "language_code": language_code,
@@ -587,10 +598,7 @@ async def language_selection_callback(
         language_code, "language_selected", display_name=display_name
     )
 
-    await query.edit_message_text(
-        confirmation_message,
-        parse_mode="Markdown"
-    )
+    await query.edit_message_text(confirmation_message, parse_mode="Markdown")
 
     # If first time, send the 10 most recent updates
     if is_first_time:
@@ -659,9 +667,7 @@ async def send_about_message(
     about_message = get_translation(lang_code, "about_message")
 
     await context.bot.send_message(
-        chat_id=chat_id,
-        text=about_message,
-        parse_mode="Markdown"
+        chat_id=chat_id, text=about_message, parse_mode="Markdown"
     )
 
 
@@ -696,19 +702,19 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
     # Build help message from translation strings
     help_message = (
-        get_translation(lang_code, "help_title") +
-        get_translation(lang_code, "help_commands") +
-        get_translation(lang_code, "help_start") +
-        get_translation(lang_code, "help_stop") +
-        get_translation(lang_code, "help_updates") +
-        get_translation(lang_code, "help_updates_tag") +
-        get_translation(lang_code, "help_language") +
-        get_translation(lang_code, "help_about") +
-        get_translation(lang_code, "help_version") +
-        get_translation(lang_code, "help_help") +
-        get_translation(lang_code, "help_how_it_works") +
-        get_translation(lang_code, "help_description") +
-        get_translation(lang_code, "help_get_started")
+        get_translation(lang_code, "help_title")
+        + get_translation(lang_code, "help_commands")
+        + get_translation(lang_code, "help_start")
+        + get_translation(lang_code, "help_stop")
+        + get_translation(lang_code, "help_updates")
+        + get_translation(lang_code, "help_updates_tag")
+        + get_translation(lang_code, "help_language")
+        + get_translation(lang_code, "help_about")
+        + get_translation(lang_code, "help_version")
+        + get_translation(lang_code, "help_help")
+        + get_translation(lang_code, "help_how_it_works")
+        + get_translation(lang_code, "help_description")
+        + get_translation(lang_code, "help_get_started")
     )
 
     await update.message.reply_text(help_message, parse_mode="Markdown")
@@ -802,10 +808,7 @@ def find_similar_tags(
     """
     # Use difflib to find close matches
     matches = difflib.get_close_matches(
-        tag.lower(),
-        [t.lower() for t in available_tags],
-        n=3,
-        cutoff=cutoff
+        tag.lower(), [t.lower() for t in available_tags], n=3, cutoff=cutoff
     )
 
     # Return the original case versions of the matches
@@ -851,9 +854,7 @@ async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
     if not args:
         # No parameter - show last 10 updates
-        display_name = LANGUAGE_NAME_MAP.get(
-            language_code, language_code.upper()
-        )
+        display_name = LANGUAGE_NAME_MAP.get(language_code, language_code.upper())
         header = get_translation(
             language_code, "updates_header", display_name=display_name
         )
@@ -878,9 +879,7 @@ async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             message += update_line
 
         await update.message.reply_text(
-            message,
-            parse_mode="Markdown",
-            disable_web_page_preview=True
+            message, parse_mode="Markdown", disable_web_page_preview=True
         )
     else:
         # Parameter provided - filter by tag
@@ -901,8 +900,12 @@ async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             count = len(filtered_updates)
             showing = min(count, 10)
             header = get_translation(
-                language_code, "updates_found_tag",
-                display_name=display_name, count=count, tag=tag, showing=showing
+                language_code,
+                "updates_found_tag",
+                display_name=display_name,
+                count=count,
+                tag=tag,
+                showing=showing,
             )
 
             # Show up to 10 most recent filtered updates
@@ -925,9 +928,7 @@ async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                 message += update_line
 
             await update.message.reply_text(
-                message,
-                parse_mode="Markdown",
-                disable_web_page_preview=True
+                message, parse_mode="Markdown", disable_web_page_preview=True
             )
         else:
             # No updates found - try to find similar tags (OS names)
@@ -940,15 +941,16 @@ async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                 # Found similar tags - suggest them
                 suggestions = ", ".join(f"`{t}`" for t in similar_tags[:3])
                 message = get_translation(
-                    language_code, "updates_not_found_tag",
-                    tag=tag, suggestions=suggestions
+                    language_code,
+                    "updates_not_found_tag",
+                    tag=tag,
+                    suggestions=suggestions,
                 )
                 await update.message.reply_text(message, parse_mode="Markdown")
             else:
                 # No similar tags found
                 message = get_translation(
-                    language_code, "updates_not_found_no_suggestions",
-                    tag=tag
+                    language_code, "updates_not_found_no_suggestions", tag=tag
                 )
                 await update.message.reply_text(message, parse_mode="Markdown")
 
@@ -993,16 +995,13 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         continuation_footer = "(continued...)"
 
         # Sort languages alphabetically by language code (xx-yy format)
-        sorted_languages = sorted(
-            language_urls.items(),
-            key=lambda x: x[0]
-        )
+        sorted_languages = sorted(language_urls.items(), key=lambda x: x[0])
 
         # Build messages, splitting if necessary
         messages = []
         # Accumulated content for current message (already bolded)
         accumulated_content = header
-        current_lines = ""            # Current lines being added to message
+        current_lines = ""  # Current lines being added to message
         item_count = 0  # Counter for items in current message
 
         for idx, (lang_code, _) in enumerate(sorted_languages, 1):
@@ -1015,14 +1014,11 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
                 accumulated_content + current_lines + line + continuation_footer
             )
             test_message_final = accumulated_content + current_lines + line + footer
-            max_test_length = max(
-                len(test_message_continued), len(test_message_final)
-            )
+            max_test_length = max(len(test_message_continued), len(test_message_final))
 
             # Split if: reached 100 items OR exceeds length (but not on first line)
-            if (
-                item_count >= max_items_per_message
-                or (max_test_length > max_message_length and current_lines != "")
+            if item_count >= max_items_per_message or (
+                max_test_length > max_message_length and current_lines != ""
             ):
                 # Save current message with continuation footer and start a new one
                 messages.append(
@@ -1057,8 +1053,10 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         if language_code not in language_urls:
             display_name = LANGUAGE_NAME_MAP.get(language_code, language_code.upper())
             message = get_translation(
-                user_lang, "language_not_found",
-                language_code=language_code, display_name=display_name
+                user_lang,
+                "language_not_found",
+                language_code=language_code,
+                display_name=display_name,
             )
             await update.message.reply_text(message, parse_mode="Markdown")
             return
@@ -1074,23 +1072,15 @@ async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             subscriptions[chat_id]["language_code"] = language_code
             save_subscriptions(subscriptions)
             message = get_translation(
-                language_code, "language_updated",
-                display_name=display_name
+                language_code, "language_updated", display_name=display_name
             )
-            await update.message.reply_text(
-                message,
-                parse_mode="Markdown"
-            )
+            await update.message.reply_text(message, parse_mode="Markdown")
         else:
             # User not subscribed, just show message without saving preference
             message = get_translation(
-                language_code, "language_not_subscribed",
-                display_name=display_name
+                language_code, "language_not_subscribed", display_name=display_name
             )
-            await update.message.reply_text(
-                message,
-                parse_mode="Markdown"
-            )
+            await update.message.reply_text(message, parse_mode="Markdown")
 
 
 def extract_command_from_message(message_text: str) -> str:
@@ -1150,24 +1140,22 @@ async def handle_unknown_command(
 
     # Try to find similar commands using the module-level constant
     similar_commands = difflib.get_close_matches(
-        command,
-        VALID_COMMANDS,
-        n=1,
-        cutoff=FUZZY_CUTOFF_COMMANDS
+        command, VALID_COMMANDS, n=1, cutoff=FUZZY_CUTOFF_COMMANDS
     )
 
     if similar_commands:
         # Found a similar command - suggest it
         suggestion = similar_commands[0]
         message = get_translation(
-            lang_code, "unknown_command_with_suggestion",
-            command=command, suggestion=suggestion
+            lang_code,
+            "unknown_command_with_suggestion",
+            command=command,
+            suggestion=suggestion,
         )
     else:
         # No similar command found
         message = get_translation(
-            lang_code, "unknown_command_no_suggestion",
-            command=command
+            lang_code, "unknown_command_no_suggestion", command=command
         )
 
     await update.message.reply_text(message, parse_mode="Markdown")
@@ -1237,9 +1225,7 @@ async def chat_member_status_handler(
             # Deactivate subscription (keep language preference)
             subscriptions[chat_id]["active"] = False
             save_subscriptions(subscriptions)
-            logger.info(
-                f"Bot removed from chat {chat_id}, subscription deactivated"
-            )
+            logger.info(f"Bot removed from chat {chat_id}, subscription deactivated")
 
 
 async def send_recent_updates_simple(
@@ -1265,10 +1251,7 @@ async def send_recent_updates_simple(
 
     if not updates:
         message = get_translation(language_code, "no_updates")
-        await context.bot.send_message(
-            chat_id=int(chat_id),
-            text=message
-        )
+        await context.bot.send_message(chat_id=int(chat_id), text=message)
         return
 
     # Get the 10 most recent updates
@@ -1294,7 +1277,7 @@ async def send_recent_updates_simple(
         chat_id=int(chat_id),
         text=message,
         parse_mode="Markdown",
-        disable_web_page_preview=True
+        disable_web_page_preview=True,
     )
 
 
@@ -1318,10 +1301,7 @@ async def send_recent_updates(
 
     if not updates:
         message = get_translation(language_code, "no_updates")
-        await context.bot.send_message(
-            chat_id=int(chat_id),
-            text=message
-        )
+        await context.bot.send_message(chat_id=int(chat_id), text=message)
         return
 
     # Get the 10 most recent updates
@@ -1365,14 +1345,12 @@ async def send_recent_updates(
             chat_id=int(chat_id),
             text=message,
             parse_mode="Markdown",
-            disable_web_page_preview=True
+            disable_web_page_preview=True,
         )
     else:
         # English format: detailed format with emojis (one message per update)
         await context.bot.send_message(
-            chat_id=int(chat_id),
-            text=header,
-            parse_mode="Markdown"
+            chat_id=int(chat_id), text=header, parse_mode="Markdown"
         )
 
         for idx, update_item in enumerate(recent_updates, 1):
@@ -1381,7 +1359,7 @@ async def send_recent_updates(
                 chat_id=int(chat_id),
                 text=message,
                 parse_mode="Markdown",
-                disable_web_page_preview=True
+                disable_web_page_preview=True,
             )
 
 
@@ -1474,9 +1452,7 @@ async def send_version_notifications(
         if not subscription_data.get("active", False):
             continue
 
-        language_code = str(
-            subscription_data.get("language_code") or DEFAULT_LANGUAGE
-        )
+        language_code = str(subscription_data.get("language_code") or DEFAULT_LANGUAGE)
 
         try:
             header = get_translation(
@@ -1535,9 +1511,7 @@ def create_application(token: str) -> Application:  # type: ignore[type-arg]
     # Add handler for unknown commands
     # Note: This is added AFTER specific CommandHandlers, so valid commands
     # are handled first. This catches any commands that weren't matched above.
-    application.add_handler(
-        MessageHandler(filters.COMMAND, handle_unknown_command)
-    )
+    application.add_handler(MessageHandler(filters.COMMAND, handle_unknown_command))
 
     # Add handler for non-command messages (must be last to not override commands)
     # This will respond to any text message that is not a command

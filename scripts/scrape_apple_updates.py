@@ -85,8 +85,8 @@ def extract_language_urls(html_content: str, base_url: str) -> dict[str, str]:
     # These contain all the language-specific URLs
     for link_tag in soup.find_all("link", rel="alternate"):
         if link_tag.get("hreflang") and link_tag.get("href"):
-            lang_code = link_tag["hreflang"]
-            url = link_tag["href"]
+            lang_code = str(link_tag["hreflang"])
+            url = str(link_tag["href"])
             # Convert relative URLs to absolute if needed
             if not url.startswith("http"):
                 url = urljoin(base_url, url)
@@ -122,8 +122,7 @@ def save_language_urls_to_json(
                 existing_urls = json.load(f)
         except (OSError, json.JSONDecodeError):
             print(
-                f"Warning: Could not read existing {output_file}, "
-                "will create new file"
+                f"Warning: Could not read existing {output_file}, will create new file"
             )
             existing_urls = {}
 
@@ -131,7 +130,8 @@ def save_language_urls_to_json(
     added_langs = set(language_urls.keys()) - set(existing_urls.keys())
     removed_langs = set(existing_urls.keys()) - set(language_urls.keys())
     updated_langs = {
-        lang for lang in language_urls.keys() & existing_urls.keys()
+        lang
+        for lang in language_urls.keys() & existing_urls.keys()
         if language_urls[lang] != existing_urls[lang]
     }
 

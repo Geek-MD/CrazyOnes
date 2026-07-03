@@ -15,7 +15,6 @@ Note: Starting a new instance automatically stops any existing instance.
 """
 
 import argparse
-import asyncio
 import json
 import logging
 import os
@@ -57,7 +56,7 @@ _shutdown_event = threading.Event()
 
 def write_pid_file() -> None:
     """Write the current process ID to the PID file."""
-    with open(PID_FILE, 'w') as f:
+    with open(PID_FILE, "w") as f:
         f.write(str(os.getpid()))
 
 
@@ -176,7 +175,7 @@ def setup_logging(log_file: str = "crazyones.log") -> None:
             dt = datetime.fromtimestamp(record.created, tz=timezone.utc)
             # Get local timezone offset
             local_dt = datetime.fromtimestamp(record.created)
-            offset = local_dt.astimezone().strftime('%z')
+            offset = local_dt.astimezone().strftime("%z")
             # Format: YYYY/MM/DD HH:MM:SS +HHMM
             formatted_offset = f"{offset[:3]}:{offset[3:]}"
             return f"{dt.strftime('%Y/%m/%d %H:%M:%S')} {formatted_offset}"
@@ -223,7 +222,8 @@ def log_only(message: str, level: str = "ERROR") -> None:
     # Get the logger and temporarily remove console handler
     logger = logging.getLogger()
     console_handlers = [
-        h for h in logger.handlers
+        h
+        for h in logger.handlers
         if isinstance(h, logging.StreamHandler) and h.stream == sys.stdout
     ]
 
@@ -305,7 +305,7 @@ def validate_telegram_token(token: str) -> bool:
     # Telegram bot token format: bot_id:auth_token
     # bot_id: 8-10 digits
     # auth_token: 35+ alphanumeric characters (can include - and _)
-    pattern = r'^\d{8,10}:[A-Za-z0-9_-]{35,}$'
+    pattern = r"^\d{8,10}:[A-Za-z0-9_-]{35,}$"
     return bool(re.match(pattern, token))
 
 
@@ -502,26 +502,24 @@ WantedBy=multi-user.target
 
 
 def install_single_service(
-    service_name: str,
-    service_content: str,
-    is_root: bool = False
+    service_name: str, service_content: str, is_root: bool = False
 ) -> bool:
     """
     Install a single systemd service.
-    
+
     Args:
         service_name: Name of the service (e.g., "crazyones.service")
         service_content: Content of the service file
         is_root: Whether running as root
-    
+
     Returns:
         True if successful, False otherwise
     """
     import subprocess
     import tempfile
-    
+
     service_path = Path(f"/etc/systemd/system/{service_name}")
-    
+
     try:
         # Write service file
         if not is_root:
@@ -531,13 +529,13 @@ def install_single_service(
                 prefix=f"{service_name.replace('.service', '')}_",
             )
             tmp_service_path = Path(tmp_service_path_str)
-            
+
             try:
                 os.fchmod(tmp_fd, 0o600)
-                
+
                 with os.fdopen(tmp_fd, "w", encoding="utf-8") as f:
                     f.write(service_content)
-                
+
                 # Copy with sudo
                 result = subprocess.run(
                     ["sudo", "cp", str(tmp_service_path), str(service_path)],
@@ -545,11 +543,11 @@ def install_single_service(
                     text=True,
                     timeout=60,
                 )
-                
+
                 if result.returncode != 0:
                     print(f"✗ Error copying {service_name}: {result.stderr}")
                     return False
-                
+
                 # Set permissions
                 result = subprocess.run(
                     ["sudo", "chmod", "644", str(service_path)],
@@ -557,11 +555,14 @@ def install_single_service(
                     text=True,
                     timeout=30,
                 )
-                
+
                 if result.returncode != 0:
-                    print(f"✗ Error setting permissions on {service_name}: {result.stderr}")
+                    print(
+                        "✗ Error setting permissions on "
+                        f"{service_name}: {result.stderr}"
+                    )
                     return False
-                    
+
             finally:
                 try:
                     tmp_service_path.unlink()
@@ -572,43 +573,39 @@ def install_single_service(
             with open(service_path, "w", encoding="utf-8") as f:
                 f.write(service_content)
             os.chmod(service_path, 0o644)
-        
+
         print(f"✓ Service file created: {service_path}")
-        
+
         # Enable service
         cmd = (
             ["systemctl", "enable", service_name]
             if is_root
             else ["sudo", "systemctl", "enable", service_name]
         )
-        result = subprocess.run(
-            cmd, capture_output=True, text=True, timeout=30
-        )
-        
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+
         if result.returncode != 0:
             print(f"✗ Error enabling {service_name}: {result.stderr}")
             return False
-        
+
         print(f"✓ Service {service_name} enabled")
-        
+
         # Start service
         cmd = (
             ["systemctl", "start", service_name]
             if is_root
             else ["sudo", "systemctl", "start", service_name]
         )
-        result = subprocess.run(
-            cmd, capture_output=True, text=True, timeout=30
-        )
-        
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+
         if result.returncode != 0:
             print(f"✗ Error starting {service_name}: {result.stderr}")
             return False
-        
+
         print(f"✓ Service {service_name} started")
-        
+
         return True
-        
+
     except subprocess.TimeoutExpired:
         print(f"✗ Error: Timeout while installing {service_name}")
         return False
@@ -658,7 +655,7 @@ def install_systemd_service() -> bool:
             work_dir=str(work_dir),
             user=current_user,
         )
-        
+
         bot_service_content = generate_bot_service_content(
             python_path=python_path,
             work_dir=str(work_dir),
@@ -683,7 +680,7 @@ def install_systemd_service() -> bool:
         print()
 
         is_root = os.geteuid() == 0
-        
+
         if not is_root:
             print("Attempting to install services with sudo...")
             print("You may be prompted for your password.")
@@ -697,9 +694,7 @@ def install_systemd_service() -> bool:
             else ["sudo", "systemctl", "daemon-reload"]
         )
         try:
-            result = subprocess.run(
-                cmd, capture_output=True, text=True, timeout=30
-            )
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
         except subprocess.TimeoutExpired:
             print("✗ Error: systemctl daemon-reload timed out")
             return False
@@ -713,13 +708,17 @@ def install_systemd_service() -> bool:
 
         # Install monitoring service
         print("Installing monitoring service...")
-        if not install_single_service("crazyones.service", monitoring_service_content, is_root):
+        if not install_single_service(
+            "crazyones.service", monitoring_service_content, is_root
+        ):
             return False
         print()
 
         # Install bot service
         print("Installing bot service...")
-        if not install_single_service("crazyones-bot.service", bot_service_content, is_root):
+        if not install_single_service(
+            "crazyones-bot.service", bot_service_content, is_root
+        ):
             return False
 
         print()
@@ -903,8 +902,7 @@ Examples:
         "--config",
         action="store_true",
         help=(
-            "Run configuration routine to set up Telegram bot token "
-            "and systemd service"
+            "Run configuration routine to set up Telegram bot token and systemd service"
         ),
     )
 
@@ -934,7 +932,7 @@ def show_log_tail(log_file: str = "crazyones.log", lines: int = 100) -> None:
         return
 
     try:
-        with open(log_path, encoding='utf-8') as f:
+        with open(log_path, encoding="utf-8") as f:
             all_lines = f.readlines()
             tail_lines = all_lines[-lines:] if len(all_lines) > lines else all_lines
 
@@ -944,7 +942,7 @@ def show_log_tail(log_file: str = "crazyones.log", lines: int = 100) -> None:
             print()
 
             for line in tail_lines:
-                print(line, end='')
+                print(line, end="")
 
             print()
             print("=" * 60)
@@ -1001,7 +999,7 @@ def run_monitoring_cycle(apple_updates_url: str) -> None:
         apple_updates_url: The Apple Updates URL to scrape
     """
     log_and_print("-" * 60)
-    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     log_and_print(f"Monitoring cycle started at {timestamp}")
     log_and_print("-" * 60)
     log_and_print("")
@@ -1028,8 +1026,7 @@ def run_monitoring_cycle(apple_updates_url: str) -> None:
         except FileNotFoundError as e:
             log_and_print(f"✗ Error: {e}")
             log_and_print(
-                "Language URLs file not found. "
-                "Skipping security updates monitoring."
+                "Language URLs file not found. Skipping security updates monitoring."
             )
             return
 
@@ -1096,9 +1093,7 @@ def main() -> None:
     # Handle --config or no arguments (configuration routine)
     # Check if user wants config wizard: explicit --config flag,
     # or no execution flags provided
-    should_run_config = not any(
-        [args.token, args.daemon, args.interval, args.once]
-    )
+    should_run_config = not any([args.token, args.daemon, args.interval, args.once])
     if args.config or should_run_config:
         success = run_configuration_routine()
         sys.exit(0 if success else 1)
@@ -1168,9 +1163,11 @@ def main() -> None:
         # For --once mode, we don't need a token
         if once_mode:
             token_to_use = saved_token  # Use saved token or empty string
-        elif (saved_token and
-            saved_token != "YOUR_TELEGRAM_BOT_TOKEN_HERE" and
-            saved_token != args.token):
+        elif (
+            saved_token
+            and saved_token != "YOUR_TELEGRAM_BOT_TOKEN_HERE"
+            and saved_token != args.token
+        ):
             # In daemon mode, don't ask, use provided token
             if daemon_mode:
                 log_and_print(

@@ -319,10 +319,7 @@ def test_content_hash_change_detection():
 
     # Test 4: Tracking data structure includes hash
     tracking_data = {
-        "en-us": {
-            "url": "https://support.apple.com/en-us/100100",
-            "hash": hash1
-        }
+        "en-us": {"url": "https://support.apple.com/en-us/100100", "hash": hash1}
     }
 
     # Simulate: content hasn't changed (hash matches)
