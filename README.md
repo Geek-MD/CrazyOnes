@@ -159,7 +159,7 @@ python -m scripts.bot_service
 The monitoring and notification system works as follows:
 
 1. **Monitoring service** scrapes language URLs from Apple Updates page
-2. **Monitoring service** detects security updates from each language URL
+2. **Monitoring service** detects security updates from each language URL, including rows without detail links
 3. If new updates are found, creates a trigger file (`data/new_updates_trigger.json`)
 4. **Bot service** checks for trigger files every 30 seconds
 5. **Bot service** reads trigger and sends notifications to subscribers
@@ -170,7 +170,8 @@ The monitoring and notification system works as follows:
 - Users can subscribe by sending `/start` to the bot
 - Select their preferred Apple Updates language
 - **Automatic UI language detection** - bot interface adapts to user's selected language
-- **157 languages supported** - full translation system with JSON-based string management
+- **158 languages supported** - full translation system with JSON-based string management
+- **Base-language locale fallback** - regional locales (for example, `es-cl`) can reuse complete base translations (such as `es-es`) when a key is missing
 - **Two ways to receive updates:**
   1. **Automatic notifications** - Receive new updates as they're detected (only unseen updates)
   2. **Manual request** - Use `/updates` command to get the latest 10 updates anytime
@@ -180,7 +181,7 @@ The monitoring and notification system works as follows:
 - **Update tracking** - System remembers which updates were sent to each user to avoid duplicates
 
 **Supported Languages:**
-The bot supports 157 languages with automatic interface translation:
+The bot supports 158 languages with automatic interface translation:
 - **English variants**: en-us, en-gb, en-au, en-ca, en-in, and 50+ more
 - **Spanish variants**: es-es, es-mx, es-ar, es-cl, and 15+ more
 - **French variants**: fr-fr, fr-ca, fr-be, fr-ch, and 10+ more
@@ -202,6 +203,7 @@ When a user selects their Apple Updates language preference, the bot automatical
 - `/language [code]` - Show updates for a specific language (e.g., `/language en-us`)
 - `/about` - Information about this bot
 - `/help` - Show all available commands and usage information
+- `/version` - Show the currently running bot version
 
 **Fuzzy Matching (Smart Suggestions):**
 The bot includes intelligent fuzzy matching to help users when they make typos:
