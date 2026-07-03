@@ -22,22 +22,30 @@ try:
     # Try relative import (when used as a module)
     from .telegram_bot import (
         create_application,
+        get_translation,
+        load_bot_version,
+        load_config_version,
         load_subscriptions,
         load_updates_for_language,
+        save_bot_version,
         save_subscriptions,
-        get_translation,
+        send_version_notifications,
     )
     from .generate_language_names import LANGUAGE_NAME_MAP
 except ImportError:
     # Fall back to absolute import (when run directly)
-    from telegram_bot import (  # type: ignore[import-not-found]
+    from telegram_bot import (  # type: ignore[import-not-found,no-redef]
         create_application,
+        get_translation,
+        load_bot_version,
+        load_config_version,
         load_subscriptions,
         load_updates_for_language,
+        save_bot_version,
         save_subscriptions,
-        get_translation,
+        send_version_notifications,
     )
-    from generate_language_names import LANGUAGE_NAME_MAP  # type: ignore[import-not-found]
+    from generate_language_names import LANGUAGE_NAME_MAP  # type: ignore[import-not-found,no-redef]
 
 # Setup logging
 logging.basicConfig(
@@ -237,6 +245,47 @@ async def send_update_notification(
     logger.info(f"Sent {len(new_updates)} updates to chat {chat_id}")
 
 
+async def check_and_notify_new_version(application: Application) -> None:  # type: ignore[type-arg]
+    """
+    Detect a new bot version and send release announcements to all active subscribers.
+
+    Compares the version in config.json against the last version recorded in
+    data/bot_version.json. When they differ, each active subscriber receives a
+    short notification in their registered language summarising what changed.
+    After notifications are dispatched the tracker file is updated so the
+    announcements are sent only once per release.
+
+    Args:
+        application: The Telegram application instance
+    """
+    current_version = load_config_version()
+    if not current_version:
+        logger.warning(
+            "Could not read version from config.json; skipping version check"
+        )
+        return
+
+    version_data = load_bot_version()
+    last_notified = version_data.get("last_notified_version", "")
+
+    if current_version == last_notified:
+        logger.info(f"Version {current_version} already announced; skipping")
+        return
+
+    logger.info(
+        f"New version detected: {current_version} (was: {last_notified or 'none'})"
+    )
+
+    if last_notified:
+        # Only notify when upgrading from a previously announced version, not on
+        # the very first boot when there is no history yet.
+        await send_version_notifications(application, current_version)
+
+    # Record the current version so notifications fire only once
+    version_data["last_notified_version"] = current_version
+    save_bot_version(version_data)
+
+
 async def run_bot_service(token: str) -> None:
     """
     Run the bot service main loop.
@@ -259,7 +308,10 @@ async def run_bot_service(token: str) -> None:
         allowed_updates=['message', 'callback_query', 'my_chat_member']
     )
     logger.info("Bot is running and polling for updates")
-    
+
+    # Check whether this is a new version and notify subscribers if so
+    await check_and_notify_new_version(application)
+
     # Main loop: check for new updates periodically
     check_interval = 30  # Check every 30 seconds
     

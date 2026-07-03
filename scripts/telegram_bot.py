@@ -40,6 +40,9 @@ except ImportError:
 # Subscriptions file path
 SUBSCRIPTIONS_FILE = "data/subscriptions.json"
 
+# Bot version tracking file path
+BOT_VERSION_FILE = "data/bot_version.json"
+
 # Default language for new subscriptions
 DEFAULT_LANGUAGE = "en-us"
 
@@ -58,7 +61,7 @@ APPLE_OS_REGEX_PATTERNS = {
 }
 
 # Valid bot commands for fuzzy matching
-VALID_COMMANDS = ["start", "stop", "updates", "language", "about", "help"]
+VALID_COMMANDS = ["start", "stop", "updates", "language", "about", "help", "version"]
 
 # Fuzzy matching cutoff thresholds
 FUZZY_CUTOFF_TAGS = 0.5  # Lower threshold for OS tags (more lenient for typos)
@@ -305,6 +308,12 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
         result = result.replace('/updates [tag]', '`/updates [tag]`')
     elif key == 'updates_not_found_no_suggestions':
         result = result.replace('/updates', '`/updates`')
+    elif key == 'version_message':
+        # Format: "*CrazyOnes v{version}*"
+        result = f"*{result.rstrip()}*"
+    elif key == 'version_notification_header':
+        # Format: "*CrazyOnes v{version} is now running*\n"
+        result = f"*{result.rstrip()}*\n"
     elif key == 'update_format_link' and 'url' in kwargs:
         # Special case: return markdown link directly
         return f"[More info]({kwargs['url']})"
@@ -350,6 +359,60 @@ def save_subscriptions(subscriptions: dict[str, dict[str, Any]]) -> None:
 
     with open(path, "w", encoding="utf-8") as f:
         json.dump(subscriptions, f, indent=2, ensure_ascii=False, sort_keys=True)
+
+
+def load_bot_version() -> dict[str, str]:
+    """
+    Load bot version tracking data from JSON file.
+
+    Returns:
+        Dictionary with version tracking data.
+        Contains:
+            last_notified_version: Version string of the last announced release
+    """
+    path = Path(BOT_VERSION_FILE)
+    if not path.exists():
+        return {}
+
+    with open(path, encoding="utf-8") as f:
+        data: dict[str, str] = json.load(f)
+        return data
+
+
+def save_bot_version(version_data: dict[str, str]) -> None:
+    """
+    Save bot version tracking data to JSON file.
+
+    Args:
+        version_data: Dictionary with version tracking fields.
+    """
+    path = Path(BOT_VERSION_FILE)
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(version_data, f, indent=2, ensure_ascii=False, sort_keys=True)
+
+
+def load_config_version(config_file: str = "config.json") -> str:
+    """
+    Read the version string from config.json.
+
+    Args:
+        config_file: Path to the config file.
+
+    Returns:
+        Version string, or empty string if not found.
+    """
+    config_path = Path(config_file)
+    if not config_path.exists():
+        return ""
+
+    try:
+        with open(config_path, encoding="utf-8") as f:
+            config: dict[str, str] = json.load(f)
+            return config.get("version", "")
+    except (OSError, json.JSONDecodeError):
+        return ""
 
 
 def get_user_language(chat_id: str) -> str:
@@ -641,6 +704,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         get_translation(lang_code, "help_updates_tag") +
         get_translation(lang_code, "help_language") +
         get_translation(lang_code, "help_about") +
+        get_translation(lang_code, "help_version") +
         get_translation(lang_code, "help_help") +
         get_translation(lang_code, "help_how_it_works") +
         get_translation(lang_code, "help_description") +
@@ -1365,6 +1429,79 @@ def format_update_message(
     return message
 
 
+async def version_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Handle /version command. Report the currently running bot version.
+
+    Args:
+        update: Telegram update object
+        context: Callback context
+    """
+    if not update.effective_chat or not update.message:
+        return
+
+    chat_id = str(update.effective_chat.id)
+    lang_code = get_user_language(chat_id)
+    version = load_config_version()
+
+    message = get_translation(lang_code, "version_message", version=version)
+    await update.message.reply_text(message, parse_mode="Markdown")
+
+
+async def send_version_notifications(
+    application: Application,  # type: ignore[type-arg]
+    version: str,
+) -> None:
+    """
+    Send a version-announcement notification to all active subscribers.
+
+    This is called once on bot startup when a new version is detected.
+    Each subscriber receives the message in their registered language.
+
+    Args:
+        application: The Telegram application instance
+        version: The new version string to announce
+    """
+    subscriptions = load_subscriptions()
+
+    if not subscriptions:
+        logger.info("No subscriptions found; skipping version notifications")
+        return
+
+    notification_count = 0
+
+    for chat_id, subscription_data in subscriptions.items():
+        if not subscription_data.get("active", False):
+            continue
+
+        language_code = str(
+            subscription_data.get("language_code") or DEFAULT_LANGUAGE
+        )
+
+        try:
+            header = get_translation(
+                language_code, "version_notification_header", version=version
+            )
+            changes = get_translation(language_code, "version_changes")
+            body = get_translation(
+                language_code, "version_notification_body", changes=changes
+            )
+            message = f"{header}\n{body}"
+
+            await application.bot.send_message(
+                chat_id=int(chat_id),
+                text=message,
+                parse_mode="Markdown",
+            )
+            notification_count += 1
+        except Exception as e:
+            logger.error(f"Error sending version notification to {chat_id}: {e}")
+
+    logger.info(
+        f"Sent version {version} notifications to {notification_count} subscribers"
+    )
+
+
 def create_application(token: str) -> Application:  # type: ignore[type-arg]
     """
     Create and configure the Telegram bot application.
@@ -1385,6 +1522,7 @@ def create_application(token: str) -> Application:  # type: ignore[type-arg]
     application.add_handler(CommandHandler("language", language_command))
     application.add_handler(CommandHandler("about", about_command))
     application.add_handler(CommandHandler("help", help_command))
+    application.add_handler(CommandHandler("version", version_command))
 
     # Add callback query handler for language selection
     application.add_handler(CallbackQueryHandler(language_selection_callback))

@@ -5,6 +5,18 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-07-03
+
+### Added
+- `/version` command to report the currently running bot version.
+- Subscriber database extended to track the last notified version per installation, enabling automatic version-announcement messages.
+- On bot startup, when a new version is detected, all active subscribers receive a notification in their registered language summarising the release highlights.
+- New translation keys: `version_message`, `help_version`, `version_notification_header`, `version_notification_body`, and `version_changes` added to all 158 language files.
+
+### Changed
+- Help text updated to include `/version` in the command list.
+- `VALID_COMMANDS` extended with `"version"` so fuzzy matching covers the new command.
+
 ## [1.1.1] - 2026-07-02
 
 ### Fixed
