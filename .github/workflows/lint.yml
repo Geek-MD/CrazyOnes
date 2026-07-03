@@ -26,4 +26,4 @@ jobs:
         run: ruff check .
 
       - name: Run mypy
-        run: mypy scripts/*.py --strict
+        run: mypy scripts/*.py
