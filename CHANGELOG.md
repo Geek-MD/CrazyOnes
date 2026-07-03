@@ -10,9 +10,12 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ### Changed
 - Translation lookup now falls back by base language (for example, `es-cl` uses `es-es` when locale-specific strings are incomplete), improving Spanish help and updates coverage.
 - Help command entries are now rendered in plain command format (without italicized command names), including `/version`.
+- `pyproject.toml` is now the single source of truth for the version number. `crazyones.py` resolves the version at runtime via `importlib.metadata` instead of a hardcoded string.
+- Docker publish workflow now reads the version from `pyproject.toml` (via `tomllib`) instead of `config.json`, making the release process independent of user configuration files.
 
 ### Fixed
 - Update name extraction for rows without links now ignores extra helper/CVE text in the same table cell.
+- `/version` command and `--version` CLI flag were reporting the stale `1.1.1` version string after the v1.2.0 and v1.2.1 releases.
 
 ## [1.2.0] - 2026-07-03
 

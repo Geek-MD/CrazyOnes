@@ -317,3 +317,13 @@ mypy scripts/*.py --strict
 # Auto-format code
 ruff format scripts/*.py tests/*.py
 ```
+
+## Releasing a New Version
+
+`pyproject.toml` is the **single source of truth** for the version number. To release a new version:
+
+1. Update `version` in `pyproject.toml` (e.g. `version = "1.3.0"`).
+2. Commit and tag the release (e.g. `git tag v1.3.0`).
+3. Run the **Build and Publish Docker Image** workflow — it reads the version directly from `pyproject.toml`.
+
+The `/version` Telegram command and the `--version` CLI flag both resolve the version at runtime from the installed package metadata, which is derived from `pyproject.toml`. No other files need to be updated.

@@ -17,22 +17,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Extract version from config.json
+      - name: Extract version from pyproject.toml
         id: version
         run: |
-          # Check if config.json exists
-          if [ ! -f "config.json" ]; then
-            echo "ERROR: config.json not found!"
-            exit 1
-          fi
-          
-          # Extract version using jq (pre-installed on ubuntu-latest)
-          VERSION=$(jq -r '.version' config.json)
+          VERSION=$(python -c "
+import tomllib
+with open('pyproject.toml', 'rb') as f:
+    print(tomllib.load(f)['project']['version'])
+")
           
           # Validate that version was extracted and is not empty
           if [ -z "$VERSION" ] || [ "$VERSION" = "null" ]; then
-            echo "ERROR: Unable to extract version from config.json!"
-            echo "Please ensure config.json contains a valid 'version' field."
+            echo "ERROR: Unable to extract version from pyproject.toml!"
+            echo "Please ensure pyproject.toml contains a valid 'version' field under [project]."
             exit 1
           fi
           

@@ -24,6 +24,7 @@ import sys
 import threading
 import time
 from datetime import datetime, timezone
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
 from scripts.generate_language_names import update_language_names
@@ -44,8 +45,11 @@ from scripts.scrape_apple_updates import (
     save_language_urls_to_json,
 )
 
-# Version from pyproject.toml
-__version__ = "1.1.1"
+# Version read dynamically from package metadata (set in pyproject.toml)
+try:
+    __version__ = version("apple-updates-bot")
+except PackageNotFoundError:
+    __version__ = "unknown"
 
 # PID file location
 PID_FILE = "/tmp/crazyones.pid"
