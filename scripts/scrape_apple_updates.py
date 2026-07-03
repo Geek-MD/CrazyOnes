@@ -85,8 +85,8 @@ def extract_language_urls(html_content: str, base_url: str) -> dict[str, str]:
     # These contain all the language-specific URLs
     for link_tag in soup.find_all("link", rel="alternate"):
         if link_tag.get("hreflang") and link_tag.get("href"):
-            lang_code = link_tag["hreflang"]
-            url = link_tag["href"]
+            lang_code = str(link_tag["hreflang"])
+            url = str(link_tag["href"])
             # Convert relative URLs to absolute if needed
             if not url.startswith("http"):
                 url = urljoin(base_url, url)

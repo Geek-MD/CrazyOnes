@@ -252,7 +252,7 @@ def extract_security_updates_table(
         url = None
         link = name_col.find("a")
         if link and link.get("href"):
-            url = link["href"]
+            url = str(link["href"])
             # Convert relative URLs to absolute
             if url and not url.startswith("http"):
                 url = urljoin(base_url, url)

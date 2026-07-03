@@ -17,6 +17,9 @@ from typing import Any
 
 from telegram.ext import Application
 
+# Type alias for Application with all-Any type args (6 required by python-telegram-bot)
+AnyApplication = Application[Any, Any, Any, Any, Any, Any]
+
 try:
     # Try relative import (when used as a module)
     from .generate_language_names import LANGUAGE_NAME_MAP
@@ -33,8 +36,8 @@ try:
     )
 except ImportError:
     # Fall back to absolute import (when run directly)
-    from generate_language_names import (
-        LANGUAGE_NAME_MAP,  # type: ignore[import-not-found,no-redef]
+    from generate_language_names import (  # type: ignore[import-not-found,no-redef]
+        LANGUAGE_NAME_MAP,
     )
     from telegram_bot import (  # type: ignore[import-not-found,no-redef]
         create_application,
@@ -68,7 +71,7 @@ def signal_handler(signum: int, frame: object) -> None:
     _shutdown_event.set()
 
 
-async def check_for_new_updates(application: Application) -> None:
+async def check_for_new_updates(application: AnyApplication) -> None:
     """
     Check for new updates trigger file and notify subscribers.
 
@@ -115,7 +118,7 @@ async def check_for_new_updates(application: Application) -> None:
 
 
 async def send_new_updates_to_subscribers(
-    application: Application, updated_languages: list[str]
+    application: AnyApplication, updated_languages: list[str]
 ) -> None:
     """
     Send new updates to subscribers for the specified languages.
@@ -192,7 +195,7 @@ async def send_new_updates_to_subscribers(
 
 
 async def send_update_notification(
-    application: Application,
+    application: AnyApplication,
     chat_id: str,
     language_code: str,
     new_updates: list[dict[str, Any]],
@@ -242,7 +245,7 @@ async def send_update_notification(
     logger.info(f"Sent {len(new_updates)} updates to chat {chat_id}")
 
 
-async def check_and_notify_new_version(application: Application) -> None:  # type: ignore[type-arg]
+async def check_and_notify_new_version(application: AnyApplication) -> None:
     """
     Detect a new bot version and send release announcements to all active subscribers.
 
@@ -301,6 +304,7 @@ async def run_bot_service(token: str) -> None:
 
     # Start polling
     logger.info("Starting polling...")
+    assert application.updater is not None, "Application must be built with an Updater"
     await application.updater.start_polling(
         allowed_updates=["message", "callback_query", "my_chat_member"]
     )

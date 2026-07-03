@@ -11,8 +11,9 @@ these files to their respective languages later.
 
 import json
 from pathlib import Path
+from typing import cast
 
-from generate_language_names import LANGUAGE_NAME_MAP
+from generate_language_names import LANGUAGE_NAME_MAP  # type: ignore[import-not-found]
 
 
 def load_base_strings() -> dict[str, str]:
@@ -32,7 +33,7 @@ def load_base_strings() -> dict[str, str]:
         )
 
     with open(strings_file, encoding="utf-8") as f:
-        return json.load(f)
+        return cast(dict[str, str], json.load(f))
 
 
 def generate_translation_file(lang_code: str, base_strings: dict[str, str]) -> None:
