@@ -38,5 +38,10 @@
   "unknown_command_no_suggestion": "Unknown command: /{command}\n\nUse /help to see all available commands.",
   "update_format_target": "Target: {target}\n",
   "update_format_date": "Date: {date}\n",
-  "update_format_link": "More info"
+  "update_format_link": "More info",
+  "help_version": "/version - Show the current bot version\n",
+  "version_message": "CrazyOnes v{version}",
+  "version_notification_header": "CrazyOnes v{version} is now running\n",
+  "version_notification_body": "What's new in this version:\n\n{changes}",
+  "version_changes": "- /version command to report the running bot version\n- Automatic notifications on new version releases\n- Messages delivered in the subscriber's registered language"
 }

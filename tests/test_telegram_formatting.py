@@ -47,7 +47,66 @@ def test_help_title_formatting():
     print("✓ help_title is correctly formatted with bold asterisks")
 
 
+def test_version_message_formatting():
+    """
+    Test that version_message is formatted with bold Markdown asterisks.
+
+    Expected format: "*CrazyOnes v<version>*"
+    """
+    result = get_translation('en-us', 'version_message', version='1.2.0')
+
+    assert result.startswith('*'), f"Version message should start with asterisk, got: {repr(result)}"
+    assert result.endswith('*'), f"Version message should end with asterisk, got: {repr(result)}"
+    assert '1.2.0' in result, f"Version message should contain the version, got: {repr(result)}"
+    assert 'CrazyOnes' in result, f"Version message should contain 'CrazyOnes', got: {repr(result)}"
+
+    print("✓ version_message is correctly formatted with bold asterisks")
+
+
+def test_version_notification_header_formatting():
+    """
+    Test that version_notification_header is formatted with bold Markdown asterisks.
+
+    Expected format: "*CrazyOnes v<version> ...*\n"
+    """
+    result = get_translation('en-us', 'version_notification_header', version='1.2.0')
+
+    assert result.startswith('*'), f"Header should start with asterisk, got: {repr(result)}"
+    assert '*\n' in result, f"Header should end with asterisk and newline, got: {repr(result)}"
+    assert '1.2.0' in result, f"Header should contain the version, got: {repr(result)}"
+
+    print("✓ version_notification_header is correctly formatted")
+
+
+def test_help_version_key_present():
+    """Test that the help_version translation key exists for en-us."""
+    result = get_translation('en-us', 'help_version')
+
+    assert result != 'help_version', "help_version key should exist in translations"
+    assert '/version' in result, f"help_version should contain '/version', got: {repr(result)}"
+
+    print("✓ help_version key is present and contains '/version'")
+
+
+def test_version_changes_key_present():
+    """Test that version_changes key exists for English and Spanish locales."""
+    en_result = get_translation('en-us', 'version_changes')
+    es_result = get_translation('es-es', 'version_changes')
+
+    assert en_result != 'version_changes', "version_changes key should exist in en-us"
+    assert es_result != 'version_changes', "version_changes key should exist in es-es"
+
+    # Spanish translation should differ from English
+    assert en_result != es_result, "Spanish version_changes should differ from English"
+
+    print("✓ version_changes keys are present for en-us and es-es")
+
+
 if __name__ == '__main__':
     test_language_list_header_formatting()
     test_help_title_formatting()
+    test_version_message_formatting()
+    test_version_notification_header_formatting()
+    test_help_version_key_present()
+    test_version_changes_key_present()
     print("\nAll formatting tests passed!")
