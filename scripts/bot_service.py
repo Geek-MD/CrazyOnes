@@ -50,8 +50,7 @@ except ImportError:
 
 # Setup logging
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 
 logger = logging.getLogger(__name__)
@@ -116,8 +115,7 @@ async def check_for_new_updates(application: Application) -> None:
 
 
 async def send_new_updates_to_subscribers(
-    application: Application,
-    updated_languages: list[str]
+    application: Application, updated_languages: list[str]
 ) -> None:
     """
     Send new updates to subscribers for the specified languages.
@@ -197,7 +195,7 @@ async def send_update_notification(
     application: Application,
     chat_id: str,
     language_code: str,
-    new_updates: list[dict[str, Any]]
+    new_updates: list[dict[str, Any]],
 ) -> None:
     """
     Send a notification about new updates to a subscriber.
@@ -214,9 +212,7 @@ async def send_update_notification(
     )
 
     # Build header message
-    header = get_translation(
-        language_code, "new_updates_header"
-    )
+    header = get_translation(language_code, "new_updates_header")
     header += f"\n_{display_name}_\n\n"
 
     # Build message with updates
@@ -240,7 +236,7 @@ async def send_update_notification(
         chat_id=int(chat_id),
         text=message,
         parse_mode="Markdown",
-        disable_web_page_preview=True
+        disable_web_page_preview=True,
     )
 
     logger.info(f"Sent {len(new_updates)} updates to chat {chat_id}")
@@ -306,7 +302,7 @@ async def run_bot_service(token: str) -> None:
     # Start polling
     logger.info("Starting polling...")
     await application.updater.start_polling(
-        allowed_updates=['message', 'callback_query', 'my_chat_member']
+        allowed_updates=["message", "callback_query", "my_chat_member"]
     )
     logger.info("Bot is running and polling for updates")
 
@@ -323,10 +319,7 @@ async def run_bot_service(token: str) -> None:
 
             # Wait for next check or shutdown
             try:
-                await asyncio.wait_for(
-                    _shutdown_event.wait(),
-                    timeout=check_interval
-                )
+                await asyncio.wait_for(_shutdown_event.wait(), timeout=check_interval)
                 # If we get here, shutdown was triggered
                 break
             except asyncio.TimeoutError:

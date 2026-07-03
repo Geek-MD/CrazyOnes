@@ -24,9 +24,7 @@ def test_load_config():
     with tempfile.TemporaryDirectory() as tmpdir:
         # Create a test config file
         config_file = Path(tmpdir) / "test_config.json"
-        test_config = {
-            "apple_updates_url": "https://support.apple.com/en-us/100100"
-        }
+        test_config = {"apple_updates_url": "https://support.apple.com/en-us/100100"}
         with open(config_file, "w", encoding="utf-8") as f:
             json.dump(test_config, f)
 
@@ -155,9 +153,7 @@ def test_save_config():
 
     with tempfile.TemporaryDirectory() as tmpdir:
         config_file = Path(tmpdir) / "test_config.json"
-        test_config = {
-            "apple_updates_url": "https://support.apple.com/es-es/100100"
-        }
+        test_config = {"apple_updates_url": "https://support.apple.com/es-es/100100"}
 
         # Save config
         save_config(test_config, str(config_file))
@@ -182,16 +178,12 @@ def test_save_config_updates_existing():
         config_file = Path(tmpdir) / "test_config.json"
 
         # Create initial config
-        initial_config = {
-            "apple_updates_url": "https://support.apple.com/en-us/100100"
-        }
+        initial_config = {"apple_updates_url": "https://support.apple.com/en-us/100100"}
         with open(config_file, "w", encoding="utf-8") as f:
             json.dump(initial_config, f)
 
         # Update config with new URL
-        updated_config = {
-            "apple_updates_url": "https://support.apple.com/es-es/100100"
-        }
+        updated_config = {"apple_updates_url": "https://support.apple.com/es-es/100100"}
         save_config(updated_config, str(config_file))
 
         # Load and verify
@@ -299,9 +291,7 @@ def test_validate_telegram_token():
     ]
 
     for token in invalid_tokens:
-        assert not validate_telegram_token(
-            token
-        ), f"Token should be invalid: {token}"
+        assert not validate_telegram_token(token), f"Token should be invalid: {token}"
 
     print("  ✓ Telegram token validation works correctly")
 
@@ -348,8 +338,7 @@ def test_generate_systemd_service_content():
     # Check specific content
     assert "Description=CrazyOnes" in content
     expected_exec = (
-        "ExecStart=/usr/bin/python3 /home/user/crazyones.py "
-        "--daemon --interval 43200"
+        "ExecStart=/usr/bin/python3 /home/user/crazyones.py --daemon --interval 43200"
     )
     assert expected_exec in content
     assert "User=testuser" in content
