@@ -1343,9 +1343,9 @@ async def send_recent_updates(
             name = str(latest_update.get("name", "")).strip()
             target = str(latest_update.get("target", "")).strip()
             date = str(latest_update.get("date", "")).strip()
-            url = str(latest_update.get("url", "")).strip()
+            latest_url = str(latest_update.get("url", "")).strip()
             subscriptions[chat_id]["last_update_signature"] = (
-                f"{name}|{target}|{date}|{url}"
+                f"{name}|{target}|{date}|{latest_url}"
             )
             save_subscriptions(subscriptions)
 
