@@ -6,9 +6,11 @@ This bot communicates in English and allows users to subscribe to Apple Updates
 in their preferred language. It tracks subscriptions and sends updates accordingly.
 """
 
+import asyncio
 import difflib
 import json
 import logging
+import os
 import re
 from pathlib import Path
 from typing import Any
@@ -30,11 +32,34 @@ from telegram.ext import (
 
 try:
     # Try relative import (when used as a module)
-    from .generate_language_names import LANGUAGE_NAME_MAP
+    from .generate_language_names import LANGUAGE_NAME_MAP, update_language_names
+    from .monitor_apple_updates import (
+        load_language_urls as load_monitored_language_urls,
+        load_tracking_data,
+        process_language_url,
+        save_tracking_data,
+    )
+    from .scrape_apple_updates import (
+        extract_language_urls,
+        fetch_apple_updates_page,
+        save_language_urls_to_json,
+    )
 except ImportError:
     # Fall back to absolute import (when run directly)
     from generate_language_names import (  # type: ignore[import-not-found,no-redef]
         LANGUAGE_NAME_MAP,
+        update_language_names,
+    )
+    from monitor_apple_updates import (  # type: ignore[import-not-found,no-redef]
+        load_language_urls as load_monitored_language_urls,
+        load_tracking_data,
+        process_language_url,
+        save_tracking_data,
+    )
+    from scrape_apple_updates import (  # type: ignore[import-not-found,no-redef]
+        extract_language_urls,
+        fetch_apple_updates_page,
+        save_language_urls_to_json,
     )
 
 # Subscriptions file path
@@ -45,6 +70,9 @@ BOT_VERSION_FILE = "data/bot_version.json"
 
 # Default language for new subscriptions
 DEFAULT_LANGUAGE = "en-us"
+
+# Default Apple Updates URL
+DEFAULT_APPLE_UPDATES_URL = "https://support.apple.com/en-us/100100"
 
 # Supported group chat types for automatic about message
 SUPPORTED_GROUP_TYPES = {Chat.GROUP, Chat.SUPERGROUP, Chat.CHANNEL}
@@ -62,6 +90,7 @@ APPLE_OS_REGEX_PATTERNS = {
 
 # Valid bot commands for fuzzy matching
 VALID_COMMANDS = ["start", "stop", "updates", "language", "about", "help", "version"]
+ADMIN_COMMANDS = ["rebuild"]
 
 # Fuzzy matching cutoff thresholds
 FUZZY_CUTOFF_TAGS = 0.5  # Lower threshold for OS tags (more lenient for typos)
@@ -451,6 +480,88 @@ def load_config_version(config_file: str = "config.json") -> str:
         return ""
 
 
+def load_config_value(key: str, config_file: str = "config.json") -> str:
+    """
+    Read a string value from config.json.
+
+    Args:
+        key: Config key to read.
+        config_file: Path to the config file.
+
+    Returns:
+        Config value as string, or empty string if missing.
+    """
+    config_path = Path(config_file)
+    if not config_path.exists():
+        return ""
+
+    try:
+        with open(config_path, encoding="utf-8") as f:
+            config: dict[str, Any] = json.load(f)
+    except (OSError, json.JSONDecodeError):
+        return ""
+
+    value = config.get(key, "")
+    return str(value).strip() if value else ""
+
+
+def load_admin_user_id() -> str:
+    """
+    Resolve configured administrator user ID.
+
+    Priority:
+    1) CRAZYONES_ADMIN_USER_ID / ADMIN_USER_ID environment variable
+    2) admin_user_id in config.json
+
+    Returns:
+        Admin user ID as string, or empty string if not configured.
+    """
+    env_admin_id = (
+        os.getenv("CRAZYONES_ADMIN_USER_ID", "").strip()
+        or os.getenv("ADMIN_USER_ID", "").strip()
+    )
+    if env_admin_id:
+        return env_admin_id
+
+    return load_config_value("admin_user_id")
+
+
+def is_admin_user(user_id: int | None) -> bool:
+    """
+    Check whether a Telegram user ID matches the configured admin user.
+
+    Args:
+        user_id: Telegram user ID.
+
+    Returns:
+        True when the caller is the configured admin.
+    """
+    if user_id is None:
+        return False
+
+    admin_user_id = load_admin_user_id()
+    if not admin_user_id:
+        return False
+
+    return str(user_id) == admin_user_id
+
+
+def get_valid_commands(user_id: int | None) -> list[str]:
+    """
+    Get valid commands for fuzzy matching according to user permissions.
+
+    Args:
+        user_id: Telegram user ID.
+
+    Returns:
+        List of command names available for this user.
+    """
+    commands = VALID_COMMANDS.copy()
+    if is_admin_user(user_id):
+        commands.extend(ADMIN_COMMANDS)
+    return commands
+
+
 def get_user_language(chat_id: str) -> str:
     """
     Get the user's language preference from subscriptions.
@@ -758,6 +869,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         + get_translation(lang_code, "help_description")
         + get_translation(lang_code, "help_get_started")
     )
+    if is_admin_user(update.effective_user.id if update.effective_user else None):
+        help_message += "\n\n" + get_translation(lang_code, "help_rebuild")
 
     await update.message.reply_text(help_message, parse_mode="Markdown")
 
@@ -1181,8 +1294,11 @@ async def handle_unknown_command(
     lang_code = get_user_language(chat_id)
 
     # Try to find similar commands using the module-level constant
+    available_commands = get_valid_commands(
+        update.effective_user.id if update.effective_user else None
+    )
     similar_commands = difflib.get_close_matches(
-        command, VALID_COMMANDS, n=1, cutoff=FUZZY_CUTOFF_COMMANDS
+        command, available_commands, n=1, cutoff=FUZZY_CUTOFF_COMMANDS
     )
 
     if similar_commands:
@@ -1471,6 +1587,74 @@ async def version_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     await update.message.reply_text(message, parse_mode="Markdown")
 
 
+def rebuild_security_update_json_files() -> int:
+    """
+    Rebuild all security update JSON files.
+
+    Returns:
+        Number of language files processed.
+    """
+    apple_updates_url = load_config_value("apple_updates_url") or DEFAULT_APPLE_UPDATES_URL
+    html_content = fetch_apple_updates_page(apple_updates_url)
+    language_urls = extract_language_urls(html_content, apple_updates_url)
+
+    if not language_urls:
+        lang_code = apple_updates_url.split("/")[-2] if "/" in apple_updates_url else "en-us"
+        language_urls[lang_code] = apple_updates_url
+
+    save_language_urls_to_json(language_urls)
+    update_language_names()
+
+    monitored_language_urls = load_monitored_language_urls()
+    tracking_data = load_tracking_data()
+
+    processed = 0
+    for lang_code, url in monitored_language_urls.items():
+        if process_language_url(lang_code, url, tracking_data, force_update=True):
+            processed += 1
+
+    save_tracking_data(tracking_data)
+    return processed
+
+
+async def rebuild_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Handle /rebuild command. Regenerate security update JSON files.
+
+    This command is restricted to the configured administrator user.
+
+    Args:
+        update: Telegram update object
+        context: Callback context
+    """
+    if not update.effective_chat or not update.message:
+        return
+
+    user_id = update.effective_user.id if update.effective_user else None
+    chat_id = str(update.effective_chat.id)
+    lang_code = get_user_language(chat_id)
+
+    if not is_admin_user(user_id):
+        message = get_translation(lang_code, "admin_only_command", command="rebuild")
+        await update.message.reply_text(message, parse_mode="Markdown")
+        return
+
+    await update.message.reply_text(
+        get_translation(lang_code, "rebuild_started"), parse_mode="Markdown"
+    )
+
+    try:
+        processed_count = await asyncio.to_thread(rebuild_security_update_json_files)
+        success_message = get_translation(
+            lang_code, "rebuild_success", count=processed_count
+        )
+        await update.message.reply_text(success_message, parse_mode="Markdown")
+    except Exception as e:
+        logger.error(f"Error rebuilding security update JSON files: {e}", exc_info=True)
+        error_message = get_translation(lang_code, "rebuild_error")
+        await update.message.reply_text(error_message, parse_mode="Markdown")
+
+
 async def send_version_notifications(
     application: Application,  # type: ignore[type-arg]
     version: str,
@@ -1544,6 +1728,7 @@ def create_application(token: str) -> Application:  # type: ignore[type-arg]
     application.add_handler(CommandHandler("about", about_command))
     application.add_handler(CommandHandler("help", help_command))
     application.add_handler(CommandHandler("version", version_command))
+    application.add_handler(CommandHandler("rebuild", rebuild_command))
 
     # Add callback query handler for language selection
     application.add_handler(CallbackQueryHandler(language_selection_callback))
