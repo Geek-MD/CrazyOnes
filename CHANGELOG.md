@@ -5,6 +5,18 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.6] - 2026-07-04
+
+### Added
+- `/version verbose` argument: displays the latest release notes (parsed from `CHANGELOG.md`) and a clickable link to the full changelog on GitHub.
+
+### Changed
+- `help_version` string updated to document the new `verbose` argument.
+- `version_changes` string updated to reflect current release highlights instead of the stale v1.2.0 content.
+
+### Fixed
+- Automatic version-announcement notifications on bot startup are now disabled. Users can view release notes on demand via `/version verbose`.
+
 ## [1.3.5] - 2026-07-04
 
 ### Added

@@ -456,6 +456,48 @@ def load_config_version(config_file: str = "config.json") -> str:
         return ""
 
 
+def parse_latest_changelog_entry(changelog_file: str = "CHANGELOG.md") -> str:
+    """
+    Parse the latest version entry from CHANGELOG.md.
+
+    Returns the body of the first version section (everything between
+    the first and second ``## [x.y.z]`` headings).
+
+    Args:
+        changelog_file: Path to the CHANGELOG.md file.
+
+    Returns:
+        Changelog body for the latest release, or empty string if not found.
+    """
+    changelog_path = Path(changelog_file)
+    if not changelog_path.exists():
+        return ""
+
+    try:
+        text = changelog_path.read_text(encoding="utf-8")
+    except OSError:
+        return ""
+
+    # Find the first version heading (## [x.y.z] - YYYY-MM-DD)
+    version_heading = re.compile(r"^## \[", re.MULTILINE)
+    matches = list(version_heading.finditer(text))
+
+    if not matches:
+        return ""
+
+    start = matches[0].start()
+    end = matches[1].start() if len(matches) > 1 else len(text)
+
+    entry = text[start:end].strip()
+
+    # Remove the heading line itself (first line) and return only the body
+    lines = entry.split("\n", 1)
+    if len(lines) < 2:
+        return ""
+
+    return lines[1].strip()
+
+
 def load_admin_user_id(config_file: str = "config.json") -> str:
     """
     Read the admin user ID from config.json.
@@ -1507,6 +1549,10 @@ async def version_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     """
     Handle /version command. Report the currently running bot version.
 
+    When called with the ``verbose`` argument (``/version verbose``), also
+    shows the release notes for the latest version and a link to the full
+    changelog on GitHub.
+
     Args:
         update: Telegram update object
         context: Callback context
@@ -1518,8 +1564,30 @@ async def version_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     lang_code = get_user_language(chat_id)
     version = load_config_version()
 
-    message = get_translation(lang_code, "version_message", version=version)
-    await update.message.reply_text(message, parse_mode="Markdown")
+    args = context.args if context.args else []
+    verbose = bool(args) and args[0].lower() == "verbose"
+
+    if not verbose:
+        message = get_translation(lang_code, "version_message", version=version)
+        await update.message.reply_text(message, parse_mode="Markdown")
+        return
+
+    # Verbose mode: show version header + latest changelog + GitHub link
+    header = get_translation(lang_code, "version_message", version=version)
+    changelog_body = parse_latest_changelog_entry()
+    link_label = get_translation(lang_code, "version_verbose_link")
+
+    changelog_url = "https://github.com/Geek-MD/CrazyOnes/blob/main/CHANGELOG.md"
+    link_line = f"[{link_label}]({changelog_url})"
+
+    if changelog_body:
+        message = f"{header}\n\n{changelog_body}\n\n{link_line}"
+    else:
+        message = f"{header}\n\n{link_line}"
+
+    await update.message.reply_text(
+        message, parse_mode="Markdown", disable_web_page_preview=False
+    )
 
 
 def _run_rebuild() -> None:
