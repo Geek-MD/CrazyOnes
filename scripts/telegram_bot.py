@@ -6,6 +6,7 @@ This bot communicates in English and allows users to subscribe to Apple Updates
 in their preferred language. It tracks subscriptions and sends updates accordingly.
 """
 
+import asyncio
 import difflib
 import json
 import logging
@@ -287,8 +288,13 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
         "help_version",
         "help_help",
         "help_get_started",
+        "help_rebuild",
     ]:
         # Keep command text in plain format (no italics)
+        pass
+    elif key == "help_commands_admin":
+        # Format: "_Admin Commands_\n"
+        result = f"_{result.rstrip()}_\n"
         pass
     elif key == "updates_header":
         # Format: "*CrazyOnes - Apple Updates* - _{display_name}_\n\n..."
@@ -449,6 +455,44 @@ def load_config_version(config_file: str = "config.json") -> str:
             return config.get("version", "")
     except (OSError, json.JSONDecodeError):
         return ""
+
+
+def load_admin_user_id(config_file: str = "config.json") -> str:
+    """
+    Read the admin user ID from config.json.
+
+    Args:
+        config_file: Path to the config file.
+
+    Returns:
+        Admin user ID string, or empty string if not configured.
+    """
+    config_path = Path(config_file)
+    if not config_path.exists():
+        return ""
+
+    try:
+        with open(config_path, encoding="utf-8") as f:
+            config: dict[str, str] = json.load(f)
+            return config.get("admin_user_id", "")
+    except (OSError, json.JSONDecodeError):
+        return ""
+
+
+def is_admin(user_id: int) -> bool:
+    """
+    Check if a Telegram user is the configured administrator.
+
+    Args:
+        user_id: Telegram user ID to check.
+
+    Returns:
+        True if the user is the configured admin, False otherwise.
+    """
+    admin_user_id = load_admin_user_id()
+    if not admin_user_id:
+        return False
+    return str(user_id) == str(admin_user_id)
 
 
 def get_user_language(chat_id: str) -> str:
@@ -758,6 +802,14 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         + get_translation(lang_code, "help_description")
         + get_translation(lang_code, "help_get_started")
     )
+
+    # Append admin-only commands when the requester is the administrator
+    if update.effective_user and is_admin(update.effective_user.id):
+        help_message += (
+            "\n\n"
+            + get_translation(lang_code, "help_commands_admin")
+            + get_translation(lang_code, "help_rebuild")
+        )
 
     await update.message.reply_text(help_message, parse_mode="Markdown")
 
@@ -1471,6 +1523,87 @@ async def version_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     await update.message.reply_text(message, parse_mode="Markdown")
 
 
+def _run_rebuild() -> None:
+    """
+    Synchronous helper that regenerates all security update JSON files.
+
+    Runs the Apple Updates scraper to refresh language URLs, then forces a
+    full re-download and re-parse of every language page so that the
+    ``data/updates/<lang>.json`` files are up to date.
+    """
+    try:
+        from .monitor_apple_updates import (  # type: ignore[import-not-found,no-redef]  # noqa: I001
+            load_language_urls as monitor_load_language_urls,
+            load_tracking_data,
+            process_language_url,
+            save_tracking_data,
+        )
+        from .scrape_apple_updates import main as scrape_main  # type: ignore[import-not-found,no-redef]
+    except ImportError:
+        from monitor_apple_updates import (  # type: ignore[import-not-found,no-redef]  # noqa: I001
+            load_language_urls as monitor_load_language_urls,
+            load_tracking_data,
+            process_language_url,
+            save_tracking_data,
+        )
+        from scrape_apple_updates import main as scrape_main  # type: ignore[import-not-found,no-redef]
+
+    # Step 1: Refresh language URLs from the Apple Updates page
+    scrape_main()
+
+    # Step 2: Force-regenerate all update JSON files
+    language_urls = monitor_load_language_urls()
+    tracking_data = load_tracking_data()
+
+    for lang_code, url in language_urls.items():
+        process_language_url(lang_code, url, tracking_data, force_update=True)
+
+    save_tracking_data(tracking_data)
+
+
+async def rebuild_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Handle /rebuild command. Regenerate all security update JSON files.
+
+    This command is exclusive to the configured administrator. It forces a
+    full re-scrape of the Apple Updates page and regenerates every
+    ``data/updates/<lang>.json`` file.  Non-admin users receive the standard
+    unknown-command response so that the command's existence is not revealed.
+
+    Args:
+        update: Telegram update object
+        context: Callback context
+    """
+    if not update.effective_chat or not update.message or not update.effective_user:
+        return
+
+    if not is_admin(update.effective_user.id):
+        # Treat as unknown command for non-admin users
+        await handle_unknown_command(update, context)
+        return
+
+    chat_id = str(update.effective_chat.id)
+    lang_code = get_user_language(chat_id)
+
+    await update.message.reply_text(
+        get_translation(lang_code, "rebuild_started"), parse_mode="Markdown"
+    )
+
+    try:
+        await asyncio.to_thread(_run_rebuild)
+        await update.message.reply_text(
+            get_translation(lang_code, "rebuild_success"), parse_mode="Markdown"
+        )
+        logger.info(
+            f"Rebuild completed successfully for admin user {update.effective_user.id}"
+        )
+    except Exception as e:
+        logger.error(f"Rebuild failed: {e}", exc_info=True)
+        await update.message.reply_text(
+            get_translation(lang_code, "rebuild_error"), parse_mode="Markdown"
+        )
+
+
 async def send_version_notifications(
     application: Application,  # type: ignore[type-arg]
     version: str,
@@ -1544,6 +1677,7 @@ def create_application(token: str) -> Application:  # type: ignore[type-arg]
     application.add_handler(CommandHandler("about", about_command))
     application.add_handler(CommandHandler("help", help_command))
     application.add_handler(CommandHandler("version", version_command))
+    application.add_handler(CommandHandler("rebuild", rebuild_command))
 
     # Add callback query handler for language selection
     application.add_handler(CallbackQueryHandler(language_selection_callback))

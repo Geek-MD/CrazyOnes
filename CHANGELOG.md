@@ -5,6 +5,14 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.5] - 2026-07-04
+
+### Added
+- Administrator user ID can now be configured via the `ADMIN_USER_ID` environment variable (Docker) or the `admin_user_id` field in `config.json`.
+- New `/rebuild` command reserved exclusively for the administrator. It forces a full re-scrape of the Apple Updates page and regenerates all language-specific `data/updates/<lang>.json` files.
+- `/rebuild` is shown in `/help` only when the requester is the configured administrator; all other users receive the standard unknown-command response so the command's existence is not disclosed.
+- New translation keys: `help_commands_admin`, `help_rebuild`, `rebuild_started`, `rebuild_success`, and `rebuild_error` added to `strings.json` and `en-us.json`.
+
 ## [1.3.0] - 2026-07-03
 
 ### Added
