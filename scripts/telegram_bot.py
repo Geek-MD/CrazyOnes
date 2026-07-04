@@ -295,7 +295,6 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
     elif key == "help_commands_admin":
         # Format: "_Admin Commands_\n"
         result = f"_{result.rstrip()}_\n"
-        pass
     elif key == "updates_header":
         # Format: "*CrazyOnes - Apple Updates* - _{display_name}_\n\n..."
         # The display_name is already formatted as italic from earlier processing
@@ -1594,9 +1593,7 @@ async def rebuild_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         await update.message.reply_text(
             get_translation(lang_code, "rebuild_success"), parse_mode="Markdown"
         )
-        logger.info(
-            f"Rebuild completed successfully for admin user {update.effective_user.id}"
-        )
+        logger.info("Rebuild completed successfully")
     except Exception as e:
         logger.error(f"Rebuild failed: {e}", exc_info=True)
         await update.message.reply_text(
