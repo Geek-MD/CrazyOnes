@@ -6,7 +6,8 @@ LOG_FILE="${CRAZYONES_LOG_FILE:-${APP_HOME}/crazyones.log}"
 EXAMPLE_TOKEN="123456789:ABCdefGHIjklMNOpqrsTUVwxyz-1234567890"
 TOKEN="${TELEGRAM_BOT_TOKEN:-}"
 APPLE_UPDATES_URL="${APPLE_UPDATES_URL:-https://support.apple.com/en-us/100100}"
-CRAZYONES_VERSION="${CRAZYONES_VERSION:-1.3.0}"
+CRAZYONES_VERSION="${CRAZYONES_VERSION:-1.3.5}"
+ADMIN_USER_ID="${ADMIN_USER_ID:-}"
 
 mkdir -p "${APP_HOME}/data"
 touch "${LOG_FILE}"
@@ -33,7 +34,8 @@ cat > "${APP_HOME}/config.json" <<EOF
 {
   "version": "${CRAZYONES_VERSION}",
   "apple_updates_url": "${APPLE_UPDATES_URL}",
-  "telegram_bot_token": "${TOKEN}"
+  "telegram_bot_token": "${TOKEN}",
+  "admin_user_id": "${ADMIN_USER_ID}"
 }
 EOF
 

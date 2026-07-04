@@ -43,5 +43,10 @@
   "version_message": "CrazyOnes v{version}",
   "version_notification_header": "CrazyOnes v{version} is now running\n",
   "version_notification_body": "What's new in this version:\n\n{changes}",
-  "version_changes": "- /version command to report the running bot version\n- Automatic notifications on new version releases\n- Messages delivered in the subscriber's registered language"
+  "version_changes": "- /version command to report the running bot version\n- Automatic notifications on new version releases\n- Messages delivered in the subscriber's registered language",
+  "help_commands_admin": "Admin Commands\n",
+  "help_rebuild": "/rebuild - Regenerate security updates JSON files (admin only)\n",
+  "rebuild_started": "Rebuilding security updates data, please wait...",
+  "rebuild_success": "Security updates data has been successfully rebuilt.",
+  "rebuild_error": "An error occurred while rebuilding security updates data."
 }
