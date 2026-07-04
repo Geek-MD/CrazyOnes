@@ -376,8 +376,7 @@ async def run_bot_service(token: str) -> None:
     )
     logger.info("Bot is running and polling for updates")
 
-    # Check whether this is a new version and notify subscribers if so
-    await check_and_notify_new_version(application)
+    # Automatic version notifications are disabled; use /version verbose instead
 
     # Main loop: check for new updates periodically
     check_interval = 30  # Check every 30 seconds
