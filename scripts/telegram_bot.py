@@ -1756,9 +1756,7 @@ async def subscribers_command(
 
     report = (
         get_translation(lang_code, "subscribers_title")
-        + get_translation(
-            lang_code, "subscribers_active_total", total=counts["total"]
-        )
+        + get_translation(lang_code, "subscribers_active_total", total=counts["total"])
         + get_translation(lang_code, "subscribers_breakdown")
         + get_translation(lang_code, "subscribers_users", users=counts["users"])
         + get_translation(
