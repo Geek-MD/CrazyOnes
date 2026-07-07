@@ -20,7 +20,7 @@ jobs:
       - name: Extract version from pyproject.toml
         id: version
         run: |
-          VERSION=$(python -c "import tomllib;print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          VERSION=$(python -c "import pathlib,tomllib;print(tomllib.loads(pathlib.Path('pyproject.toml').read_text(encoding='utf-8'))['project']['version'])")
           
           # Validate that version was extracted and is not empty
           if [ -z "$VERSION" ] || [ "$VERSION" = "null" ]; then
