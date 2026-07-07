@@ -580,7 +580,10 @@ def count_subscribers() -> dict[str, int]:
                 else:
                     groups += 1
             except ValueError:
-                users += 1
+                logger.warning(
+                    f"Subscription has non-integer chat_id {chat_id!r}; "
+                    "skipping breakdown classification"
+                )
 
     return {"total": total, "users": users, "channels": channels, "groups": groups}
 
