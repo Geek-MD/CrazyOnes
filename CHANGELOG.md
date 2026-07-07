@@ -5,6 +5,12 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.8] - 2026-07-07
+
+### Fixed
+- All 108 non-English locale files (previously identical copies of `strings.json`) are now fully translated into their respective native languages. Affected language families include Arabic, German, French, Italian, Dutch, Portuguese (PT and BR), Russian, Japanese, Korean, Simplified/Traditional Chinese, Thai, Vietnamese, Indonesian, Malay, Turkish, Hebrew, Greek, and all major European languages.
+- Regional locale variants now correctly inherit from their canonical base locale (for example, `de-at`, `de-ch`, `de-li`, `de-lu` inherit from `de-de.json`; all `ar-*` locales from `ar-sa.json`; `zh-hk`/`zh-mo` from `zh-tw.json`; `zh-sg` from `zh-cn.json`).
+
 ## [1.3.7] - 2026-07-07
 
 ### Fixed
