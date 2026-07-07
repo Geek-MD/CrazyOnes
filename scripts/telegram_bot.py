@@ -289,11 +289,18 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
         "help_help",
         "help_get_started",
         "help_rebuild",
+        "help_subscribers",
     ]:
         # Keep command text in plain format (no italics)
         pass
     elif key == "help_commands_admin":
         # Format: "_Admin Commands_\n"
+        result = f"_{result.rstrip()}_\n"
+    elif key == "subscribers_title":
+        # Format: "*CrazyOnes - Subscriber Report*\n\n"
+        result = f"*{result.rstrip()}*\n\n"
+    elif key == "subscribers_breakdown":
+        # Format: "_Breakdown_\n"
         result = f"_{result.rstrip()}_\n"
     elif key == "updates_header":
         # Format: "*CrazyOnes - Apple Updates* - _{display_name}_\n\n..."
@@ -536,6 +543,48 @@ def is_admin(user_id: int) -> bool:
     return str(user_id) == str(admin_user_id)
 
 
+def count_subscribers() -> dict[str, int]:
+    """
+    Count active subscribers broken down by chat type.
+
+    For subscriptions that include a stored ``chat_type`` field, the exact type
+    is used.  For legacy entries without that field a heuristic is applied:
+    positive chat IDs are classified as private users; negative IDs as groups.
+
+    Returns:
+        Dictionary with keys ``total``, ``users``, ``channels``, and ``groups``.
+    """
+    subscriptions = load_subscriptions()
+    total = 0
+    users = 0
+    channels = 0
+    groups = 0
+
+    for chat_id, data in subscriptions.items():
+        if not data.get("active", False):
+            continue
+        total += 1
+
+        chat_type = data.get("chat_type", "")
+        if chat_type == Chat.PRIVATE:
+            users += 1
+        elif chat_type == Chat.CHANNEL:
+            channels += 1
+        elif chat_type in (Chat.GROUP, Chat.SUPERGROUP):
+            groups += 1
+        else:
+            # Fallback heuristic based on chat_id sign
+            try:
+                if int(chat_id) > 0:
+                    users += 1
+                else:
+                    groups += 1
+            except ValueError:
+                users += 1
+
+    return {"total": total, "users": users, "channels": channels, "groups": groups}
+
+
 def get_user_language(chat_id: str) -> str:
     """
     Get the user's language preference from subscriptions.
@@ -643,16 +692,20 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     # Load subscriptions
     subscriptions = load_subscriptions()
 
+    chat_type = update.effective_chat.type
+
     # Check if user already has a subscription
     if chat_id in subscriptions:
         # User exists, just activate and use their saved language
         subscriptions[chat_id]["active"] = True
+        subscriptions[chat_id]["chat_type"] = chat_type
         language_code = subscriptions[chat_id].get("language_code", DEFAULT_LANGUAGE)
     else:
         # New user, create subscription with default language
         subscriptions[chat_id] = {
             "language_code": DEFAULT_LANGUAGE,
             "active": True,
+            "chat_type": chat_type,
             "last_update_id": None,  # Changed from last_update_index to last_update_id
             "last_update_signature": None,
         }
@@ -705,9 +758,11 @@ async def language_selection_callback(
     last_id = (
         None if is_first_time else subscriptions[chat_id].get("last_update_id", None)
     )
+    chat_type = update.effective_chat.type
     subscriptions[chat_id] = {
         "language_code": language_code,
         "active": True,
+        "chat_type": chat_type,
         "last_update_id": last_id,
         "last_update_signature": subscriptions.get(chat_id, {}).get(
             "last_update_signature", None
@@ -850,6 +905,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
             "\n\n"
             + get_translation(lang_code, "help_commands_admin")
             + get_translation(lang_code, "help_rebuild")
+            + get_translation(lang_code, "help_subscribers")
         )
 
     await update.message.reply_text(help_message, parse_mode="Markdown")
@@ -1669,6 +1725,48 @@ async def rebuild_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         )
 
 
+async def subscribers_command(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
+    """
+    Handle /subscribers command. Report subscriber counts to the administrator.
+
+    Displays the total number of active subscribers and a breakdown by chat
+    type (individual users, channels, and groups).  Non-admin users receive
+    the standard unknown-command response so the command is not disclosed.
+
+    Args:
+        update: Telegram update object
+        context: Callback context
+    """
+    if not update.effective_chat or not update.message or not update.effective_user:
+        return
+
+    if not is_admin(update.effective_user.id):
+        await handle_unknown_command(update, context)
+        return
+
+    chat_id = str(update.effective_chat.id)
+    lang_code = get_user_language(chat_id)
+
+    counts = count_subscribers()
+
+    report = (
+        get_translation(lang_code, "subscribers_title")
+        + get_translation(
+            lang_code, "subscribers_active_total", total=counts["total"]
+        )
+        + get_translation(lang_code, "subscribers_breakdown")
+        + get_translation(lang_code, "subscribers_users", users=counts["users"])
+        + get_translation(
+            lang_code, "subscribers_channels", channels=counts["channels"]
+        )
+        + get_translation(lang_code, "subscribers_groups", groups=counts["groups"])
+    )
+
+    await update.message.reply_text(report, parse_mode="Markdown")
+
+
 async def send_version_notifications(
     application: Application,  # type: ignore[type-arg]
     version: str,
@@ -1743,6 +1841,7 @@ def create_application(token: str) -> Application:  # type: ignore[type-arg]
     application.add_handler(CommandHandler("help", help_command))
     application.add_handler(CommandHandler("version", version_command))
     application.add_handler(CommandHandler("rebuild", rebuild_command))
+    application.add_handler(CommandHandler("subscribers", subscribers_command))
 
     # Add callback query handler for language selection
     application.add_handler(CallbackQueryHandler(language_selection_callback))

@@ -43,11 +43,18 @@
   "version_message": "CrazyOnes v{version}",
   "version_notification_header": "CrazyOnes v{version} is now running\n",
   "version_notification_body": "What's new in this version:\n\n{changes}",
-  "version_changes": "- Automatic version-announcement notifications disabled\n- /version verbose shows the latest release notes and a link to the full changelog",
+  "version_changes": "- New /subscribers command for administrators: shows total active subscriber count broken down by individual users, channels, and groups",
   "version_verbose_link": "View full changelog on GitHub",
   "help_commands_admin": "Admin Commands\n",
   "help_rebuild": "/rebuild - Regenerate security updates JSON files (admin only)\n",
   "rebuild_started": "Rebuilding security updates data, please wait...",
   "rebuild_success": "Security updates data has been successfully rebuilt.",
-  "rebuild_error": "An error occurred while rebuilding security updates data."
+  "rebuild_error": "An error occurred while rebuilding security updates data.",
+  "help_subscribers": "/subscribers - Show subscriber count breakdown (admin only)\n",
+  "subscribers_title": "CrazyOnes - Subscriber Report\n\n",
+  "subscribers_active_total": "Total active subscribers: {total}\n\n",
+  "subscribers_breakdown": "Breakdown\n",
+  "subscribers_users": "- Individual users: {users}\n",
+  "subscribers_channels": "- Channels: {channels}\n",
+  "subscribers_groups": "- Groups: {groups}\n"
 }

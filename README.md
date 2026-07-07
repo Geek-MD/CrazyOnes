@@ -205,6 +205,10 @@ When a user selects their Apple Updates language preference, the bot automatical
 - `/help` - Show all available commands and usage information
 - `/version` - Show the currently running bot version
 
+**Administrator Commands** (visible only to the configured admin):
+- `/rebuild` - Force a full re-scrape of the Apple Updates page and regenerate all language update files
+- `/subscribers` - Show total active subscriber count broken down by individual users, channels, and groups
+
 **Fuzzy Matching (Smart Suggestions):**
 The bot includes intelligent fuzzy matching to help users when they make typos:
 
