@@ -170,7 +170,7 @@ The monitoring and notification system works as follows:
 - Users can subscribe by sending `/start` to the bot
 - Select their preferred Apple Updates language
 - **Automatic UI language detection** - bot interface adapts to user's selected language
-- **158 languages supported** - full translation system with JSON-based string management
+- **158 languages supported** - full translation system with JSON-based string management; all locale files are translated into their respective native languages
 - **Base-language locale fallback** - regional locales (for example, `es-cl`) can reuse complete base translations (such as `es-es`) when a key is missing
 - **Two ways to receive updates:**
   1. **Automatic notifications** - Receive new updates as they're detected (only unseen updates)
@@ -190,8 +190,8 @@ The bot supports 158 languages with automatic interface translation:
 - **German, Italian, Japanese, Korean, Portuguese, Russian**, and many more
 
 When a user selects their Apple Updates language preference, the bot automatically:
-- Displays all messages in that language (if translation available)
-- Fallback to English for languages without full translations
+- Displays all messages in that language (all 158 locales have native translations)
+- Fallback to English for any missing keys in partially-translated locales
 - Maintains consistent user experience across all commands
 
 **Bot Commands:**
