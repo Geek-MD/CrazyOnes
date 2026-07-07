@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} 이(가) 현재 실행 중입니다\n",
   "version_notification_body": "이 버전의 새로운 내용:\n\n{changes}",
   "version_changes": "- 버전 공지 자동 알림 비활성화\n- /version verbose 에서 최신 릴리스 노트와 전체 변경 로그 링크 표시",
-  "version_verbose_link": "GitHub에서 전체 변경 로그 보기",
-  "help_commands_admin": "관리자 명령어\n",
-  "help_rebuild": "/rebuild - 보안 업데이트 JSON 파일 다시 생성하기 (관리자 전용)\n",
-  "rebuild_started": "보안 업데이트 데이터를 다시 생성하는 중입니다. 잠시만 기다려 주세요...",
-  "rebuild_success": "보안 업데이트 데이터가 성공적으로 다시 생성되었습니다.",
-  "rebuild_error": "보안 업데이트 데이터를 다시 생성하는 중 오류가 발생했습니다."
+  "version_verbose_link": "GitHub에서 전체 변경 로그 보기"
 }

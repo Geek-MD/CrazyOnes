@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} køyrer no\n",
   "version_notification_body": "Nytt i denne versjonen:\n\n{changes}",
   "version_changes": "- Automatiske versjonskunngjeringsvarslar er slått av\n- /version verbose viser dei nyaste utgivingsnotata og ei lenkje til heile endringsloggen",
-  "version_verbose_link": "Sjå heile endringsloggen på GitHub",
-  "help_commands_admin": "Administratorkommandoar\n",
-  "help_rebuild": "/rebuild - Generer JSON-filer for tryggingsoppdateringar på nytt (berre for administrator)\n",
-  "rebuild_started": "Byggjer data for tryggingsoppdateringar på nytt, ver venleg å vente...",
-  "rebuild_success": "Data for tryggingsoppdateringar blei bygde opp på nytt.",
-  "rebuild_error": "Det oppstod ein feil medan data for tryggingsoppdateringar blei bygde opp på nytt."
+  "version_verbose_link": "Sjå heile endringsloggen på GitHub"
 }

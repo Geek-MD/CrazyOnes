@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} zdaj deluje\n",
   "version_notification_body": "Kaj je novega v tej različici:\n\n{changes}",
   "version_changes": "- Samodejna obvestila o novi različici so onemogočena\n- /version verbose prikaže najnovejše opombe ob izdaji in povezavo do celotnega dnevnika sprememb",
-  "version_verbose_link": "Ogled celotnega dnevnika sprememb na GitHubu",
-  "help_commands_admin": "Skrbniški ukazi\n",
-  "help_rebuild": "/rebuild - Ponovno ustvari JSON-datoteke z varnostnimi posodobitvami (samo za skrbnike)\n",
-  "rebuild_started": "Podatki o varnostnih posodobitvah se ponovno ustvarjajo, prosimo, počakajte...",
-  "rebuild_success": "Podatki o varnostnih posodobitvah so bili uspešno ponovno ustvarjeni.",
-  "rebuild_error": "Pri ponovnem ustvarjanju podatkov o varnostnih posodobitvah je prišlo do napake."
+  "version_verbose_link": "Ogled celotnega dnevnika sprememb na GitHubu"
 }

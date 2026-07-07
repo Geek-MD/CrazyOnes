@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} er nú í keyrslu\n",
   "version_notification_body": "Nýtt í þessari útgáfu:\n\n{changes}",
   "version_changes": "- Sjálfvirkar tilkynningar um nýja útgáfu hafa verið gerðar óvirkar\n- /version verbose sýnir nýjustu útgáfuskýringarnar og tengil á alla breytingaskrána",
-  "version_verbose_link": "Skoða alla breytingaskrána á GitHub",
-  "help_commands_admin": "Stjórnandaskipanir\n",
-  "help_rebuild": "/rebuild - Endurmynda JSON-skrár fyrir öryggisuppfærslur (aðeins stjórnandi)\n",
-  "rebuild_started": "Endurmynda gögn um öryggisuppfærslur, vinsamlegast bíddu...",
-  "rebuild_success": "Gögn um öryggisuppfærslur voru endurmynduð.",
-  "rebuild_error": "Villa kom upp við endurmyndun gagna um öryggisuppfærslur."
+  "version_verbose_link": "Skoða alla breytingaskrána á GitHub"
 }

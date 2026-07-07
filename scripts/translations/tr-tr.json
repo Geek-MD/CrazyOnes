@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} artık çalışıyor\n",
   "version_notification_body": "Bu sürümdeki yenilikler:\n\n{changes}",
   "version_changes": "- Otomatik sürüm duyuru bildirimleri devre dışı bırakıldı\n- /version verbose, en son sürüm notlarını ve tam değişiklik günlüğü bağlantısını gösterir",
-  "version_verbose_link": "GitHub'da tam değişiklik günlüğünü görüntüle",
-  "help_commands_admin": "Yönetici Komutları\n",
-  "help_rebuild": "/rebuild - Güvenlik güncellemeleri JSON dosyalarını yeniden oluştur (yalnızca yönetici)\n",
-  "rebuild_started": "Güvenlik güncellemesi verileri yeniden oluşturuluyor, lütfen bekleyin...",
-  "rebuild_success": "Güvenlik güncellemesi verileri başarıyla yeniden oluşturuldu.",
-  "rebuild_error": "Güvenlik güncellemesi verileri yeniden oluşturulurken bir hata oluştu."
+  "version_verbose_link": "GitHub'da tam değişiklik günlüğünü görüntüle"
 }

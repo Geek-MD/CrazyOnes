@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} ja està en execució\n",
   "version_notification_body": "Novetats d'aquesta versió:\n\n{changes}",
   "version_changes": "- Les notificacions automàtiques d'anunci de versió s'han desactivat\n- /version verbose mostra les últimes notes de la versió i un enllaç al registre complet de canvis",
-  "version_verbose_link": "Veure el registre complet de canvis a GitHub",
-  "help_commands_admin": "Ordres d'administrador\n",
-  "help_rebuild": "/rebuild - Regenerar els fitxers JSON d'actualitzacions de seguretat (només administrador)\n",
-  "rebuild_started": "S'estan regenerant les dades d'actualitzacions de seguretat, si us plau espera...",
-  "rebuild_success": "Les dades d'actualitzacions de seguretat s'han regenerat correctament.",
-  "rebuild_error": "S'ha produït un error mentre es regeneraven les dades d'actualitzacions de seguretat."
+  "version_verbose_link": "Veure el registre complet de canvis a GitHub"
 }

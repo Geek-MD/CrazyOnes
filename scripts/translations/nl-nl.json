@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} wordt nu uitgevoerd\n",
   "version_notification_body": "Nieuw in deze versie:\n\n{changes}",
   "version_changes": "- Automatische meldingen van versieaankondigingen uitgeschakeld\n- /version verbose toont de nieuwste versienotities en een link naar het volledige wijzigingslogboek",
-  "version_verbose_link": "Volledig wijzigingslogboek bekijken op GitHub",
-  "help_commands_admin": "Beheerdersopdrachten\n",
-  "help_rebuild": "/rebuild - JSON-bestanden voor beveiligingsupdates opnieuw genereren (alleen beheerder)\n",
-  "rebuild_started": "Gegevens van beveiligingsupdates worden opnieuw gegenereerd, een ogenblik geduld...",
-  "rebuild_success": "De gegevens van beveiligingsupdates zijn succesvol opnieuw gegenereerd.",
-  "rebuild_error": "Er is een fout opgetreden tijdens het opnieuw genereren van de gegevens van beveiligingsupdates."
+  "version_verbose_link": "Volledig wijzigingslogboek bekijken op GitHub"
 }

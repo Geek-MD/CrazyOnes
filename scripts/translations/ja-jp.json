@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} が現在稼働中です\n",
   "version_notification_body": "このバージョンの新機能:\n\n{changes}",
   "version_changes": "- バージョン告知の自動通知を無効化\n- /version verbose で最新のリリースノートと完全な変更履歴へのリンクを表示",
-  "version_verbose_link": "GitHubで完全な変更履歴を見る",
-  "help_commands_admin": "管理者コマンド\n",
-  "help_rebuild": "/rebuild - セキュリティアップデートのJSONファイルを再生成する（管理者のみ）\n",
-  "rebuild_started": "セキュリティアップデートのデータを再構築しています。しばらくお待ちください...",
-  "rebuild_success": "セキュリティアップデートのデータが正常に再構築されました。",
-  "rebuild_error": "セキュリティアップデートのデータの再構築中にエラーが発生しました。"
+  "version_verbose_link": "GitHubで完全な変更履歴を見る"
 }

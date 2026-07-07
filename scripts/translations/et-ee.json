@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} töötab nüüd\n",
   "version_notification_body": "Selle versiooni uuendused:\n\n{changes}",
   "version_changes": "- Automaatseid versiooniteavitusi enam ei saadeta\n- /version verbose näitab viimaseid väljalaskemärkmeid ja linki täielikule muudatuste logile",
-  "version_verbose_link": "Vaata täielikku muudatuste logi GitHubis",
-  "help_commands_admin": "Administraatori käsud\n",
-  "help_rebuild": "/rebuild - Loo turvauuenduste JSON-failid uuesti (ainult administraator)\n",
-  "rebuild_started": "Turvauuenduste andmeid ehitatakse uuesti, palun oota...",
-  "rebuild_success": "Turvauuenduste andmed loodi edukalt uuesti.",
-  "rebuild_error": "Turvauuenduste andmete uuesti loomisel tekkis viga."
+  "version_verbose_link": "Vaata täielikku muudatuste logi GitHubis"
 }

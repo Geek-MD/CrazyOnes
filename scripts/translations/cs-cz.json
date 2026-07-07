@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} je nyní spuštěn\n",
   "version_notification_body": "Co je nového v této verzi:\n\n{changes}",
   "version_changes": "- Automatická oznámení o vydání nové verze byla vypnuta\n- /version verbose zobrazí nejnovější poznámky k vydání a odkaz na úplný přehled změn",
-  "version_verbose_link": "Zobrazit úplný přehled změn na GitHubu",
-  "help_commands_admin": "Příkazy pro správce\n",
-  "help_rebuild": "/rebuild - Znovu vygenerovat soubory JSON s bezpečnostními aktualizacemi (pouze správce)\n",
-  "rebuild_started": "Probíhá opětovné vytváření dat bezpečnostních aktualizací, čekejte prosím...",
-  "rebuild_success": "Data bezpečnostních aktualizací byla úspěšně znovu vytvořena.",
-  "rebuild_error": "Při opětovném vytváření dat bezpečnostních aktualizací došlo k chybě."
+  "version_verbose_link": "Zobrazit úplný přehled změn na GitHubu"
 }

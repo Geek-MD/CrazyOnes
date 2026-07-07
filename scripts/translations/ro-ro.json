@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} rulează acum\n",
   "version_notification_body": "Noutăți în această versiune:\n\n{changes}",
   "version_changes": "- Notificările automate de anunțare a versiunii au fost dezactivate\n- /version verbose afișează cele mai recente note ale versiunii și un link către jurnalul complet al modificărilor",
-  "version_verbose_link": "Vezi jurnalul complet al modificărilor pe GitHub",
-  "help_commands_admin": "Comenzi de administrator\n",
-  "help_rebuild": "/rebuild - Regenerează fișierele JSON cu actualizări de securitate (doar pentru administratori)\n",
-  "rebuild_started": "Se regenerează datele actualizărilor de securitate, te rugăm să aștepți...",
-  "rebuild_success": "Datele actualizărilor de securitate au fost regenerate cu succes.",
-  "rebuild_error": "A apărut o eroare în timpul regenerării datelor actualizărilor de securitate."
+  "version_verbose_link": "Vezi jurnalul complet al modificărilor pe GitHub"
 }

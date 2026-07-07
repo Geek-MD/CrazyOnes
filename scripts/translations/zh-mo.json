@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} 現在已啟用\n",
   "version_notification_body": "此版本的新內容：\n\n{changes}",
   "version_changes": "- 已停用自動版本公告通知\n- /version verbose 會顯示最新版本說明與完整變更記錄連結",
-  "version_verbose_link": "在 GitHub 上查看完整變更記錄",
-  "help_commands_admin": "管理員指令\n",
-  "help_rebuild": "/rebuild - 重新產生安全更新 JSON 檔案（僅限管理員）\n",
-  "rebuild_started": "正在重建安全更新資料，請稍候...",
-  "rebuild_success": "安全更新資料已成功重建。",
-  "rebuild_error": "重建安全更新資料時發生錯誤。"
+  "version_verbose_link": "在 GitHub 上查看完整變更記錄"
 }

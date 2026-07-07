@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} jest teraz uruchomiony\n",
   "version_notification_body": "Co nowego w tej wersji:\n\n{changes}",
   "version_changes": "- Automatyczne powiadomienia o ogłoszeniach wersji zostały wyłączone\n- /version verbose pokazuje najnowsze informacje o wydaniu oraz link do pełnego dziennika zmian",
-  "version_verbose_link": "Zobacz pełny dziennik zmian w GitHub",
-  "help_commands_admin": "Polecenia administratora\n",
-  "help_rebuild": "/rebuild - Wygeneruj ponownie pliki JSON aktualizacji zabezpieczeń (tylko administrator)\n",
-  "rebuild_started": "Trwa ponowne budowanie danych aktualizacji zabezpieczeń, proszę czekać...",
-  "rebuild_success": "Dane aktualizacji zabezpieczeń zostały pomyślnie odbudowane.",
-  "rebuild_error": "Wystąpił błąd podczas ponownego budowania danych aktualizacji zabezpieczeń."
+  "version_verbose_link": "Zobacz pełny dziennik zmian w GitHub"
 }

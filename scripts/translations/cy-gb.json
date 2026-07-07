@@ -44,10 +44,5 @@
   "version_notification_header": "Mae CrazyOnes v{version} bellach yn rhedeg\n",
   "version_notification_body": "Beth sy'n newydd yn y fersiwn hon:\n\n{changes}",
   "version_changes": "- Analluogwyd hysbysiadau cyhoeddi fersiwn awtomatig\n- Mae /version verbose yn dangos y nodiadau rhyddhau diweddaraf a dolen i'r cofnod newid llawn",
-  "version_verbose_link": "Gweld y cofnod newid llawn ar GitHub",
-  "help_commands_admin": "Gorchmynion gweinyddwr\n",
-  "help_rebuild": "/rebuild - Ailgynhyrchu ffeiliau JSON diweddariadau diogelwch (gweinyddwr yn unig)\n",
-  "rebuild_started": "Yn ailadeiladu data diweddariadau diogelwch, arhoswch...",
-  "rebuild_success": "Mae data diweddariadau diogelwch wedi'i ailadeiladu'n llwyddiannus.",
-  "rebuild_error": "Digwyddodd gwall wrth ailadeiladu data diweddariadau diogelwch."
+  "version_verbose_link": "Gweld y cofnod newid llawn ar GitHub"
 }

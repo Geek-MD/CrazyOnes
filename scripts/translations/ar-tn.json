@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} يعمل الآن\n",
   "version_notification_body": "ما الجديد في هذا الإصدار:\n\n{changes}",
   "version_changes": "- تم تعطيل الإشعارات التلقائية للإعلان عن الإصدارات\n- يعرض /version verbose أحدث ملاحظات الإصدار ورابطًا إلى سجل التغييرات الكامل",
-  "version_verbose_link": "عرض سجل التغييرات الكامل على GitHub",
-  "help_commands_admin": "أوامر المسؤول\n",
-  "help_rebuild": "/rebuild - إعادة إنشاء ملفات JSON الخاصة بتحديثات الأمان (للمسؤول فقط)\n",
-  "rebuild_started": "جارٍ إعادة إنشاء بيانات تحديثات الأمان، يرجى الانتظار...",
-  "rebuild_success": "تمت إعادة إنشاء بيانات تحديثات الأمان بنجاح.",
-  "rebuild_error": "حدث خطأ أثناء إعادة إنشاء بيانات تحديثات الأمان."
+  "version_verbose_link": "عرض سجل التغييرات الكامل على GitHub"
 }
