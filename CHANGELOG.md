@@ -5,6 +5,16 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-07-07
+
+### Added
+- New `/subscribers` command exclusive to the configured administrator. It reports the total number of active subscribers and a breakdown by chat type: individual users (private chats), channels, and groups/supergroups.
+- `/subscribers` is listed in `/help` only when the requester is the configured administrator; all other users receive the standard unknown-command response.
+- New translation keys: `help_subscribers`, `subscribers_title`, `subscribers_active_total`, `subscribers_breakdown`, `subscribers_users`, `subscribers_channels`, and `subscribers_groups` added to `strings.json`, `en-us.json`, and `es-es.json`.
+
+### Changed
+- Subscription records now persist a `chat_type` field (e.g., `private`, `group`, `supergroup`, `channel`) so subscriber counts are classified accurately. Existing records without this field fall back to a sign-based heuristic (positive chat ID → user, negative → group).
+
 ## [1.3.8] - 2026-07-07
 
 ### Fixed

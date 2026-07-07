@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} kini sedang berjalan\n",
   "version_notification_body": "Apa yang baharu dalam versi ini:\n\n{changes}",
   "version_changes": "- Pemberitahuan pengumuman versi automatik dinyahdayakan\n- /version verbose memaparkan nota keluaran terkini dan pautan ke log perubahan penuh",
-  "version_verbose_link": "Lihat log perubahan penuh di GitHub",
-  "help_commands_admin": "Arahan Pentadbir\n",
-  "help_rebuild": "/rebuild - Jana semula fail JSON kemas kini keselamatan (admin sahaja)\n",
-  "rebuild_started": "Sedang menjana semula data kemas kini keselamatan, sila tunggu...",
-  "rebuild_success": "Data kemas kini keselamatan telah berjaya dijana semula.",
-  "rebuild_error": "Ralat berlaku semasa menjana semula data kemas kini keselamatan."
+  "version_verbose_link": "Lihat log perubahan penuh di GitHub"
 }

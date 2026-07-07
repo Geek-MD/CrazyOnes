@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} körs nu\n",
   "version_notification_body": "Nyheter i denna version:\n\n{changes}",
   "version_changes": "- Automatiska meddelanden om versionsannonseringar har inaktiverats\n- /version verbose visar de senaste versionsanteckningarna och en länk till den fullständiga ändringsloggen",
-  "version_verbose_link": "Visa fullständig ändringslogg på GitHub",
-  "help_commands_admin": "Administratörskommandon\n",
-  "help_rebuild": "/rebuild - Återskapa JSON-filer för säkerhetsuppdateringar (endast administratör)\n",
-  "rebuild_started": "Säkerhetsuppdateringsdata återskapas, vänta...",
-  "rebuild_success": "Data för säkerhetsuppdateringar har återskapats.",
-  "rebuild_error": "Ett fel uppstod när data för säkerhetsuppdateringar skulle återskapas."
+  "version_verbose_link": "Visa fullständig ändringslogg på GitHub"
 }

@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} martxan dago orain\n",
   "version_notification_body": "Bertsio honetako berritasunak:\n\n{changes}",
   "version_changes": "- Bertsioaren iragarpen-jakinarazpen automatikoak desgaitu dira\n- /version verbose komandoak azken bertsio-oharrak eta aldaketa-erregistro osorako esteka erakusten ditu",
-  "version_verbose_link": "Ikusi aldaketa-erregistro osoa GitHub-en",
-  "help_commands_admin": "Administratzailearen komandoak\n",
-  "help_rebuild": "/rebuild - Birsortu segurtasun-eguneraketen JSON fitxategiak (administratzaileentzat bakarrik)\n",
-  "rebuild_started": "Segurtasun-eguneraketen datuak berreraikitzen, itxaron mesedez...",
-  "rebuild_success": "Segurtasun-eguneraketen datuak ondo berreraiki dira.",
-  "rebuild_error": "Errore bat gertatu da segurtasun-eguneraketen datuak berreraikitzean."
+  "version_verbose_link": "Ikusi aldaketa-erregistro osoa GitHub-en"
 }

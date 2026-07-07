@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} tagad darbojas\n",
   "version_notification_body": "Kas jauns šajā versijā:\n\n{changes}",
   "version_changes": "- Automātiskie paziņojumi par versiju ir atspējoti\n- /version verbose parāda jaunākās laidiena piezīmes un saiti uz pilno izmaiņu žurnālu",
-  "version_verbose_link": "Skatīt pilno izmaiņu žurnālu GitHub",
-  "help_commands_admin": "Administratora komandas\n",
-  "help_rebuild": "/rebuild - Atkārtoti ģenerēt drošības atjauninājumu JSON failus (tikai administratoriem)\n",
-  "rebuild_started": "Notiek drošības atjauninājumu datu atkārtota ģenerēšana, lūdzu, uzgaidiet...",
-  "rebuild_success": "Drošības atjauninājumu dati ir veiksmīgi atkārtoti ģenerēti.",
-  "rebuild_error": "Atkārtoti ģenerējot drošības atjauninājumu datus, radās kļūda."
+  "version_verbose_link": "Skatīt pilno izmaiņu žurnālu GitHub"
 }

@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} dabar veikia\n",
   "version_notification_body": "Kas naujo šioje versijoje:\n\n{changes}",
   "version_changes": "- Automatiniai versijos pranešimai išjungti\n- /version verbose rodo naujausias leidimo pastabas ir nuorodą į visą pakeitimų žurnalą",
-  "version_verbose_link": "Peržiūrėti visą pakeitimų žurnalą GitHub platformoje",
-  "help_commands_admin": "Administratoriaus komandos\n",
-  "help_rebuild": "/rebuild - Iš naujo sugeneruoti saugumo naujinimų JSON failus (tik administratoriams)\n",
-  "rebuild_started": "Iš naujo kuriami saugumo naujinimų duomenys, palaukite...",
-  "rebuild_success": "Saugumo naujinimų duomenys sėkmingai sugeneruoti iš naujo.",
-  "rebuild_error": "Kuriant saugumo naujinimų duomenis iš naujo įvyko klaida."
+  "version_verbose_link": "Peržiūrėti visą pakeitimų žurnalą GitHub platformoje"
 }

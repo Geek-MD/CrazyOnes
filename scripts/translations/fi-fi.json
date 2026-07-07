@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} on nyt käynnissä\n",
   "version_notification_body": "Uutta tässä versiossa:\n\n{changes}",
   "version_changes": "- Automaattiset versioilmoitukset poistettu käytöstä\n- /version verbose näyttää uusimmat julkaisutiedot ja linkin täydelliseen muutoslokiin",
-  "version_verbose_link": "Näytä täydellinen muutosloki GitHubissa",
-  "help_commands_admin": "Ylläpitäjän komennot\n",
-  "help_rebuild": "/rebuild - Luo suojauspäivitysten JSON-tiedostot uudelleen (vain ylläpitäjä)\n",
-  "rebuild_started": "Suojauspäivitysten tietoja rakennetaan uudelleen, odota...",
-  "rebuild_success": "Suojauspäivitysten tiedot on rakennettu uudelleen onnistuneesti.",
-  "rebuild_error": "Suojauspäivitysten tietojen uudelleenrakennuksen aikana tapahtui virhe."
+  "version_verbose_link": "Näytä täydellinen muutosloki GitHubissa"
 }

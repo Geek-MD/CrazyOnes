@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} je sada pokrenut\n",
   "version_notification_body": "Što je novo u ovoj verziji:\n\n{changes}",
   "version_changes": "- Automatske obavijesti o najavi verzije su onemogućene\n- /version verbose prikazuje najnovije bilješke o izdanju i poveznicu na potpuni dnevnik promjena",
-  "version_verbose_link": "Pogledaj potpuni dnevnik promjena na GitHubu",
-  "help_commands_admin": "Administratorske naredbe\n",
-  "help_rebuild": "/rebuild - Ponovno generiraj JSON datoteke sigurnosnih ažuriranja (samo za administratore)\n",
-  "rebuild_started": "Ponovno se izrađuju podaci o sigurnosnim ažuriranjima, pričekajte...",
-  "rebuild_success": "Podaci o sigurnosnim ažuriranjima uspješno su ponovno izrađeni.",
-  "rebuild_error": "Došlo je do pogreške tijekom ponovne izrade podataka o sigurnosnim ažuriranjima."
+  "version_verbose_link": "Pogledaj potpuni dnevnik promjena na GitHubu"
 }

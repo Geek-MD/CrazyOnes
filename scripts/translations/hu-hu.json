@@ -44,10 +44,5 @@
   "version_notification_header": "A CrazyOnes v{version} most fut\n",
   "version_notification_body": "Újdonságok ebben a verzióban:\n\n{changes}",
   "version_changes": "- Az automatikus verzióbejelentő értesítések letiltva\n- A /version verbose megjeleníti a legfrissebb kiadási megjegyzéseket és a teljes változásnapló hivatkozását",
-  "version_verbose_link": "A teljes változásnapló megtekintése GitHubon",
-  "help_commands_admin": "Adminisztrátori parancsok\n",
-  "help_rebuild": "/rebuild - A biztonsági frissítések JSON-fájljainak újragenerálása (csak adminoknak)\n",
-  "rebuild_started": "A biztonsági frissítési adatok újraépítése folyamatban, kérlek, várj...",
-  "rebuild_success": "A biztonsági frissítési adatok sikeresen újra lettek építve.",
-  "rebuild_error": "Hiba történt a biztonsági frissítési adatok újraépítése közben."
+  "version_verbose_link": "A teljes változásnapló megtekintése GitHubon"
 }

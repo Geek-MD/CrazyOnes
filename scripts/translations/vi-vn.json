@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} hiện đang chạy\n",
   "version_notification_body": "Điểm mới trong phiên bản này:\n\n{changes}",
   "version_changes": "- Đã tắt thông báo công bố phiên bản tự động\n- /version verbose hiển thị ghi chú phát hành mới nhất và liên kết đến nhật ký thay đổi đầy đủ",
-  "version_verbose_link": "Xem nhật ký thay đổi đầy đủ trên GitHub",
-  "help_commands_admin": "Lệnh quản trị\n",
-  "help_rebuild": "/rebuild - Tạo lại các tệp JSON cập nhật bảo mật (chỉ dành cho quản trị viên)\n",
-  "rebuild_started": "Đang tạo lại dữ liệu cập nhật bảo mật, vui lòng chờ...",
-  "rebuild_success": "Dữ liệu cập nhật bảo mật đã được tạo lại thành công.",
-  "rebuild_error": "Đã xảy ra lỗi khi tạo lại dữ liệu cập nhật bảo mật."
+  "version_verbose_link": "Xem nhật ký thay đổi đầy đủ trên GitHub"
 }

@@ -44,10 +44,5 @@
   "version_notification_header": "Tá CrazyOnes v{version} ag rith anois\n",
   "version_notification_body": "Cad atá nua sa leagan seo:\n\n{changes}",
   "version_changes": "- Díchumasaíodh fógraí uathoibríocha fógra leagain\n- Taispeánann /version verbose na nótaí eisiúna is déanaí agus nasc chuig an loga athruithe iomlán",
-  "version_verbose_link": "Féach an loga athruithe iomlán ar GitHub",
-  "help_commands_admin": "Orduithe riarthóra\n",
-  "help_rebuild": "/rebuild - Athghin comhaid JSON nuashonruithe slándála (riarthóir amháin)\n",
-  "rebuild_started": "Sonraí nuashonruithe slándála á n-aththógáil, fan go fóill...",
-  "rebuild_success": "Aththógadh sonraí nuashonruithe slándála go rathúil.",
-  "rebuild_error": "Tharla earráid agus sonraí nuashonruithe slándála á n-aththógáil."
+  "version_verbose_link": "Féach an loga athruithe iomlán ar GitHub"
 }

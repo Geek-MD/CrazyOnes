@@ -43,11 +43,18 @@
   "version_message": "CrazyOnes v{version}",
   "version_notification_header": "CrazyOnes v{version} ya está en ejecución\n",
   "version_notification_body": "Novedades en esta versión:\n\n{changes}",
-  "version_changes": "- Notificaciones automáticas de anuncio de versión desactivadas\n- /version verbose muestra las últimas notas de la versión y un enlace al registro de cambios completo",
+  "version_changes": "- Nuevo comando /subscribers para administradores: muestra el total de suscriptores activos desglosado por usuarios individuales, canales y grupos",
   "version_verbose_link": "Ver registro de cambios completo en GitHub",
   "help_commands_admin": "Comandos de Administrador\n",
   "help_rebuild": "/rebuild - Regenerar archivos JSON de actualizaciones de seguridad (solo administrador)\n",
   "rebuild_started": "Regenerando datos de actualizaciones de seguridad, por favor espere...",
   "rebuild_success": "Los datos de actualizaciones de seguridad se han regenerado exitosamente.",
-  "rebuild_error": "Ocurrió un error al regenerar los datos de actualizaciones de seguridad."
+  "rebuild_error": "Ocurrió un error al regenerar los datos de actualizaciones de seguridad.",
+  "help_subscribers": "/subscribers - Mostrar desglose de suscriptores (solo administrador)\n",
+  "subscribers_title": "CrazyOnes - Informe de Suscriptores\n\n",
+  "subscribers_active_total": "Suscriptores activos totales: {total}\n\n",
+  "subscribers_breakdown": "Desglose\n",
+  "subscribers_users": "- Usuarios individuales: {users}\n",
+  "subscribers_channels": "- Canales: {channels}\n",
+  "subscribers_groups": "- Grupos: {groups}\n"
 }

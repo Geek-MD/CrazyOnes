@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} 现已运行\n",
   "version_notification_body": "此版本的新内容：\n\n{changes}",
   "version_changes": "- 已禁用自动版本公告通知\n- /version verbose 显示最新发行说明以及完整更新日志链接",
-  "version_verbose_link": "在 GitHub 上查看完整更新日志",
-  "help_commands_admin": "管理员命令\n",
-  "help_rebuild": "/rebuild - 重新生成安全更新 JSON 文件（仅限管理员）\n",
-  "rebuild_started": "正在重建安全更新数据，请稍候...",
-  "rebuild_success": "安全更新数据已成功重建。",
-  "rebuild_error": "重建安全更新数据时发生错误。"
+  "version_verbose_link": "在 GitHub 上查看完整更新日志"
 }

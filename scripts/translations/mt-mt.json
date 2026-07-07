@@ -44,10 +44,5 @@
   "version_notification_header": "CrazyOnes v{version} issa qed jaħdem\n",
   "version_notification_body": "X'hemm ġdid f'din il-verżjoni:\n\n{changes}",
   "version_changes": "- In-notifiki awtomatiċi tat-tħabbir tal-verżjoni ġew diżattivati\n- /version verbose juri l-aħħar noti tar-rilaxx u link għar-reġistru sħiħ tal-bidliet",
-  "version_verbose_link": "Ara r-reġistru sħiħ tal-bidliet fuq GitHub",
-  "help_commands_admin": "Kmandi tal-Amministratur\n",
-  "help_rebuild": "/rebuild - Erġa' ġġenera l-fajls JSON tal-aġġornamenti tas-sigurtà (amministratur biss)\n",
-  "rebuild_started": "Qed jerġgħu jinbnew id-data tal-aġġornamenti tas-sigurtà, jekk jogħġbok stenna...",
-  "rebuild_success": "Id-data tal-aġġornamenti tas-sigurtà nbniet mill-ġdid b'suċċess.",
-  "rebuild_error": "Seħħ żball waqt li kienet qed tinbena mill-ġdid id-data tal-aġġornamenti tas-sigurtà."
+  "version_verbose_link": "Ara r-reġistru sħiħ tal-bidliet fuq GitHub"
 }

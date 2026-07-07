@@ -1,1 +1,1 @@
-{}
+{"111": {"active": true, "language_code": "en-us", "chat_type": "private"}, "222": {"active": true, "language_code": "es-es", "chat_type": "private"}, "-1001234567890": {"active": true, "language_code": "en-us", "chat_type": "channel"}, "-1009876543210": {"active": true, "language_code": "en-us", "chat_type": "supergroup"}, "-333": {"active": true, "language_code": "en-us", "chat_type": "group"}, "444": {"active": false, "language_code": "en-us", "chat_type": "private"}, "555": {"active": true, "language_code": "en-us"}}
