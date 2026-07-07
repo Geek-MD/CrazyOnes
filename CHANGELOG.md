@@ -5,6 +5,11 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.7] - 2026-07-07
+
+### Fixed
+- `/help`, `/about`, `/version verbose`, `/language`, and `/updates` commands now respond in the user's configured language instead of always falling back to English. The Spanish (`es-es`) translation file has been fully translated, which automatically applies to all Spanish regional locales (`es-cl`, `es-ar`, `es-mx`, etc.) via the existing base-language fallback mechanism.
+
 ## [1.3.6] - 2026-07-04
 
 ### Added
