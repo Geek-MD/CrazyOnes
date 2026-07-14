@@ -27,6 +27,7 @@ try:
         build_update_signature,
         create_application,
         get_translation,
+        load_admin_user_id,
         load_bot_version,
         load_config_version,
         load_subscriptions,
@@ -44,6 +45,7 @@ except ImportError:
         build_update_signature,
         create_application,
         get_translation,
+        load_admin_user_id,
         load_bot_version,
         load_config_version,
         load_subscriptions,
@@ -62,10 +64,89 @@ logger = logging.getLogger(__name__)
 
 # Trigger file for new updates
 TRIGGER_FILE = "data/new_updates_trigger.json"
+SCRAPING_ERROR_TRIGGER_FILE = "data/scraping_errors_trigger.json"
 
 # Shutdown event
 _shutdown_event = asyncio.Event()
 
+
+async def check_for_scraping_errors(application: AnyApplication) -> None:
+    """Check for scraping error triggers and notify the configured admin user."""
+    trigger_path = Path(SCRAPING_ERROR_TRIGGER_FILE)
+
+    if not trigger_path.exists():
+        return
+
+    logger.info("Scraping error trigger detected, notifying administrator...")
+
+    try:
+        with open(trigger_path, encoding="utf-8") as f:
+            trigger_data: dict[str, Any] = json.load(f)
+
+        trigger_path.unlink()
+
+        errors = trigger_data.get("errors", [])
+        if not isinstance(errors, list) or not errors:
+            logger.warning("Scraping error trigger file had no errors")
+            return
+
+        await send_scraping_error_notification(application, errors)
+
+    except Exception as e:
+        logger.error(f"Error processing scraping error trigger file: {e}")
+        try:
+            trigger_path.unlink()
+        except FileNotFoundError:
+            pass
+
+
+async def send_scraping_error_notification(
+    application: AnyApplication, errors: list[Any]
+) -> None:
+    """Send scraping failure details to the configured administrator."""
+    admin_user_id = load_admin_user_id()
+
+    if not admin_user_id:
+        logger.warning("Scraping error detected, but admin_user_id is not configured")
+        return
+
+    formatted_errors = []
+    for idx, error in enumerate(errors[:10], 1):
+        if not isinstance(error, dict):
+            formatted_errors.append(f"{idx}. {error}")
+            continue
+
+        source = error.get("source", "unknown")
+        timestamp = error.get("timestamp", "unknown time")
+        message = error.get("message", "Unknown scraping error")
+        context = error.get("context", {})
+        context_text = ""
+        if isinstance(context, dict) and context:
+            context_text = "\n   Context: " + ", ".join(
+                f"{key}={value}" for key, value in context.items()
+            )
+
+        formatted_errors.append(
+            f"{idx}. Source: {source}\n"
+            f"   Time: {timestamp}\n"
+            f"   Error: {message}"
+            f"{context_text}"
+        )
+
+    omitted_count = len(errors) - len(formatted_errors)
+    omitted_text = (
+        f"\n\n...and {omitted_count} more error(s)." if omitted_count > 0 else ""
+    )
+
+    message = (
+        "🚨 CrazyOnes scraping error\n\n"
+        "The Apple Updates web scraping process reported a problem:\n\n"
+        + "\n\n".join(formatted_errors)
+        + omitted_text
+    )
+
+    await application.bot.send_message(chat_id=int(admin_user_id), text=message)
+    logger.info(f"Sent scraping error notification to admin {admin_user_id}")
 
 def signal_handler(signum: int, frame: object) -> None:
     """Handle shutdown signals gracefully."""
@@ -383,6 +464,9 @@ async def run_bot_service(token: str) -> None:
 
     while not _shutdown_event.is_set():
         try:
+            # Check for scraping errors first so administrators know about failures.
+            await check_for_scraping_errors(application)
+
             # Check for new updates
             await check_for_new_updates(application)
 

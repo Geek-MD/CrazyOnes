@@ -5,6 +5,14 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.2] - 2026-07-14
+
+### Added
+- Telegram administrator notifications for Apple Updates webscraping errors, including source, timestamp, error message, and diagnostic context.
+
+### Changed
+- Scraping error trigger creation is shared through the common utilities module to avoid duplicated notification code.
+
 ## [1.4.1] - 2026-07-14
 
 ### Fixed

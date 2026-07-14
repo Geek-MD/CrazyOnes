@@ -38,13 +38,15 @@ from bs4 import BeautifulSoup, Tag
 
 try:
     # Try relative import (when used as a module)
-    from .utils import (  # type: ignore[import-not-found,no-redef]
+    from .utils import (  # type: ignore[import-not-found,no-redef]  # noqa: I001
+        create_scraping_error_trigger as create_error_trigger,
         get_user_agent_headers,
         parse_date_to_iso,
     )
 except ImportError:
     # Fall back to absolute import (when run directly)
-    from utils import (  # type: ignore[import-not-found,no-redef]
+    from utils import (  # type: ignore[import-not-found,no-redef]  # noqa: I001
+        create_scraping_error_trigger as create_error_trigger,
         get_user_agent_headers,
         parse_date_to_iso,
     )
@@ -418,7 +420,14 @@ def process_language_url(
             return False
 
     except Exception as e:
-        print(f"  ✗ Error processing {lang_code}: {e}")
+        error_message = f"Error processing {lang_code}: {e}"
+        print(f"  ✗ {error_message}")
+        create_error_trigger(
+            get_project_root(),
+            "monitor_apple_updates",
+            error_message,
+            {"language_code": lang_code, "url": url},
+        )
         return False
 
 
@@ -431,10 +440,17 @@ def main() -> None:
         language_urls = load_language_urls()
         print(f"Loaded {len(language_urls)} language URLs\n")
     except FileNotFoundError as e:
-        print(f"Error: {e}")
+        error_message = str(e)
+        print(f"Error: {error_message}")
         print(
             "Please run scrape_apple_updates.py first to generate "
             "data/language_urls.json"
+        )
+        create_error_trigger(
+            get_project_root(),
+            "monitor_apple_updates",
+            error_message,
+            {"stage": "load_language_urls"},
         )
         return
 

@@ -16,18 +16,22 @@ from bs4 import BeautifulSoup
 
 try:
     # Try relative import (when used as a module)
-    from .generate_language_names import (  # type: ignore[import-not-found,no-redef]  # noqa: E501
+    from .generate_language_names import (  # type: ignore[import-not-found,no-redef]  # noqa: E501,I001
         update_language_names,
     )
-    from .utils import (  # type: ignore[import-not-found,no-redef]
+    from .utils import (  # type: ignore[import-not-found,no-redef]  # noqa: I001
+        create_scraping_error_trigger as create_error_trigger,
         get_user_agent_headers,
     )
 except ImportError:
     # Fall back to absolute import (when run directly)
-    from generate_language_names import (  # type: ignore[import-not-found,no-redef]  # noqa: E501
+    from generate_language_names import (  # type: ignore[import-not-found,no-redef]  # noqa: E501,I001
         update_language_names,
     )
-    from utils import get_user_agent_headers  # type: ignore[import-not-found,no-redef]
+    from utils import (  # type: ignore[import-not-found,no-redef]  # noqa: I001
+        create_scraping_error_trigger as create_error_trigger,
+        get_user_agent_headers,
+    )
 
 
 def get_project_root() -> Path:
@@ -199,4 +203,13 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        create_error_trigger(
+            get_project_root(),
+            "scrape_apple_updates",
+            str(e),
+            {"stage": "scrape_apple_updates_main"},
+        )
+        raise
