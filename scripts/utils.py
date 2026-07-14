@@ -52,6 +52,7 @@ def create_scraping_error_trigger(
     with open(trigger_path, "w", encoding="utf-8") as f:
         json.dump(trigger_data, f, indent=2, ensure_ascii=False)
 
+
 def get_user_agent_headers() -> dict[str, str]:
     """
     Get HTTP headers with proper User-Agent for Apple requests.

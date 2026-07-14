@@ -148,6 +148,7 @@ async def send_scraping_error_notification(
     await application.bot.send_message(chat_id=int(admin_user_id), text=message)
     logger.info(f"Sent scraping error notification to admin {admin_user_id}")
 
+
 def signal_handler(signum: int, frame: object) -> None:
     """Handle shutdown signals gracefully."""
     logger.info("Shutdown signal received")
