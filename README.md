@@ -1,6 +1,6 @@
 # CrazyOnes
 
-![Version](https://img.shields.io/github/v/release/edisonmontes/crazyones?label=version)
+![Version](https://img.shields.io/github/v/release/Geek-MD/CrazyOnes?label=version)
 ![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)
 ![Code Style: Ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)
 ![Type Checked: mypy](https://img.shields.io/badge/type%20checked-mypy-blue)
