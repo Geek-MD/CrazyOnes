@@ -3,8 +3,54 @@
 Utility functions shared across the Apple Updates scraping modules.
 """
 
+import json
 import re
-from datetime import datetime
+from datetime import datetime, timezone
+from pathlib import Path
+
+
+def create_scraping_error_trigger(
+    project_root: Path,
+    source: str,
+    message: str,
+    context: dict[str, str] | None = None,
+    trigger_file: str = "data/scraping_errors_trigger.json",
+) -> None:
+    """Create or append a trigger file so the bot can notify the admin.
+
+    Args:
+        project_root: Repository root used to resolve the trigger file path.
+        source: Scraper module or stage that reported the error.
+        message: Human-readable scraping error description.
+        context: Optional metadata to help diagnose the failure.
+        trigger_file: Path to the trigger JSON file, relative to project_root.
+    """
+    trigger_path = project_root / trigger_file
+    trigger_path.parent.mkdir(parents=True, exist_ok=True)
+
+    error_entry: dict[str, object] = {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "source": source,
+        "message": message,
+        "context": context or {},
+    }
+
+    trigger_data: dict[str, list[dict[str, object]]] = {"errors": []}
+    if trigger_path.exists():
+        try:
+            with open(trigger_path, encoding="utf-8") as f:
+                loaded_data = json.load(f)
+            if isinstance(loaded_data, dict) and isinstance(
+                loaded_data.get("errors"), list
+            ):
+                trigger_data = loaded_data
+        except (OSError, json.JSONDecodeError):
+            trigger_data = {"errors": []}
+
+    trigger_data["errors"].append(error_entry)
+
+    with open(trigger_path, "w", encoding="utf-8") as f:
+        json.dump(trigger_data, f, indent=2, ensure_ascii=False)
 
 
 def get_user_agent_headers() -> dict[str, str]:
