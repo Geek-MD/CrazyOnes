@@ -5,6 +5,12 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1] - 2026-07-14
+
+### Fixed
+- New subscribers now automatically receive the 10 most recent security updates on `/start`.
+- The subscription baseline is persisted after the initial delivery so future automatic notifications only send newer updates.
+
 ## [1.4.0] - 2026-07-07
 
 ### Added
