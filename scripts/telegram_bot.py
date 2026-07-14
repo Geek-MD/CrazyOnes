@@ -697,8 +697,10 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
     chat_type = update.effective_chat.type
 
+    is_new_subscription = chat_id not in subscriptions
+
     # Check if user already has a subscription
-    if chat_id in subscriptions:
+    if not is_new_subscription:
         # User exists, just activate and use their saved language
         subscriptions[chat_id]["active"] = True
         subscriptions[chat_id]["chat_type"] = chat_type
@@ -726,6 +728,11 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     )
 
     await update.message.reply_text(welcome_message, parse_mode="Markdown")
+
+    # New users receive the latest 10 updates immediately and the same call records
+    # the latest delivered marker so automatic notifications only send newer items.
+    if is_new_subscription:
+        await send_recent_updates(update, context, chat_id, language_code)
 
 
 async def language_selection_callback(
