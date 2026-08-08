@@ -8,6 +8,7 @@ in their preferred language. It tracks subscriptions and sends updates according
 
 import asyncio
 import difflib
+import hashlib
 import json
 import logging
 import re
@@ -43,6 +44,9 @@ SUBSCRIPTIONS_FILE = "data/subscriptions.json"
 
 # Bot version tracking file path
 BOT_VERSION_FILE = "data/bot_version.json"
+
+# Content-addressed record of update blocks used as notification baselines.
+UPDATE_BLOCKS_FILE = "data/update_blocks.json"
 
 # Default language for new subscriptions
 DEFAULT_LANGUAGE = "en-us"
@@ -674,6 +678,62 @@ def build_update_signature(update_item: dict[str, Any]) -> str:
     date = str(update_item.get("date", "")).strip()
     url = str(update_item.get("url", "")).strip()
     return f"{name}|{target}|{date}|{url}"
+
+
+def build_updates_block_hash(updates: list[dict[str, Any]]) -> str:
+    """Return a stable SHA-256 hash for an ordered block of updates."""
+    signatures = [build_update_signature(item) for item in updates]
+    payload = json.dumps(signatures, ensure_ascii=False, separators=(",", ":"))
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def load_update_blocks() -> dict[str, dict[str, dict[str, Any]]]:
+    """Load the content-addressed update-block registry."""
+    path = Path(UPDATE_BLOCKS_FILE)
+    if not path.exists():
+        return {}
+    with open(path, encoding="utf-8") as f:
+        data: dict[str, dict[str, dict[str, Any]]] = json.load(f)
+        return data
+
+
+def register_update_block(language_code: str, updates: list[dict[str, Any]]) -> str:
+    """Persist an update block for a language and return its content hash."""
+    block_hash = build_updates_block_hash(updates)
+    registry = load_update_blocks()
+    language_blocks = registry.setdefault(language_code, {})
+    language_blocks[block_hash] = {
+        "count": len(updates),
+        "update_signatures": [build_update_signature(item) for item in updates],
+    }
+
+    path = Path(UPDATE_BLOCKS_FILE)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary_path = path.with_suffix(f"{path.suffix}.tmp")
+    with open(temporary_path, "w", encoding="utf-8") as f:
+        json.dump(registry, f, indent=2, ensure_ascii=False, sort_keys=True)
+    temporary_path.replace(path)
+    return block_hash
+
+
+def record_notified_block(
+    subscription: dict[str, Any], language_code: str, updates: list[dict[str, Any]]
+) -> None:
+    """Record the exact block of updates successfully informed to a subscriber."""
+    if not updates:
+        return
+    block_hash = register_update_block(language_code, updates)
+    history = subscription.setdefault("notified_update_blocks", [])
+    if not isinstance(history, list):
+        history = []
+        subscription["notified_update_blocks"] = history
+    already_recorded = any(
+        isinstance(item, dict) and item.get("hash") == block_hash for item in history
+    )
+    if not already_recorded:
+        history.append(
+            {"language_code": language_code, "hash": block_hash, "count": len(updates)}
+        )
 
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -1508,18 +1568,6 @@ async def send_recent_updates(
     # Get the 10 most recent updates
     recent_updates = updates[:10]
 
-    # Update the last_update_id to mark these as sent
-    subscriptions = load_subscriptions()
-    if chat_id in subscriptions:
-        # Get the highest ID from the recent updates
-        if recent_updates:
-            highest_id = max(u.get("id", 0) for u in recent_updates)
-            subscriptions[chat_id]["last_update_id"] = highest_id
-            subscriptions[chat_id]["last_update_signature"] = build_update_signature(
-                recent_updates[0]
-            )
-            save_subscriptions(subscriptions)
-
     # Send header message
     header = get_translation(
         language_code, "recent_updates_header", count=len(recent_updates)
@@ -1565,6 +1613,21 @@ async def send_recent_updates(
                 parse_mode="Markdown",
                 disable_web_page_preview=True,
             )
+
+    # Only advance the baseline after Telegram accepted the complete block. This
+    # deliberately favors a possible retry over silently losing a notification.
+    subscriptions = load_subscriptions()
+    if chat_id in subscriptions and recent_updates:
+        highest_id = max(u.get("id", 0) for u in recent_updates)
+        subscriptions[chat_id]["last_update_id"] = highest_id
+        subscriptions[chat_id]["last_update_signature"] = build_update_signature(
+            recent_updates[0]
+        )
+        subscriptions[chat_id]["last_update_block_hash"] = register_update_block(
+            language_code, updates
+        )
+        record_notified_block(subscriptions[chat_id], language_code, recent_updates)
+        save_subscriptions(subscriptions)
 
 
 def format_update_message(

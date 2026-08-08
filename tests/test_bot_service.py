@@ -3,6 +3,7 @@
 Tests for update-notification marker logic in bot_service.py.
 """
 
+from scripts import telegram_bot
 from scripts.bot_service import (
     build_update_signature,
     get_last_update_signature,
@@ -85,3 +86,18 @@ def test_get_last_update_signature_supports_legacy_id() -> None:
     signature = get_last_update_signature(subscription, updates)
 
     assert signature == build_update_signature(updates[1])
+
+
+def test_update_blocks_are_separated_by_language(tmp_path, monkeypatch) -> None:
+    """Equal update blocks must be registered independently for each locale."""
+    monkeypatch.setattr(
+        telegram_bot, "UPDATE_BLOCKS_FILE", str(tmp_path / "update_blocks.json")
+    )
+    updates = [{"id": 1, "name": "iOS 30.2", "target": "iPhone", "date": "2026-07-03"}]
+
+    block_hash = telegram_bot.register_update_block("en-us", updates)
+    telegram_bot.register_update_block("es-cl", updates)
+
+    registry = telegram_bot.load_update_blocks()
+    assert block_hash in registry["en-us"]
+    assert block_hash in registry["es-cl"]
