@@ -5,6 +5,16 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.3] - 2026-08-08
+
+### Added
+- Per-language SHA-256 update-block tracking in `data/update_blocks.json`, with a per-subscriber history of the exact blocks successfully delivered.
+
+### Fixed
+- Automatic notifications now compare each subscriber's previous language block with the current block and send only updates that have not already been recorded.
+- New `/start` subscriptions persist their initial notification baseline only after Telegram accepts all 10 recent updates, preventing failed deliveries from being marked as sent.
+- Existing subscriptions using `last_update_signature` or `last_update_id` remain compatible with the new block-based tracking.
+
 ## [1.4.2] - 2026-07-14
 
 ### Added

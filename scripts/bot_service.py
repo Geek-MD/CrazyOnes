@@ -31,7 +31,10 @@ try:
         load_bot_version,
         load_config_version,
         load_subscriptions,
+        load_update_blocks,
         load_updates_for_language,
+        record_notified_block,
+        register_update_block,
         save_bot_version,
         save_subscriptions,
         send_version_notifications,
@@ -49,7 +52,10 @@ except ImportError:
         load_bot_version,
         load_config_version,
         load_subscriptions,
+        load_update_blocks,
         load_updates_for_language,
+        record_notified_block,
+        register_update_block,
         save_bot_version,
         save_subscriptions,
         send_version_notifications,
@@ -234,10 +240,36 @@ async def send_new_updates_to_subscribers(
         if not updates:
             continue
 
-        last_update_signature = get_last_update_signature(subscription_data, updates)
-        new_updates, latest_signature, marker_found = get_new_updates_since_signature(
-            updates, last_update_signature
-        )
+        previous_block_hash = subscription_data.get("last_update_block_hash")
+        new_updates: list[dict[str, Any]]
+        latest_signature: str | None
+        marker_found = True
+        if isinstance(previous_block_hash, str):
+            previous_block = (
+                load_update_blocks().get(language_code, {}).get(previous_block_hash)
+            )
+        else:
+            previous_block = None
+
+        if previous_block:
+            known_signatures = set(previous_block.get("update_signatures", []))
+            new_updates = [
+                item
+                for item in updates
+                if build_update_signature(item) not in known_signatures
+            ]
+            # Source files are newest-first; notifications read oldest-first.
+            new_updates.reverse()
+            latest_signature = build_update_signature(updates[0])
+        else:
+            last_update_signature = get_last_update_signature(
+                subscription_data, updates
+            )
+            (
+                new_updates,
+                latest_signature,
+                marker_found,
+            ) = get_new_updates_since_signature(updates, last_update_signature)
 
         if latest_signature is None:
             continue
@@ -249,14 +281,14 @@ async def send_new_updates_to_subscribers(
                     f"(lang: {language_code}); resetting baseline"
                 )
             subscriptions[chat_id]["last_update_signature"] = latest_signature
+            subscriptions[chat_id]["last_update_block_hash"] = register_update_block(
+                language_code, updates
+            )
             latest_id = updates[0].get("id")
             if isinstance(latest_id, int):
                 subscriptions[chat_id]["last_update_id"] = latest_id
             subscriptions_changed = True
             continue
-
-        # Sort new updates by ID (oldest first)
-        new_updates.sort(key=lambda x: x.get("id", 0))
 
         # Send notification
         try:
@@ -265,6 +297,10 @@ async def send_new_updates_to_subscribers(
             )
 
             subscriptions[chat_id]["last_update_signature"] = latest_signature
+            subscriptions[chat_id]["last_update_block_hash"] = register_update_block(
+                language_code, updates
+            )
+            record_notified_block(subscriptions[chat_id], language_code, new_updates)
             latest_id = updates[0].get("id")
             if isinstance(latest_id, int):
                 subscriptions[chat_id]["last_update_id"] = latest_id

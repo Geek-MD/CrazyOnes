@@ -164,11 +164,15 @@ The monitoring and notification system works as follows:
 3. If new updates are found, creates a trigger file (`data/new_updates_trigger.json`)
 4. **Bot service** checks for trigger files every 30 seconds
 5. **Bot service** reads trigger and sends notifications to subscribers
-6. Only sends updates that users haven't received before (tracked by update ID)
-7. Users can also manually request latest updates using `/updates` command
+6. Compares per-language SHA-256 update-block hashes and only sends entries absent
+   from each subscriber's previous block
+7. Records every successfully notified block in `data/subscriptions.json`; the
+   content-addressed block details live in `data/update_blocks.json`
+8. Users can also manually request latest updates using `/updates` command
 
 **Telegram Bot Features:**
-- Users can subscribe by sending `/start` to the bot
+- Users can subscribe by sending `/start` to the bot and immediately receive the
+  10 most recent updates; that initial delivery is recorded as their baseline
 - Select their preferred Apple Updates language
 - **Automatic UI language detection** - bot interface adapts to user's selected language
 - **158 languages supported** - full translation system with JSON-based string management; all locale files are translated into their respective native languages
