@@ -2,11 +2,13 @@
 set -euo pipefail
 
 APP_HOME="${CRAZYONES_APP_HOME:-/app}"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 LOG_FILE="${CRAZYONES_LOG_FILE:-${APP_HOME}/crazyones.log}"
 EXAMPLE_TOKEN="123456789:ABCdefGHIjklMNOpqrsTUVwxyz-1234567890"
 TOKEN="${TELEGRAM_BOT_TOKEN:-}"
 APPLE_UPDATES_URL="${APPLE_UPDATES_URL:-https://support.apple.com/en-us/100100}"
-CRAZYONES_VERSION="${CRAZYONES_VERSION:-1.4.0}"
+PROJECT_VERSION="$(python3 -c 'import pathlib, re, sys; text = pathlib.Path(sys.argv[1]).read_text(); match = re.search(r"(?ms)^\[project\]\s*$.*?^version\s*=\s*\"([^\"]+)\"", text); print(match.group(1) if match else sys.exit("project version not found"))' "${SCRIPT_DIR}/pyproject.toml")"
+CRAZYONES_VERSION="${CRAZYONES_VERSION:-${PROJECT_VERSION}}"
 ADMIN_USER_ID="${ADMIN_USER_ID:-}"
 
 mkdir -p "${APP_HOME}/data"
