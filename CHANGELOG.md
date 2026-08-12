@@ -5,6 +5,17 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-08-12
+
+### Added
+- New administrator-only `/hash` command. Without arguments it shows the 10 latest updates and appends each update's stable SHA-256 hash.
+- `/hash subscribers` lists every active user, channel, and group with the hash of the latest update delivered to it.
+- `/hash [username]` reports the matching user, channel, or group and its latest delivered update hash; chat IDs are also accepted and legacy subscription markers remain supported.
+- Subscriber records now retain known chat names and usernames so administrator reports can identify their recipients, with live Telegram lookup as a fallback.
+
+### Changed
+- Administrator help and README documentation now describe all `/hash` variants.
+
 ## [1.4.3] - 2026-08-08
 
 ### Added
