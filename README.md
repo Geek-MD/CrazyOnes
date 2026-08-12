@@ -213,6 +213,9 @@ When a user selects their Apple Updates language preference, the bot automatical
 **Administrator Commands** (visible only to the configured admin):
 - `/rebuild` - Force a full re-scrape of the Apple Updates page and regenerate all language update files
 - `/subscribers` - Show total active subscriber count broken down by individual users, channels, and groups
+- `/hash` - Show the 10 latest updates with each update's SHA-256 hash
+- `/hash subscribers` - List active subscribers and the hash of the latest update delivered to each one
+- `/hash [username]` - Show a user, channel, or group and the hash of its latest delivered update (also accepts a chat ID)
 
 **Fuzzy Matching (Smart Suggestions):**
 The bot includes intelligent fuzzy matching to help users when they make typos:

@@ -680,6 +680,28 @@ def build_update_signature(update_item: dict[str, Any]) -> str:
     return f"{name}|{target}|{date}|{url}"
 
 
+def build_update_hash(update_item: dict[str, Any]) -> str:
+    """Return the SHA-256 hash of an update's stable signature."""
+    signature = build_update_signature(update_item)
+    return hashlib.sha256(signature.encode("utf-8")).hexdigest()
+
+
+def get_subscription_last_update_hash(subscription: dict[str, Any]) -> str | None:
+    """Resolve the hash of the latest update delivered to a subscriber."""
+    signature = subscription.get("last_update_signature")
+    if isinstance(signature, str) and signature:
+        return hashlib.sha256(signature.encode("utf-8")).hexdigest()
+
+    language_code = str(subscription.get("language_code") or DEFAULT_LANGUAGE)
+    legacy_id = subscription.get("last_update_id")
+    if isinstance(legacy_id, int):
+        for update_item in load_updates_for_language(language_code):
+            if update_item.get("id") == legacy_id:
+                return build_update_hash(update_item)
+
+    return None
+
+
 def build_updates_block_hash(updates: list[dict[str, Any]]) -> str:
     """Return a stable SHA-256 hash for an ordered block of updates."""
     signatures = [build_update_signature(item) for item in updates]
@@ -756,6 +778,10 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     subscriptions = load_subscriptions()
 
     chat_type = update.effective_chat.type
+    chat_name = getattr(update.effective_chat, "title", None) or getattr(
+        update.effective_chat, "full_name", None
+    )
+    chat_username = getattr(update.effective_chat, "username", None)
 
     is_new_subscription = chat_id not in subscriptions
 
@@ -764,6 +790,10 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         # User exists, just activate and use their saved language
         subscriptions[chat_id]["active"] = True
         subscriptions[chat_id]["chat_type"] = chat_type
+        if chat_name:
+            subscriptions[chat_id]["chat_name"] = chat_name
+        if chat_username:
+            subscriptions[chat_id]["chat_username"] = chat_username
         language_code = subscriptions[chat_id].get("language_code", DEFAULT_LANGUAGE)
     else:
         # New user, create subscription with default language
@@ -771,6 +801,8 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
             "language_code": DEFAULT_LANGUAGE,
             "active": True,
             "chat_type": chat_type,
+            "chat_name": chat_name,
+            "chat_username": chat_username,
             "last_update_id": None,  # Changed from last_update_index to last_update_id
             "last_update_signature": None,
         }
@@ -976,6 +1008,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
             + get_translation(lang_code, "help_commands_admin")
             + get_translation(lang_code, "help_rebuild")
             + get_translation(lang_code, "help_subscribers")
+            + get_translation(lang_code, "help_hash")
         )
 
     await update.message.reply_text(help_message, parse_mode="Markdown")
@@ -1838,6 +1871,143 @@ async def subscribers_command(
     await update.message.reply_text(report, parse_mode="Markdown")
 
 
+def _stored_chat_name(chat_id: str, subscription: dict[str, Any]) -> str:
+    """Return the best locally stored display name for a subscription."""
+    username = subscription.get("chat_username")
+    if isinstance(username, str) and username:
+        return f"@{username.lstrip('@')}"
+    name = subscription.get("chat_name")
+    if isinstance(name, str) and name:
+        return name
+    return chat_id
+
+
+async def _resolve_chat_name(
+    context: ContextTypes.DEFAULT_TYPE,
+    chat_id: str,
+    subscription: dict[str, Any],
+) -> str:
+    """Resolve a subscriber name from storage, refreshing it from Telegram."""
+    stored_name = _stored_chat_name(chat_id, subscription)
+    try:
+        chat = await context.bot.get_chat(int(chat_id))
+    except Exception as exc:
+        logger.warning("Could not resolve subscriber chat %s: %s", chat_id, exc)
+        return stored_name
+
+    username = getattr(chat, "username", None)
+    title = getattr(chat, "title", None)
+    full_name = getattr(chat, "full_name", None)
+    if username:
+        return f"@{str(username).lstrip('@')}"
+    return str(title or full_name or stored_name)
+
+
+async def _send_plain_report(update: Update, header: str, lines: list[str]) -> None:
+    """Send a plain-text report split below Telegram's message limit."""
+    if not update.message:
+        return
+    message = header
+    for line in lines:
+        candidate = f"{message}{line}\n"
+        if len(candidate) > 4000 and message != header:
+            await update.message.reply_text(message.rstrip())
+            message = f"{header}{line}\n"
+        else:
+            message = candidate
+    await update.message.reply_text(message.rstrip())
+
+
+async def hash_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Show update hashes and subscriber delivery hashes to the administrator."""
+    if not update.effective_chat or not update.message or not update.effective_user:
+        return
+
+    if not is_admin(update.effective_user.id):
+        await handle_unknown_command(update, context)
+        return
+
+    chat_id = str(update.effective_chat.id)
+    lang_code = get_user_language(chat_id)
+    args = context.args if context.args else []
+
+    if not args:
+        updates = load_updates_for_language(lang_code)
+        if not updates:
+            await update.message.reply_text(
+                get_translation(lang_code, "updates_no_updates")
+            )
+            return
+
+        display_name = LANGUAGE_NAME_MAP.get(lang_code, lang_code.upper())
+        header = get_translation(
+            lang_code, "hash_updates_header", display_name=display_name
+        )
+        lines = []
+        for index, update_item in enumerate(updates[:10], 1):
+            name = update_item.get("name", "Unknown")
+            target = update_item.get("target", "N/A")
+            date = update_item.get("date", "N/A")
+            lines.append(
+                f"{index}. {name} - {target} - {date}\n"
+                f"SHA-256: {build_update_hash(update_item)}"
+            )
+        await _send_plain_report(update, header, lines)
+        return
+
+    subscriptions = load_subscriptions()
+    active_subscriptions = {
+        subscriber_id: data
+        for subscriber_id, data in subscriptions.items()
+        if data.get("active", False)
+    }
+
+    requested = " ".join(args).strip()
+    if requested.casefold() == "subscribers":
+        lines = []
+        for subscriber_id, subscription in active_subscriptions.items():
+            name = await _resolve_chat_name(context, subscriber_id, subscription)
+            last_hash = get_subscription_last_update_hash(
+                subscription
+            ) or get_translation(lang_code, "hash_not_available")
+            lines.append(f"{name} — {last_hash}")
+        lines.sort(key=str.casefold)
+        await _send_plain_report(
+            update, get_translation(lang_code, "hash_subscribers_header"), lines
+        )
+        return
+
+    normalized_requested = requested.lstrip("@").casefold()
+    match: tuple[str, dict[str, Any], str] | None = None
+    for subscriber_id, subscription in active_subscriptions.items():
+        name = await _resolve_chat_name(context, subscriber_id, subscription)
+        candidates = {
+            subscriber_id.casefold(),
+            name.lstrip("@").casefold(),
+            str(subscription.get("chat_name", "")).casefold(),
+            str(subscription.get("chat_username", "")).lstrip("@").casefold(),
+        }
+        if normalized_requested in candidates:
+            match = (subscriber_id, subscription, name)
+            break
+
+    if not match:
+        await update.message.reply_text(
+            get_translation(lang_code, "hash_subscriber_not_found", name=requested)
+        )
+        return
+
+    _, subscription, name = match
+    last_hash = get_subscription_last_update_hash(subscription) or get_translation(
+        lang_code, "hash_not_available"
+    )
+    await _send_plain_report(
+        update,
+        get_translation(lang_code, "hash_subscriber_header"),
+        [f"{name} — {last_hash}"],
+    )
+
+
 async def send_version_notifications(
     application: Application,  # type: ignore[type-arg]
     version: str,
@@ -1913,6 +2083,7 @@ def create_application(token: str) -> Application:  # type: ignore[type-arg]
     application.add_handler(CommandHandler("version", version_command))
     application.add_handler(CommandHandler("rebuild", rebuild_command))
     application.add_handler(CommandHandler("subscribers", subscribers_command))
+    application.add_handler(CommandHandler("hash", hash_command))
 
     # Add callback query handler for language selection
     application.add_handler(CallbackQueryHandler(language_selection_callback))

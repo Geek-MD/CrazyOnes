@@ -43,7 +43,7 @@
   "version_message": "CrazyOnes v{version}",
   "version_notification_header": "CrazyOnes v{version} ya está en ejecución\n",
   "version_notification_body": "Novedades en esta versión:\n\n{changes}",
-  "version_changes": "- Nuevo comando /subscribers para administradores: muestra el total de suscriptores activos desglosado por usuarios individuales, canales y grupos",
+  "version_changes": "- Nuevo comando /hash exclusivo para administradores, para consultar hashes de actualizaciones y entregas a suscriptores",
   "version_verbose_link": "Ver registro de cambios completo en GitHub",
   "help_commands_admin": "Comandos de Administrador\n",
   "help_rebuild": "/rebuild - Regenerar archivos JSON de actualizaciones de seguridad (solo administrador)\n",
@@ -56,5 +56,11 @@
   "subscribers_breakdown": "Desglose\n",
   "subscribers_users": "- Usuarios individuales: {users}\n",
   "subscribers_channels": "- Canales: {channels}\n",
-  "subscribers_groups": "- Grupos: {groups}\n"
+  "subscribers_groups": "- Grupos: {groups}\n",
+  "help_hash": "/hash [subscribers|nombre] - Mostrar hashes de actualizaciones o suscriptores (solo administrador)\n",
+  "hash_updates_header": "CrazyOnes - Hashes de actualizaciones - {display_name}\n\n",
+  "hash_subscribers_header": "CrazyOnes - Hashes de suscriptores\n\n",
+  "hash_subscriber_header": "CrazyOnes - Hash del suscriptor\n\n",
+  "hash_not_available": "Sin actualizaciones entregadas",
+  "hash_subscriber_not_found": "No se encontró un suscriptor activo con el nombre {name}."
 }
