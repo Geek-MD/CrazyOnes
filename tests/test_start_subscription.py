@@ -73,6 +73,7 @@ def test_start_command_sends_latest_updates_and_records_baseline(
 
     assert subscription["active"] is True
     assert subscription["language_code"] == telegram_bot.DEFAULT_LANGUAGE
+    assert subscription["subscribed_at"].endswith("+00:00")
     assert subscription["last_update_id"] == 12
     assert subscription["last_update_signature"] == telegram_bot.build_update_signature(
         updates[0]
@@ -83,6 +84,10 @@ def test_start_command_sends_latest_updates_and_records_baseline(
     informed_block = subscription["notified_update_blocks"][0]
     assert informed_block["count"] == 10
     assert informed_block["hash"] == telegram_bot.build_updates_block_hash(updates[:10])
+    assert subscription["last_notified_update_hash"] == telegram_bot.build_update_hash(
+        updates[0]
+    )
+    assert subscription["last_notified_at"].endswith("+00:00")
 
     blocks = telegram_bot.load_update_blocks()[telegram_bot.DEFAULT_LANGUAGE]
     assert blocks[informed_block["hash"]]["update_signatures"] == [

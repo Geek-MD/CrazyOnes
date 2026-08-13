@@ -43,7 +43,7 @@
   "version_message": "CrazyOnes v{version}",
   "version_notification_header": "CrazyOnes v{version} ya está en ejecución\n",
   "version_notification_body": "Novedades en esta versión:\n\n{changes}",
-  "version_changes": "- Nuevo comando /hash exclusivo para administradores, para consultar hashes de actualizaciones y entregas a suscriptores",
+  "version_changes": "- Los hashes de entrega ahora se guardan explícitamente y se recuperan del historial existente cuando es posible",
   "version_verbose_link": "Ver registro de cambios completo en GitHub",
   "help_commands_admin": "Comandos de Administrador\n",
   "help_rebuild": "/rebuild - Regenerar archivos JSON de actualizaciones de seguridad (solo administrador)\n",
@@ -61,6 +61,6 @@
   "hash_updates_header": "CrazyOnes - Hashes de actualizaciones - {display_name}\n\n",
   "hash_subscribers_header": "CrazyOnes - Hashes de suscriptores\n\n",
   "hash_subscriber_header": "CrazyOnes - Hash del suscriptor\n\n",
-  "hash_not_available": "Sin actualizaciones entregadas",
+  "hash_not_available": "Sin registro verificable de entrega",
   "hash_subscriber_not_found": "No se encontró un suscriptor activo con el nombre {name}."
 }

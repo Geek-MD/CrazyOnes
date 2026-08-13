@@ -49,6 +49,72 @@ def test_build_update_hash_uses_stable_signature() -> None:
     assert telegram_bot.build_update_hash(update_item) == expected
 
 
+def test_record_notified_block_persists_latest_delivery(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(
+        telegram_bot, "UPDATE_BLOCKS_FILE", str(tmp_path / "update_blocks.json")
+    )
+    newest = {"name": "iOS 30.2", "target": "iPhone", "date": "2026-08-12"}
+    oldest = {"name": "iOS 30.1", "target": "iPhone", "date": "2026-08-11"}
+    monkeypatch.setattr(
+        telegram_bot,
+        "load_updates_for_language",
+        lambda _language: [newest, oldest],
+    )
+    subscription: dict[str, Any] = {}
+
+    telegram_bot.record_notified_block(subscription, "en-us", [oldest, newest])
+
+    assert subscription["last_notified_update_signature"] == (
+        telegram_bot.build_update_signature(newest)
+    )
+    assert subscription["last_notified_update_hash"] == telegram_bot.build_update_hash(
+        newest
+    )
+    assert subscription["last_notified_at"].endswith("+00:00")
+
+
+def test_last_update_hash_recovers_from_notified_block_history(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(
+        telegram_bot, "UPDATE_BLOCKS_FILE", str(tmp_path / "update_blocks.json")
+    )
+    newest = {"name": "iOS 30.2", "target": "iPhone", "date": "2026-08-12"}
+    oldest = {"name": "iOS 30.1", "target": "iPhone", "date": "2026-08-11"}
+    monkeypatch.setattr(
+        telegram_bot,
+        "load_updates_for_language",
+        lambda _language: [newest, oldest],
+    )
+    block_hash = telegram_bot.register_update_block("en-us", [oldest, newest])
+    subscription = {
+        "language_code": "en-us",
+        "notified_update_blocks": [
+            {"language_code": "en-us", "hash": block_hash, "count": 2}
+        ],
+    }
+
+    assert telegram_bot.get_subscription_last_update_hash(subscription) == (
+        telegram_bot.build_update_hash(newest)
+    )
+
+
+def test_last_update_hash_ignores_history_without_string_hash(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(
+        telegram_bot, "UPDATE_BLOCKS_FILE", str(tmp_path / "update_blocks.json")
+    )
+    subscription = {
+        "language_code": "en-us",
+        "notified_update_blocks": [{"language_code": "en-us", "hash": None}],
+    }
+
+    assert telegram_bot.get_subscription_last_update_hash(subscription) is None
+
+
 def test_hash_command_lists_latest_updates(monkeypatch: pytest.MonkeyPatch) -> None:
     updates = [
         {"name": f"iOS 30.{index}", "target": "iPhone", "date": "2026-08-12"}
@@ -95,6 +161,9 @@ def test_hash_command_lists_and_finds_subscribers(
     list_context = SimpleNamespace(args=["subscribers"], bot=DummyBot(chats))
     asyncio.run(telegram_bot.hash_command(list_update, list_context))
     assert f"@alice — {expected_hash}" in list_update.message.replies[0]["text"]
+    assert telegram_bot.load_subscriptions()["123"]["last_notified_update_hash"] == (
+        expected_hash
+    )
 
     user_update = make_update()
     user_context = SimpleNamespace(args=["alice"], bot=DummyBot(chats))
