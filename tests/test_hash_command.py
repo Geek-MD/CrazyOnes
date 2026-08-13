@@ -101,6 +101,20 @@ def test_last_update_hash_recovers_from_notified_block_history(
     )
 
 
+def test_last_update_hash_ignores_history_without_string_hash(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(
+        telegram_bot, "UPDATE_BLOCKS_FILE", str(tmp_path / "update_blocks.json")
+    )
+    subscription = {
+        "language_code": "en-us",
+        "notified_update_blocks": [{"language_code": "en-us", "hash": None}],
+    }
+
+    assert telegram_bot.get_subscription_last_update_hash(subscription) is None
+
+
 def test_hash_command_lists_latest_updates(monkeypatch: pytest.MonkeyPatch) -> None:
     updates = [
         {"name": f"iOS 30.{index}", "target": "iPhone", "date": "2026-08-12"}

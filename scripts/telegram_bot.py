@@ -724,7 +724,10 @@ def get_subscription_last_update_hash(subscription: dict[str, Any]) -> str | Non
             if not isinstance(entry, dict):
                 continue
             entry_language = str(entry.get("language_code") or language_code)
-            block = registry.get(entry_language, {}).get(entry.get("hash"))
+            block_hash = entry.get("hash")
+            if not isinstance(block_hash, str):
+                continue
+            block = registry.get(entry_language, {}).get(block_hash)
             if not isinstance(block, dict):
                 continue
             signatures = block.get("update_signatures")
