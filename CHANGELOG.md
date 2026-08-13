@@ -5,6 +5,17 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1] - 2026-08-12
+
+### Added
+- Successful deliveries now persist `last_notified_update_hash`, `last_notified_update_signature`, and `last_notified_at` independently from the notification baseline.
+- New subscriptions record `subscribed_at` so future delivery audits have an explicit starting timestamp.
+
+### Fixed
+- `/hash subscribers` and `/hash [username]` now recover the latest delivered update hash from legacy `notified_update_blocks`, `last_update_signature`, or `last_update_id` data and persist the recovered hash.
+- Subscriber language changes preserve existing delivery metadata instead of replacing the subscription record.
+- Historical subscriptions without enough delivery metadata are now reported as having no verifiable delivery record instead of incorrectly stating that no update was delivered.
+
 ## [1.5.0] - 2026-08-12
 
 ### Added

@@ -43,7 +43,7 @@
   "version_message": "CrazyOnes v{version}",
   "version_notification_header": "CrazyOnes v{version} is now running\n",
   "version_notification_body": "What's new in this version:\n\n{changes}",
-  "version_changes": "- New administrator-only /hash command for inspecting update and subscriber delivery hashes",
+  "version_changes": "- Subscriber delivery hashes are now persisted explicitly and recovered from existing notification history when possible",
   "version_verbose_link": "View full changelog on GitHub",
   "help_commands_admin": "Admin Commands\n",
   "help_rebuild": "/rebuild - Regenerate security updates JSON files (admin only)\n",
@@ -61,6 +61,6 @@
   "hash_updates_header": "CrazyOnes - Update hashes - {display_name}\n\n",
   "hash_subscribers_header": "CrazyOnes - Subscriber hashes\n\n",
   "hash_subscriber_header": "CrazyOnes - Subscriber hash\n\n",
-  "hash_not_available": "No update delivered",
+  "hash_not_available": "No verifiable delivery record",
   "hash_subscriber_not_found": "No active subscriber was found with the name {name}."
 }

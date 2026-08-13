@@ -12,6 +12,7 @@ import hashlib
 import json
 import logging
 import re
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -686,13 +687,60 @@ def build_update_hash(update_item: dict[str, Any]) -> str:
     return hashlib.sha256(signature.encode("utf-8")).hexdigest()
 
 
+def utc_now_isoformat() -> str:
+    """Return the current UTC time in an ISO-8601 representation."""
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _newest_signature_for_language(
+    language_code: str, signatures: list[str]
+) -> str | None:
+    """Choose the newest known signature using the current language ordering."""
+    candidates = set(signatures)
+    if not candidates:
+        return None
+    for update_item in load_updates_for_language(language_code):
+        signature = build_update_signature(update_item)
+        if signature in candidates:
+            return signature
+    return signatures[-1]
+
+
 def get_subscription_last_update_hash(subscription: dict[str, Any]) -> str | None:
     """Resolve the hash of the latest update delivered to a subscriber."""
+    delivered_hash = subscription.get("last_notified_update_hash")
+    if isinstance(delivered_hash, str) and delivered_hash:
+        return delivered_hash
+
+    delivered_signature = subscription.get("last_notified_update_signature")
+    if isinstance(delivered_signature, str) and delivered_signature:
+        return hashlib.sha256(delivered_signature.encode("utf-8")).hexdigest()
+
+    language_code = str(subscription.get("language_code") or DEFAULT_LANGUAGE)
+    history = subscription.get("notified_update_blocks")
+    if isinstance(history, list):
+        registry = load_update_blocks()
+        for entry in reversed(history):
+            if not isinstance(entry, dict):
+                continue
+            entry_language = str(entry.get("language_code") or language_code)
+            block = registry.get(entry_language, {}).get(entry.get("hash"))
+            if not isinstance(block, dict):
+                continue
+            signatures = block.get("update_signatures")
+            if not isinstance(signatures, list):
+                continue
+            valid_signatures = [item for item in signatures if isinstance(item, str)]
+            newest = _newest_signature_for_language(entry_language, valid_signatures)
+            if newest:
+                return hashlib.sha256(newest.encode("utf-8")).hexdigest()
+
+    # Compatibility with versions before 1.5.1, where this marker represented
+    # the latest informed update in normal notification flows.
     signature = subscription.get("last_update_signature")
     if isinstance(signature, str) and signature:
         return hashlib.sha256(signature.encode("utf-8")).hexdigest()
 
-    language_code = str(subscription.get("language_code") or DEFAULT_LANGUAGE)
     legacy_id = subscription.get("last_update_id")
     if isinstance(legacy_id, int):
         for update_item in load_updates_for_language(language_code):
@@ -744,6 +792,15 @@ def record_notified_block(
     """Record the exact block of updates successfully informed to a subscriber."""
     if not updates:
         return
+    signatures = [build_update_signature(item) for item in updates]
+    newest_signature = _newest_signature_for_language(language_code, signatures)
+    if newest_signature:
+        subscription["last_notified_update_signature"] = newest_signature
+        subscription["last_notified_update_hash"] = hashlib.sha256(
+            newest_signature.encode("utf-8")
+        ).hexdigest()
+        subscription["last_notified_at"] = utc_now_isoformat()
+
     block_hash = register_update_block(language_code, updates)
     history = subscription.setdefault("notified_update_blocks", [])
     if not isinstance(history, list):
@@ -803,6 +860,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
             "chat_type": chat_type,
             "chat_name": chat_name,
             "chat_username": chat_username,
+            "subscribed_at": utc_now_isoformat(),
             "last_update_id": None,  # Changed from last_update_index to last_update_id
             "last_update_signature": None,
         }
@@ -855,21 +913,20 @@ async def language_selection_callback(
     # Check if this is a first-time subscription
     is_first_time = chat_id not in subscriptions
 
-    # Save subscription with language, active status, and initial tracking
-    # Changed from last_update_index to last_update_id (None = never sent updates)
-    last_id = (
-        None if is_first_time else subscriptions[chat_id].get("last_update_id", None)
-    )
+    # Preserve delivery history when changing language.
     chat_type = update.effective_chat.type
-    subscriptions[chat_id] = {
-        "language_code": language_code,
-        "active": True,
-        "chat_type": chat_type,
-        "last_update_id": last_id,
-        "last_update_signature": subscriptions.get(chat_id, {}).get(
-            "last_update_signature", None
-        ),
-    }
+    subscription = subscriptions.setdefault(chat_id, {})
+    subscription.update(
+        {
+            "language_code": language_code,
+            "active": True,
+            "chat_type": chat_type,
+            "last_update_id": subscription.get("last_update_id"),
+            "last_update_signature": subscription.get("last_update_signature"),
+        }
+    )
+    if is_first_time:
+        subscription["subscribed_at"] = utc_now_isoformat()
     save_subscriptions(subscriptions)
 
     # Get language display name
@@ -1965,12 +2022,19 @@ async def hash_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     requested = " ".join(args).strip()
     if requested.casefold() == "subscribers":
         lines = []
+        subscriptions_changed = False
         for subscriber_id, subscription in active_subscriptions.items():
             name = await _resolve_chat_name(context, subscriber_id, subscription)
-            last_hash = get_subscription_last_update_hash(
-                subscription
-            ) or get_translation(lang_code, "hash_not_available")
+            resolved_hash = get_subscription_last_update_hash(subscription)
+            if resolved_hash and not subscription.get("last_notified_update_hash"):
+                subscription["last_notified_update_hash"] = resolved_hash
+                subscriptions_changed = True
+            last_hash = resolved_hash or get_translation(
+                lang_code, "hash_not_available"
+            )
             lines.append(f"{name} — {last_hash}")
+        if subscriptions_changed:
+            save_subscriptions(subscriptions)
         lines.sort(key=str.casefold)
         await _send_plain_report(
             update, get_translation(lang_code, "hash_subscribers_header"), lines
@@ -1998,9 +2062,11 @@ async def hash_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         return
 
     _, subscription, name = match
-    last_hash = get_subscription_last_update_hash(subscription) or get_translation(
-        lang_code, "hash_not_available"
-    )
+    resolved_hash = get_subscription_last_update_hash(subscription)
+    if resolved_hash and not subscription.get("last_notified_update_hash"):
+        subscription["last_notified_update_hash"] = resolved_hash
+        save_subscriptions(subscriptions)
+    last_hash = resolved_hash or get_translation(lang_code, "hash_not_available")
     await _send_plain_report(
         update,
         get_translation(lang_code, "hash_subscriber_header"),

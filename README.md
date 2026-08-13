@@ -217,6 +217,8 @@ When a user selects their Apple Updates language preference, the bot automatical
 - `/hash subscribers` - List active subscribers and the hash of the latest update delivered to each one
 - `/hash [username]` - Show a user, channel, or group and the hash of its latest delivered update (also accepts a chat ID)
 
+Successful deliveries persist the individual update hash, signature, and delivery time. New subscriptions also store their subscription time. For records created by older versions, `/hash` recovers and stores the latest hash from the available notification-block or legacy marker data; if none exists, it reports that the delivery cannot be verified instead of guessing.
+
 **Fuzzy Matching (Smart Suggestions):**
 The bot includes intelligent fuzzy matching to help users when they make typos:
 
