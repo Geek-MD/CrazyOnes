@@ -2,6 +2,7 @@
 
 import asyncio
 import hashlib
+import json
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
@@ -25,6 +26,12 @@ class DummyBot:
 
     async def get_chat(self, chat_id: int) -> Any:
         return self.chats[chat_id]
+
+
+def write_updates(tmp_path: Path, updates: list[dict[str, Any]]) -> None:
+    updates_dir = tmp_path / "data" / "updates"
+    updates_dir.mkdir(parents=True)
+    (updates_dir / "en-us.json").write_text(json.dumps(updates), encoding="utf-8")
 
 
 def make_update() -> Any:
@@ -169,3 +176,91 @@ def test_hash_command_lists_and_finds_subscribers(
     user_context = SimpleNamespace(args=["alice"], bot=DummyBot(chats))
     asyncio.run(telegram_bot.hash_command(user_update, user_context))
     assert f"@alice — {expected_hash}" in user_update.message.replies[0]["text"]
+
+
+def test_force_command_updates_named_active_subscriber(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(
+        telegram_bot, "SUBSCRIPTIONS_FILE", str(tmp_path / "subscriptions.json")
+    )
+    monkeypatch.setattr(telegram_bot, "is_admin", lambda _user_id: True)
+    update_item = {
+        "name": "iOS 30.2",
+        "target": "iPhone",
+        "date": "2026-08-12",
+    }
+    write_updates(tmp_path, [update_item])
+    update_hash = telegram_bot.build_update_hash(update_item)
+    telegram_bot.save_subscriptions(
+        {
+            "123": {
+                "active": True,
+                "language_code": "en-us",
+                "chat_username": "alice",
+                "last_update_block_hash": "obsolete",
+            },
+            "456": {"active": False, "chat_username": "inactive"},
+        }
+    )
+
+    update = make_update()
+    context = SimpleNamespace(args=["alice", update_hash], bot=DummyBot())
+    asyncio.run(telegram_bot.force_command(update, context))
+
+    subscriptions = telegram_bot.load_subscriptions()
+    assert subscriptions["123"]["last_notified_update_hash"] == update_hash
+    assert subscriptions["123"]["last_update_signature"] == (
+        telegram_bot.build_update_signature(update_item)
+    )
+    assert "last_update_block_hash" not in subscriptions["123"]
+    assert "last_notified_update_hash" not in subscriptions["456"]
+
+
+def test_force_command_all_updates_only_active_subscribers(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(
+        telegram_bot, "SUBSCRIPTIONS_FILE", str(tmp_path / "subscriptions.json")
+    )
+    monkeypatch.setattr(telegram_bot, "is_admin", lambda _user_id: True)
+    update_item = {"name": "macOS 30.1", "target": "Mac", "date": "2026-08-12"}
+    write_updates(tmp_path, [update_item])
+    update_hash = telegram_bot.build_update_hash(update_item)
+    telegram_bot.save_subscriptions(
+        {
+            "123": {"active": True, "chat_username": "alice"},
+            "124": {"active": True, "chat_username": "team"},
+            "456": {"active": False, "chat_username": "inactive"},
+        }
+    )
+
+    update = make_update()
+    context = SimpleNamespace(args=["all", update_hash], bot=DummyBot())
+    asyncio.run(telegram_bot.force_command(update, context))
+
+    subscriptions = telegram_bot.load_subscriptions()
+    assert subscriptions["123"]["last_notified_update_hash"] == update_hash
+    assert subscriptions["124"]["last_notified_update_hash"] == update_hash
+    assert "last_notified_update_hash" not in subscriptions["456"]
+    assert "2" in update.message.replies[0]["text"]
+
+
+def test_force_command_rejects_unknown_hash_without_writing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(
+        telegram_bot, "SUBSCRIPTIONS_FILE", str(tmp_path / "subscriptions.json")
+    )
+    monkeypatch.setattr(telegram_bot, "is_admin", lambda _user_id: True)
+    write_updates(tmp_path, [{"name": "iOS 30.2"}])
+    telegram_bot.save_subscriptions({"123": {"active": True}})
+
+    update = make_update()
+    context = SimpleNamespace(args=["123", "0" * 64], bot=DummyBot())
+    asyncio.run(telegram_bot.force_command(update, context))
+
+    assert telegram_bot.load_subscriptions() == {"123": {"active": True}}

@@ -43,7 +43,7 @@
   "version_message": "CrazyOnes v{version}",
   "version_notification_header": "CrazyOnes v{version} is now running\n",
   "version_notification_body": "What's new in this version:\n\n{changes}",
-  "version_changes": "- Subscriber delivery hashes are now persisted explicitly and recovered from existing notification history when possible",
+  "version_changes": "- Administrators can use /force to register a known update hash for one or all active subscribers",
   "version_verbose_link": "View full changelog on GitHub",
   "help_commands_admin": "Admin Commands\n",
   "help_rebuild": "/rebuild - Regenerate security updates JSON files (admin only)\n",
@@ -62,5 +62,10 @@
   "hash_subscribers_header": "CrazyOnes - Subscriber hashes\n\n",
   "hash_subscriber_header": "CrazyOnes - Subscriber hash\n\n",
   "hash_not_available": "No verifiable delivery record",
-  "hash_subscriber_not_found": "No active subscriber was found with the name {name}."
+  "hash_subscriber_not_found": "No active subscriber was found with the name {name}.",
+  "help_force": "/force [name|all] [hash] - Force the latest received update (admin only)\n",
+  "force_usage": "Usage: /force [name|all] [update hash]",
+  "force_hash_not_found": "The hash {hash} does not match any known update.",
+  "force_subscriber_not_found": "No active subscriber was found with the name {name}.",
+  "force_success": "The update hash {hash} was registered for {count} active subscriber(s)."
 }
