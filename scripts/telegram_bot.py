@@ -687,6 +687,24 @@ def build_update_hash(update_item: dict[str, Any]) -> str:
     return hashlib.sha256(signature.encode("utf-8")).hexdigest()
 
 
+def find_update_by_hash(update_hash: str) -> dict[str, Any] | None:
+    """Find an update matching a SHA-256 hash in any available locale."""
+    normalized_hash = update_hash.strip().casefold()
+    if not re.fullmatch(r"[0-9a-f]{64}", normalized_hash):
+        return None
+
+    updates_dir = Path("data/updates")
+    if not updates_dir.exists():
+        return None
+
+    for update_file in sorted(updates_dir.glob("*.json")):
+        language_code = update_file.stem
+        for update_item in load_updates_for_language(language_code):
+            if build_update_hash(update_item) == normalized_hash:
+                return update_item
+    return None
+
+
 def utc_now_isoformat() -> str:
     """Return the current UTC time in an ISO-8601 representation."""
     return datetime.now(timezone.utc).isoformat()
@@ -1069,6 +1087,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
             + get_translation(lang_code, "help_rebuild")
             + get_translation(lang_code, "help_subscribers")
             + get_translation(lang_code, "help_hash")
+            + get_translation(lang_code, "help_force")
         )
 
     await update.message.reply_text(help_message, parse_mode="Markdown")
@@ -2077,6 +2096,91 @@ async def hash_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     )
 
 
+async def force_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Force an update hash as the latest delivery for one or all subscribers."""
+    if not update.effective_chat or not update.message or not update.effective_user:
+        return
+
+    if not is_admin(update.effective_user.id):
+        await handle_unknown_command(update, context)
+        return
+
+    chat_id = str(update.effective_chat.id)
+    lang_code = get_user_language(chat_id)
+    args = context.args if context.args else []
+    if len(args) < 2:
+        await update.message.reply_text(get_translation(lang_code, "force_usage"))
+        return
+
+    requested = " ".join(args[:-1]).strip()
+    requested_hash = args[-1]
+    normalized_hash = requested_hash.strip().casefold()
+    update_item = find_update_by_hash(normalized_hash)
+    if update_item is None:
+        await update.message.reply_text(
+            get_translation(lang_code, "force_hash_not_found", hash=requested_hash)
+        )
+        return
+
+    subscriptions = load_subscriptions()
+    active_subscriptions = {
+        subscriber_id: data
+        for subscriber_id, data in subscriptions.items()
+        if data.get("active", False)
+    }
+
+    targets: list[tuple[str, dict[str, Any], str]] = []
+    if requested.casefold() == "all":
+        for subscriber_id, subscription in active_subscriptions.items():
+            name = await _resolve_chat_name(context, subscriber_id, subscription)
+            targets.append((subscriber_id, subscription, name))
+    else:
+        normalized_requested = requested.lstrip("@").casefold()
+        for subscriber_id, subscription in active_subscriptions.items():
+            name = await _resolve_chat_name(context, subscriber_id, subscription)
+            candidates = {
+                subscriber_id.casefold(),
+                name.lstrip("@").casefold(),
+                str(subscription.get("chat_name", "")).casefold(),
+                str(subscription.get("chat_username", "")).lstrip("@").casefold(),
+            }
+            if normalized_requested in candidates:
+                targets.append((subscriber_id, subscription, name))
+                break
+
+    if not targets:
+        await update.message.reply_text(
+            get_translation(lang_code, "force_subscriber_not_found", name=requested)
+        )
+        return
+
+    signature = build_update_signature(update_item)
+    forced_at = utc_now_isoformat()
+    for _, subscription, _ in targets:
+        subscription["last_notified_update_hash"] = normalized_hash
+        subscription["last_notified_update_signature"] = signature
+        subscription["last_notified_at"] = forced_at
+        subscription["last_update_signature"] = signature
+        # Block-based detection takes precedence over the individual marker.
+        # Removing it makes the forced signature effective on the next check.
+        subscription.pop("last_update_block_hash", None)
+
+    save_subscriptions(subscriptions)
+    await update.message.reply_text(
+        get_translation(
+            lang_code,
+            "force_success",
+            count=len(targets),
+            hash=normalized_hash,
+        )
+    )
+    logger.info(
+        "Forced update hash %s for %d active subscription(s)",
+        normalized_hash,
+        len(targets),
+    )
+
+
 async def send_version_notifications(
     application: Application,  # type: ignore[type-arg]
     version: str,
@@ -2153,6 +2257,7 @@ def create_application(token: str) -> Application:  # type: ignore[type-arg]
     application.add_handler(CommandHandler("rebuild", rebuild_command))
     application.add_handler(CommandHandler("subscribers", subscribers_command))
     application.add_handler(CommandHandler("hash", hash_command))
+    application.add_handler(CommandHandler("force", force_command))
 
     # Add callback query handler for language selection
     application.add_handler(CallbackQueryHandler(language_selection_callback))

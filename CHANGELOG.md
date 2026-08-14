@@ -5,6 +5,12 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2026-08-13
+
+### Added
+- New administrator-only `/force <name|all> <hash>` command to register a known update hash as the latest update received by one active user, group, or channel, or by every active subscriber.
+- `/force` validates its update hash against the locally stored update catalog and accepts subscriber names, usernames, and chat IDs.
+
 ## [1.5.1] - 2026-08-12
 
 ### Added

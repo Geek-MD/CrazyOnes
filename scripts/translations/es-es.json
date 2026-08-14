@@ -43,7 +43,7 @@
   "version_message": "CrazyOnes v{version}",
   "version_notification_header": "CrazyOnes v{version} ya está en ejecución\n",
   "version_notification_body": "Novedades en esta versión:\n\n{changes}",
-  "version_changes": "- Los hashes de entrega ahora se guardan explícitamente y se recuperan del historial existente cuando es posible",
+  "version_changes": "- Los administradores pueden usar /force para registrar un hash de actualización conocido para uno o todos los suscriptores activos",
   "version_verbose_link": "Ver registro de cambios completo en GitHub",
   "help_commands_admin": "Comandos de Administrador\n",
   "help_rebuild": "/rebuild - Regenerar archivos JSON de actualizaciones de seguridad (solo administrador)\n",
@@ -62,5 +62,10 @@
   "hash_subscribers_header": "CrazyOnes - Hashes de suscriptores\n\n",
   "hash_subscriber_header": "CrazyOnes - Hash del suscriptor\n\n",
   "hash_not_available": "Sin registro verificable de entrega",
-  "hash_subscriber_not_found": "No se encontró un suscriptor activo con el nombre {name}."
+  "hash_subscriber_not_found": "No se encontró un suscriptor activo con el nombre {name}.",
+  "help_force": "/force [nombre|all] [hash] - Fuerza la última actualización recibida (solo administrador)\n",
+  "force_usage": "Uso: /force [nombre|all] [hash de actualización]",
+  "force_hash_not_found": "El hash {hash} no corresponde a ninguna actualización conocida.",
+  "force_subscriber_not_found": "No se encontró un suscriptor activo con el nombre {name}.",
+  "force_success": "El hash de actualización {hash} se registró para {count} suscriptor(es) activo(s)."
 }
