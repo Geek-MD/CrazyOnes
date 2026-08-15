@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
+from unittest.mock import AsyncMock
 
 import pytest
 
@@ -23,14 +24,18 @@ class DummyMessage:
 class DummyBot:
     def __init__(self, chats: dict[int, Any] | None = None) -> None:
         self.chats = chats or {}
+        self.sent_messages: list[dict[str, Any]] = []
 
     async def get_chat(self, chat_id: int) -> Any:
         return self.chats[chat_id]
 
+    async def send_message(self, **kwargs: Any) -> None:
+        self.sent_messages.append(kwargs)
+
 
 def write_updates(tmp_path: Path, updates: list[dict[str, Any]]) -> None:
     updates_dir = tmp_path / "data" / "updates"
-    updates_dir.mkdir(parents=True)
+    updates_dir.mkdir(parents=True, exist_ok=True)
     (updates_dir / "en-us.json").write_text(json.dumps(updates), encoding="utf-8")
 
 
@@ -264,3 +269,89 @@ def test_force_command_rejects_unknown_hash_without_writing(
     asyncio.run(telegram_bot.force_command(update, context))
 
     assert telegram_bot.load_subscriptions() == {"123": {"active": True}}
+
+
+def test_force_updates_delivers_pending_and_preserves_automatic_progress(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from scripts import bot_service
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(
+        telegram_bot, "SUBSCRIPTIONS_FILE", str(tmp_path / "subscriptions.json")
+    )
+    monkeypatch.setattr(
+        telegram_bot, "UPDATE_BLOCKS_FILE", str(tmp_path / "update_blocks.json")
+    )
+    monkeypatch.setattr(telegram_bot, "is_admin", lambda _user_id: True)
+    previous = {
+        "name": "iOS 30.1",
+        "target": "iPhone",
+        "date": "2026-08-11",
+    }
+    pending = {
+        "name": "iOS 30.2",
+        "target": "iPhone",
+        "date": "2026-08-12",
+    }
+    write_updates(tmp_path, [pending, previous])
+    telegram_bot.save_subscriptions(
+        {
+            "123": {
+                "active": True,
+                "language_code": "en-us",
+                "last_update_signature": telegram_bot.build_update_signature(previous),
+            }
+        }
+    )
+    bot = DummyBot()
+    application = SimpleNamespace(bot=bot)
+    update = make_update()
+    context = SimpleNamespace(args=["updates"], application=application, bot=bot)
+
+    asyncio.run(telegram_bot.force_command(update, context))
+
+    subscription = telegram_bot.load_subscriptions()["123"]
+    assert len(bot.sent_messages) == 1
+    assert "iOS 30.2" in bot.sent_messages[0]["text"]
+    assert subscription["last_notified_update_hash"] == (
+        telegram_bot.build_update_hash(pending)
+    )
+    assert subscription["last_update_signature"] == (
+        telegram_bot.build_update_signature(pending)
+    )
+    assert subscription["last_update_block_hash"]
+
+    future = {
+        "name": "iOS 30.3",
+        "target": "iPhone",
+        "date": "2026-08-13",
+    }
+    write_updates(tmp_path, [future, pending, previous])
+
+    assert asyncio.run(
+        bot_service.send_new_updates_to_subscribers(application, ["en-us"])
+    )
+
+    subscription = telegram_bot.load_subscriptions()["123"]
+    assert len(bot.sent_messages) == 2
+    assert "iOS 30.3" in bot.sent_messages[1]["text"]
+    assert "iOS 30.2" not in bot.sent_messages[1]["text"]
+    assert subscription["last_notified_update_hash"] == (
+        telegram_bot.build_update_hash(future)
+    )
+
+
+def test_force_updates_rejects_non_admin(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(telegram_bot, "is_admin", lambda _user_id: False)
+    unknown_command = AsyncMock()
+    monkeypatch.setattr(telegram_bot, "handle_unknown_command", unknown_command)
+    update = make_update()
+    context = SimpleNamespace(args=["updates"], bot=DummyBot())
+
+    asyncio.run(telegram_bot.force_command(update, context))
+
+    unknown_command.assert_awaited_once_with(update, context)
+    assert context.bot.sent_messages == []

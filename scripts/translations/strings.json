@@ -63,9 +63,12 @@
   "hash_subscriber_header": "CrazyOnes - Subscriber hash\n\n",
   "hash_not_available": "No verifiable delivery record",
   "hash_subscriber_not_found": "No active subscriber was found with the name {name}.",
-  "help_force": "/force [name|all] [hash] - Force the latest received update (admin only)\n",
-  "force_usage": "Usage: /force [name|all] [update hash]",
+  "help_force": "/force updates | [name|all] [hash] - Force pending notifications or the latest received update (admin only)\n",
+  "force_usage": "Usage: /force updates or /force [name|all] [update hash]",
   "force_hash_not_found": "The hash {hash} does not match any known update.",
   "force_subscriber_not_found": "No active subscriber was found with the name {name}.",
-  "force_success": "The update hash {hash} was registered for {count} active subscriber(s)."
+  "force_success": "The update hash {hash} was registered for {count} active subscriber(s).",
+  "force_updates_success": "Pending update notifications were forced successfully.",
+  "force_updates_partial_failure": "Pending update notifications were forced, but one or more deliveries failed and remain pending for automatic retry.",
+  "force_updates_no_subscribers": "There are no active subscribers to notify."
 }

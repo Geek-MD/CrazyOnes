@@ -63,9 +63,12 @@
   "hash_subscriber_header": "CrazyOnes - Hash del suscriptor\n\n",
   "hash_not_available": "Sin registro verificable de entrega",
   "hash_subscriber_not_found": "No se encontró un suscriptor activo con el nombre {name}.",
-  "help_force": "/force [nombre|all] [hash] - Fuerza la última actualización recibida (solo administrador)\n",
-  "force_usage": "Uso: /force [nombre|all] [hash de actualización]",
+  "help_force": "/force updates | [nombre|all] [hash] - Fuerza las notificaciones pendientes o la última actualización recibida (solo administrador)\n",
+  "force_usage": "Uso: /force updates o /force [nombre|all] [hash de actualización]",
   "force_hash_not_found": "El hash {hash} no corresponde a ninguna actualización conocida.",
   "force_subscriber_not_found": "No se encontró un suscriptor activo con el nombre {name}.",
-  "force_success": "El hash de actualización {hash} se registró para {count} suscriptor(es) activo(s)."
+  "force_success": "El hash de actualización {hash} se registró para {count} suscriptor(es) activo(s).",
+  "force_updates_success": "Las notificaciones de actualizaciones pendientes se forzaron correctamente.",
+  "force_updates_partial_failure": "Se forzaron las notificaciones pendientes, pero una o más entregas fallaron y siguen pendientes para su reintento automático.",
+  "force_updates_no_subscribers": "No hay suscriptores activos a quienes notificar."
 }
