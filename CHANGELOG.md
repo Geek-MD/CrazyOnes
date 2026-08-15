@@ -5,6 +5,14 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.2] - 2026-08-15
+
+### Added
+- New administrator-only `/force updates` mode to immediately deliver pending updates to every active subscriber.
+
+### Fixed
+- Forced pending deliveries use the automatic notification pipeline, persisting each successful subscriber's notification hash and baseline so later updates continue automatically without duplicate notifications.
+
 ## [1.6.1] - 2026-08-15
 
 ### Fixed

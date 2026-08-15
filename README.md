@@ -216,6 +216,7 @@ When a user selects their Apple Updates language preference, the bot automatical
 - `/hash` - Show the 10 latest updates with each update's SHA-256 hash
 - `/hash subscribers` - List active subscribers and the hash of the latest update delivered to each one
 - `/hash [username]` - Show a user, channel, or group and the hash of its latest delivered update (also accepts a chat ID)
+- `/force updates` - Immediately deliver every pending update to active subscribers, updating each successful recipient's notification hash so later automatic notifications continue from the new baseline
 - `/force [username|all] [hash]` - Register an update hash as the latest update received by one active user, group, or channel, or by all active subscribers
 
 Successful deliveries persist the individual update hash, signature, and delivery time. New subscriptions also store their subscription time. For records created by older versions, `/hash` recovers and stores the latest hash from the available notification-block or legacy marker data; if none exists, it reports that the delivery cannot be verified instead of guessing.

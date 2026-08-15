@@ -2097,7 +2097,7 @@ async def hash_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
 
 async def force_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Force an update hash as the latest delivery for one or all subscribers."""
+    """Force pending deliveries or set the latest hash for subscribers."""
     if not update.effective_chat or not update.message or not update.effective_user:
         return
 
@@ -2108,6 +2108,39 @@ async def force_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     chat_id = str(update.effective_chat.id)
     lang_code = get_user_language(chat_id)
     args = context.args if context.args else []
+    if len(args) == 1 and args[0].casefold() == "updates":
+        subscriptions = load_subscriptions()
+        updated_languages = sorted(
+            {
+                str(subscription.get("language_code") or DEFAULT_LANGUAGE)
+                for subscription in subscriptions.values()
+                if subscription.get("active", False)
+            }
+        )
+        if not updated_languages:
+            await update.message.reply_text(
+                get_translation(lang_code, "force_updates_no_subscribers")
+            )
+            return
+
+        # Import here to avoid the module-level cycle: bot_service reuses the
+        # subscription and update helpers defined in this module.
+        from .bot_service import send_new_updates_to_subscribers
+
+        completed = await send_new_updates_to_subscribers(
+            context.application, updated_languages
+        )
+        result_key = (
+            "force_updates_success" if completed else "force_updates_partial_failure"
+        )
+        await update.message.reply_text(get_translation(lang_code, result_key))
+        logger.info(
+            "Forced pending update delivery for %d language(s); completed=%s",
+            len(updated_languages),
+            completed,
+        )
+        return
+
     if len(args) < 2:
         await update.message.reply_text(get_translation(lang_code, "force_usage"))
         return
