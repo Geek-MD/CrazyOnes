@@ -9,6 +9,7 @@ from pathlib import Path
 
 from scripts.monitor_apple_updates import (
     compute_content_hash,
+    compute_updates_hash,
     detect_changes,
     extract_security_updates_table,
     load_language_urls,
@@ -35,6 +36,21 @@ def test_compute_content_hash():
     assert len(hash1) == 64, "SHA256 hash should be 64 characters"
 
     print("  ✓ Content hash computation works correctly")
+
+
+def test_compute_updates_hash_ignores_content_outside_table():
+    """Page chrome changes must not alter the extracted table hash."""
+    html_a = """
+    <html><nav>First navigation</nav><div class="table-wrapper gb-table"><table>
+      <tr><th>Name</th><th>Target</th><th>Date</th></tr>
+      <tr><td>iOS 30.1</td><td>iPhone</td><td>3 July 2026</td></tr>
+    </table></div></html>
+    """
+    html_b = html_a.replace("First navigation", "Changed navigation")
+    updates_a = extract_security_updates_table(html_a, "https://example.com")
+    updates_b = extract_security_updates_table(html_b, "https://example.com")
+
+    assert compute_updates_hash(updates_a) == compute_updates_hash(updates_b)
 
 
 def test_extract_security_updates_table():
@@ -372,6 +388,7 @@ def main():
     print("=== Testing monitor_apple_updates module ===\n")
 
     test_compute_content_hash()
+    test_compute_updates_hash_ignores_content_outside_table()
     test_extract_security_updates_table()
     test_detect_changes()
     test_save_and_load_tracking_data()

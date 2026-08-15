@@ -70,6 +70,7 @@ logger = logging.getLogger(__name__)
 
 # Trigger file for new updates
 TRIGGER_FILE = "data/new_updates_trigger.json"
+PROCESSING_TRIGGER_FILE = "data/new_updates_trigger.processing.json"
 SCRAPING_ERROR_TRIGGER_FILE = "data/scraping_errors_trigger.json"
 
 # Shutdown event
@@ -173,43 +174,48 @@ async def check_for_new_updates(application: AnyApplication) -> None:
         application: The Telegram application instance
     """
     trigger_path = Path(TRIGGER_FILE)
+    processing_path = Path(PROCESSING_TRIGGER_FILE)
 
-    if not trigger_path.exists():
+    if not processing_path.exists() and not trigger_path.exists():
         return
 
     logger.info("New updates trigger detected, processing notifications...")
 
     try:
-        # Read and delete trigger file
-        with open(trigger_path, encoding="utf-8") as f:
-            trigger_data: dict[str, Any] = json.load(f)
+        # Atomically claim new work. A processing file left by a crash is retried.
+        if not processing_path.exists():
+            trigger_path.replace(processing_path)
 
-        trigger_path.unlink()
+        with open(processing_path, encoding="utf-8") as f:
+            trigger_data: dict[str, Any] = json.load(f)
 
         # Get updated languages
         updated_languages = trigger_data.get("updated_languages", [])
 
         if not updated_languages:
             logger.warning("Trigger file had no updated languages")
+            processing_path.unlink()
             return
 
         logger.info(f"Processing updates for {len(updated_languages)} languages")
 
         # Send notifications to subscribers
-        await send_new_updates_to_subscribers(application, updated_languages)
+        completed = await send_new_updates_to_subscribers(
+            application, updated_languages
+        )
+        if completed:
+            processing_path.unlink()
+        else:
+            logger.warning("Some notifications failed; trigger retained for retry")
 
     except Exception as e:
         logger.error(f"Error processing trigger file: {e}")
-        # Delete trigger file even on error to avoid reprocessing
-        try:
-            trigger_path.unlink()
-        except FileNotFoundError:
-            pass
+        logger.warning("Trigger retained for retry")
 
 
 async def send_new_updates_to_subscribers(
     application: AnyApplication, updated_languages: list[str]
-) -> None:
+) -> bool:
     """
     Send new updates to subscribers for the specified languages.
 
@@ -221,10 +227,11 @@ async def send_new_updates_to_subscribers(
 
     if not subscriptions:
         logger.info("No subscriptions found")
-        return
+        return True
 
     notification_count = 0
     subscriptions_changed = False
+    all_deliveries_succeeded = True
 
     for chat_id, subscription_data in subscriptions.items():
         if not subscription_data.get("active", False):
@@ -306,9 +313,14 @@ async def send_new_updates_to_subscribers(
                 subscriptions[chat_id]["last_update_id"] = latest_id
             notification_count += 1
             subscriptions_changed = True
+            # Persist each confirmed delivery immediately. If the service crashes
+            # while processing later subscribers, this chat will not be sent the
+            # same update again when the retained trigger is retried.
+            save_subscriptions(subscriptions)
 
         except Exception as e:
             logger.error(f"Error sending notification to {chat_id}: {e}")
+            all_deliveries_succeeded = False
 
     # Save updated subscriptions
     if subscriptions_changed:
@@ -317,6 +329,7 @@ async def send_new_updates_to_subscribers(
         logger.info(f"Sent notifications to {notification_count} subscribers")
     elif subscriptions_changed:
         logger.info("Updated subscription markers without sending notifications")
+    return all_deliveries_succeeded
 
 
 def get_last_update_signature(
