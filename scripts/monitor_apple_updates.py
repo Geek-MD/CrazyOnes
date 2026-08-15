@@ -12,15 +12,15 @@ Change Detection Strategy:
 This module uses content hashing to efficiently detect changes:
 
 1. **Download**: Always downloads content from each URL (HTTP request is necessary)
-2. **Hash**: Computes SHA256 hash of the downloaded HTML content
+2. **Extract and hash**: Computes SHA256 from the security-updates table only
 3. **Compare**: Compares hash with stored hash from previous run
 4. **Skip or Process**:
-   - If hash MATCHES → content unchanged, skip expensive HTML parsing
-   - If hash DIFFERS → content changed, proceed with full analysis
+   - If hash MATCHES → table unchanged, skip persistence and notification
+   - If hash DIFFERS → table changed, persist the extracted updates
 
 This approach optimizes performance by:
-- Detecting ANY change in page content (even minor updates)
-- Avoiding expensive HTML parsing/extraction when content is identical
+- Ignoring page changes outside the security-updates table
+- Avoiding unnecessary JSON writes and notification triggers
 - Still making necessary HTTP requests to check for updates
 
 The tracking data stores both the URL and its content hash, allowing the system
@@ -143,6 +143,14 @@ def compute_content_hash(content: str) -> str:
         Hexadecimal hash string
     """
     return hashlib.sha256(content.encode("utf-8")).hexdigest()
+
+
+def compute_updates_hash(updates: list[dict[str, Any]]) -> str:
+    """Compute a stable hash from only the extracted security-updates table."""
+    canonical_table = json.dumps(
+        updates, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+    )
+    return compute_content_hash(canonical_table)
 
 
 def fetch_page_content(url: str) -> str:
@@ -329,8 +337,10 @@ def create_update_trigger(updated_languages: list[str]) -> None:
         "updated_languages": updated_languages,
     }
 
-    with open(trigger_file, "w", encoding="utf-8") as f:
+    temporary_file = trigger_file.with_suffix(f"{trigger_file.suffix}.tmp")
+    with open(temporary_file, "w", encoding="utf-8") as f:
         json.dump(trigger_data, f, indent=2, ensure_ascii=False)
+    temporary_file.replace(trigger_file)
 
 
 def detect_changes(
@@ -367,14 +377,13 @@ def process_language_url(
     """
     Process a single language URL: fetch, parse, and save updates.
 
-    Implements content-based change detection with URL hashing optimization:
+    Implements table-based change detection:
     1. Always downloads content from the URL (HTTP request is necessary)
-    2. Computes SHA256 hash of the downloaded content
-    3. If hash matches stored hash → skip analysis (no table extraction)
-    4. If hash changed → proceed with analysis (extract security updates table)
+    2. Extracts the security-updates table
+    3. Computes SHA256 from the normalized extracted rows
+    4. If the hash matches, skips writing data and notification triggers
 
-    This optimization avoids expensive HTML parsing when content hasn't changed,
-    while still detecting any modifications to the page content.
+    This avoids false notifications when Apple changes content elsewhere on the page.
 
     Args:
         lang_code: Language code
@@ -389,8 +398,10 @@ def process_language_url(
         print(f"Processing {lang_code}: {url}")
         html_content = fetch_page_content(url)
 
-        # Compute content hash for change detection
-        content_hash = compute_content_hash(html_content)
+        # Hash only the extracted table so unrelated page changes do not create
+        # false update notifications.
+        updates = extract_security_updates_table(html_content, url)
+        content_hash = compute_updates_hash(updates)
 
         # Check if content has changed (unless force_update is True)
         if not force_update:
@@ -400,9 +411,6 @@ def process_language_url(
                     # Update tracking data with current URL (in case URL changed)
                     tracking_data[lang_code] = {"url": url, "hash": content_hash}
                     return False
-
-        # Extract security updates
-        updates = extract_security_updates_table(html_content, url)
 
         if updates:
             # Save to JSON file

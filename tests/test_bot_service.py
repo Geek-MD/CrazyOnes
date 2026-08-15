@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """
-Tests for update-notification marker logic in bot_service.py.
+Tests for update-notification marker and trigger logic in bot_service.py.
 """
 
-from scripts import telegram_bot
+import asyncio
+import json
+from unittest.mock import AsyncMock
+
+from scripts import bot_service, telegram_bot
 from scripts.bot_service import (
     build_update_signature,
     get_last_update_signature,
@@ -101,3 +105,41 @@ def test_update_blocks_are_separated_by_language(tmp_path, monkeypatch) -> None:
     registry = telegram_bot.load_update_blocks()
     assert block_hash in registry["en-us"]
     assert block_hash in registry["es-cl"]
+
+
+def test_trigger_is_deleted_only_after_success(tmp_path, monkeypatch) -> None:
+    """A completed trigger should be removed after subscriber processing."""
+    trigger = tmp_path / "new_updates_trigger.json"
+    processing = tmp_path / "new_updates_trigger.processing.json"
+    trigger.write_text(json.dumps({"updated_languages": ["en-us"]}))
+    monkeypatch.setattr(bot_service, "TRIGGER_FILE", str(trigger))
+    monkeypatch.setattr(bot_service, "PROCESSING_TRIGGER_FILE", str(processing))
+    send = AsyncMock(return_value=True)
+    monkeypatch.setattr(bot_service, "send_new_updates_to_subscribers", send)
+
+    asyncio.run(bot_service.check_for_new_updates(AsyncMock()))
+
+    assert not trigger.exists()
+    assert not processing.exists()
+    send.assert_awaited_once()
+
+
+def test_failed_trigger_is_retained_for_retry(tmp_path, monkeypatch) -> None:
+    """Failed deliveries should leave claimed work available to the next poll."""
+    trigger = tmp_path / "new_updates_trigger.json"
+    processing = tmp_path / "new_updates_trigger.processing.json"
+    trigger.write_text(json.dumps({"updated_languages": ["en-us"]}))
+    monkeypatch.setattr(bot_service, "TRIGGER_FILE", str(trigger))
+    monkeypatch.setattr(bot_service, "PROCESSING_TRIGGER_FILE", str(processing))
+    send = AsyncMock(return_value=False)
+    monkeypatch.setattr(bot_service, "send_new_updates_to_subscribers", send)
+
+    asyncio.run(bot_service.check_for_new_updates(AsyncMock()))
+
+    assert not trigger.exists()
+    assert processing.exists()
+
+    send.return_value = True
+    asyncio.run(bot_service.check_for_new_updates(AsyncMock()))
+    assert not processing.exists()
+    assert send.await_count == 2

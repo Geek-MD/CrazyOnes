@@ -5,6 +5,12 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.1] - 2026-08-15
+
+### Fixed
+- Hash only the extracted Apple security-update table so unrelated page changes do not create update triggers.
+- Process notification triggers transactionally and retain failed deliveries for automatic retry instead of deleting pending work before Telegram confirms it.
+
 ## [1.6.0] - 2026-08-13
 
 ### Added
