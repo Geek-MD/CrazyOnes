@@ -31,6 +31,7 @@ from scripts.generate_language_names import update_language_names
 
 # Import monitor module at module level for efficiency
 from scripts.monitor_apple_updates import (
+    create_update_trigger,
     detect_changes,
     load_language_urls,
     load_tracking_data,
@@ -1060,13 +1061,24 @@ def run_monitoring_cycle(apple_updates_url: str) -> None:
 
         # Process each language URL
         successful_count = 0
+        updated_languages = []
         for lang_code in languages_to_process:
             url = language_urls[lang_code]
             if process_language_url(lang_code, url, tracking_data, force_update):
                 successful_count += 1
+                updated_languages.append(lang_code)
 
         # Save updated tracking data
         save_tracking_data(tracking_data)
+
+        # Notify the bot service only after the refreshed update data and tracking
+        # state have been persisted successfully.
+        if updated_languages:
+            create_update_trigger(updated_languages)
+            log_and_print(
+                "✓ Created notification trigger for "
+                f"{len(updated_languages)} language(s)"
+            )
 
         log_and_print("")
         log_and_print("✓ Security updates monitoring completed")
