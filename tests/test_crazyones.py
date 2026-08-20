@@ -6,12 +6,14 @@ Test script for the crazyones main coordinator script.
 import json
 import tempfile
 from pathlib import Path
+from unittest.mock import patch
 
 from crazyones import (
     generate_systemd_service_content,
     load_config,
     parse_arguments,
     rotate_log_file,
+    run_monitoring_cycle,
     save_config,
     validate_telegram_token,
 )
@@ -338,7 +340,7 @@ def test_generate_systemd_service_content():
     # Check specific content
     assert "Description=CrazyOnes" in content
     expected_exec = (
-        "ExecStart=/usr/bin/python3 /home/user/crazyones.py --daemon --interval 43200"
+        "ExecStart=/usr/bin/python3 /home/user/crazyones.py --daemon --interval 21600"
     )
     assert expected_exec in content
     assert "User=testuser" in content
@@ -347,6 +349,51 @@ def test_generate_systemd_service_content():
     assert "WantedBy=multi-user.target" in content
 
     print("  ✓ Systemd service file generation works correctly")
+
+
+def test_run_monitoring_cycle_creates_trigger_for_updated_languages():
+    """The production daemon cycle must hand detected changes to the bot service."""
+    language_urls = {
+        "en-us": "https://support.apple.com/en-us/100100",
+        "es-cl": "https://support.apple.com/es-cl/100100",
+    }
+    tracking_data = {
+        language_code: {"url": url, "hash": "previous"}
+        for language_code, url in language_urls.items()
+    }
+
+    with (
+        patch("crazyones.scrape_apple_updates"),
+        patch("crazyones.load_language_urls", return_value=language_urls),
+        patch("crazyones.load_tracking_data", return_value=tracking_data),
+        patch("crazyones.detect_changes", return_value=[]),
+        patch("crazyones.process_language_url", side_effect=[False, True]),
+        patch("crazyones.save_tracking_data") as save_tracking,
+        patch("crazyones.create_update_trigger") as create_trigger,
+    ):
+        run_monitoring_cycle("https://support.apple.com/en-us/100100")
+
+    save_tracking.assert_called_once_with(tracking_data)
+    create_trigger.assert_called_once_with(["es-cl"])
+
+
+def test_run_monitoring_cycle_skips_trigger_without_updates():
+    """An unchanged monitoring cycle must not create notification work."""
+    language_urls = {"en-us": "https://support.apple.com/en-us/100100"}
+    tracking_data = {"en-us": {"url": language_urls["en-us"], "hash": "unchanged"}}
+
+    with (
+        patch("crazyones.scrape_apple_updates"),
+        patch("crazyones.load_language_urls", return_value=language_urls),
+        patch("crazyones.load_tracking_data", return_value=tracking_data),
+        patch("crazyones.detect_changes", return_value=[]),
+        patch("crazyones.process_language_url", return_value=False),
+        patch("crazyones.save_tracking_data"),
+        patch("crazyones.create_update_trigger") as create_trigger,
+    ):
+        run_monitoring_cycle("https://support.apple.com/en-us/100100")
+
+    create_trigger.assert_not_called()
 
 
 def main():
@@ -367,6 +414,8 @@ def main():
     test_parse_arguments_with_short_url()
     test_parse_arguments_with_config()
     test_generate_systemd_service_content()
+    test_run_monitoring_cycle_creates_trigger_for_updated_languages()
+    test_run_monitoring_cycle_skips_trigger_without_updates()
 
     print("\n=== All tests passed ===")
 

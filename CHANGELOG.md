@@ -5,6 +5,12 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.3] - 2026-08-20
+
+### Fixed
+- The production daemon now creates a notification trigger after persisting newly detected Apple updates, allowing the bot service to deliver automatic notifications.
+- Added coordinator-level regression coverage for monitoring cycles with and without updated languages.
+
 ## [1.6.2] - 2026-08-15
 
 ### Added
