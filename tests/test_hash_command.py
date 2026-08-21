@@ -401,6 +401,66 @@ def test_force_updates_uses_confirmed_delivery_for_every_active_subscriber(
         )
 
 
+def test_force_updates_recovers_orphaned_confirmed_marker(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A missing confirmed marker must trigger a bounded recovery delivery."""
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(
+        telegram_bot, "SUBSCRIPTIONS_FILE", str(tmp_path / "subscriptions.json")
+    )
+    monkeypatch.setattr(
+        telegram_bot, "UPDATE_BLOCKS_FILE", str(tmp_path / "update_blocks.json")
+    )
+    monkeypatch.setattr(telegram_bot, "is_admin", lambda _user_id: True)
+    updates = [
+        {
+            "name": f"iOS 30.{index}",
+            "target": "iPhone",
+            "date": f"2026-08-{index:02d}",
+        }
+        for index in range(12, 0, -1)
+    ]
+    write_updates(tmp_path, updates)
+    orphaned_signature = "Removed update|Old target|2026-07-01|"
+    telegram_bot.save_subscriptions(
+        {
+            "123": {
+                "active": True,
+                "language_code": "en-us",
+                "last_update_signature": telegram_bot.build_update_signature(
+                    updates[0]
+                ),
+                "last_update_block_hash": telegram_bot.register_update_block(
+                    "en-us", updates
+                ),
+                "last_notified_update_signature": orphaned_signature,
+                "last_notified_update_hash": hashlib.sha256(
+                    orphaned_signature.encode("utf-8")
+                ).hexdigest(),
+            }
+        }
+    )
+    bot = DummyBot()
+    application = SimpleNamespace(bot=bot)
+    update = make_update()
+    context = SimpleNamespace(args=["updates"], application=application, bot=bot)
+
+    asyncio.run(telegram_bot.force_command(update, context))
+
+    assert len(bot.sent_messages) == 1
+    assert "iOS 30.12" in bot.sent_messages[0]["text"]
+    assert "iOS 30.3" in bot.sent_messages[0]["text"]
+    assert "iOS 30.2" not in bot.sent_messages[0]["text"]
+    subscription = telegram_bot.load_subscriptions()["123"]
+    assert subscription["last_notified_update_hash"] == (
+        telegram_bot.build_update_hash(updates[0])
+    )
+    result_message = update.message.replies[-1]["text"]
+    assert "Notified: 1" in result_message
+    assert "Recovered markers: 1" in result_message
+
+
 def test_force_updates_rejects_non_admin(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

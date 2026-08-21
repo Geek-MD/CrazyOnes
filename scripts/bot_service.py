@@ -12,6 +12,7 @@ import json
 import logging
 import signal
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -78,6 +79,21 @@ SCRAPING_ERROR_TRIGGER_FILE = "data/scraping_errors_trigger.json"
 # Shutdown event
 _shutdown_event = asyncio.Event()
 _delivery_lock = asyncio.Lock()
+
+
+@dataclass
+class DeliveryReport:
+    """Outcome counters for one serialized notification run."""
+
+    notified: int = 0
+    up_to_date: int = 0
+    recovered: int = 0
+    failed: int = 0
+    skipped: int = 0
+
+    @property
+    def completed(self) -> bool:
+        return self.failed == 0
 
 
 async def check_for_scraping_errors(application: AnyApplication) -> None:
@@ -224,10 +240,24 @@ async def send_new_updates_to_subscribers(
 ) -> bool:
     """Serialize notification runs so confirmed delivery state cannot be overwritten."""
     async with _delivery_lock:
-        return await _send_new_updates_to_subscribers(
+        report = await _send_new_updates_to_subscribers(
             application,
             updated_languages,
             use_confirmed_delivery_marker=use_confirmed_delivery_marker,
+        )
+        return report.completed
+
+
+async def force_pending_updates_to_subscribers(
+    application: AnyApplication, updated_languages: list[str]
+) -> DeliveryReport:
+    """Force pending deliveries and recover subscribers with orphaned markers."""
+    async with _delivery_lock:
+        return await _send_new_updates_to_subscribers(
+            application,
+            updated_languages,
+            use_confirmed_delivery_marker=True,
+            recover_orphaned_markers=True,
         )
 
 
@@ -236,7 +266,8 @@ async def _send_new_updates_to_subscribers(
     updated_languages: list[str],
     *,
     use_confirmed_delivery_marker: bool = False,
-) -> bool:
+    recover_orphaned_markers: bool = False,
+) -> DeliveryReport:
     """
     Send new updates to subscribers for the specified languages.
 
@@ -245,14 +276,14 @@ async def _send_new_updates_to_subscribers(
         updated_languages: List of language codes that have new updates
     """
     subscriptions = load_subscriptions()
+    report = DeliveryReport()
 
     if not subscriptions:
         logger.info("No subscriptions found")
-        return True
+        return report
 
     notification_count = 0
     subscriptions_changed = False
-    all_deliveries_succeeded = True
 
     for chat_id, subscription_data in subscriptions.items():
         if not subscription_data.get("active", False):
@@ -266,6 +297,7 @@ async def _send_new_updates_to_subscribers(
         updates = load_updates_for_language(language_code)
 
         if not updates:
+            report.skipped += 1
             continue
 
         previous_block_hash = subscription_data.get("last_update_block_hash")
@@ -281,6 +313,19 @@ async def _send_new_updates_to_subscribers(
                 latest_signature,
                 marker_found,
             ) = get_new_updates_since_signature(updates, last_update_signature)
+            if recover_orphaned_markers and (
+                not last_update_signature or not marker_found
+            ):
+                # A forced administrative recovery must not silently treat an
+                # unknown confirmed marker as success. Re-send a bounded recent
+                # block so the subscriber reaches a verifiable current baseline.
+                new_updates = list(reversed(updates[:10]))
+                report.recovered += 1
+                logger.warning(
+                    "Recovering orphaned delivery marker for chat %s (lang: %s)",
+                    chat_id,
+                    language_code,
+                )
         else:
             if isinstance(previous_block_hash, str):
                 previous_block = (
@@ -310,6 +355,7 @@ async def _send_new_updates_to_subscribers(
                 ) = get_new_updates_since_signature(updates, last_update_signature)
 
         if latest_signature is None:
+            report.skipped += 1
             continue
 
         if not new_updates:
@@ -326,6 +372,7 @@ async def _send_new_updates_to_subscribers(
             if isinstance(latest_id, int):
                 subscriptions[chat_id]["last_update_id"] = latest_id
             subscriptions_changed = True
+            report.up_to_date += 1
             continue
 
         # Send notification
@@ -343,6 +390,7 @@ async def _send_new_updates_to_subscribers(
             if isinstance(latest_id, int):
                 subscriptions[chat_id]["last_update_id"] = latest_id
             notification_count += 1
+            report.notified += 1
             subscriptions_changed = True
             # Persist each confirmed delivery immediately. If the service crashes
             # while processing later subscribers, this chat will not be sent the
@@ -351,7 +399,7 @@ async def _send_new_updates_to_subscribers(
 
         except Exception as e:
             logger.error(f"Error sending notification to {chat_id}: {e}")
-            all_deliveries_succeeded = False
+            report.failed += 1
 
     # Save updated subscriptions
     if subscriptions_changed:
@@ -360,7 +408,7 @@ async def _send_new_updates_to_subscribers(
         logger.info(f"Sent notifications to {notification_count} subscribers")
     elif subscriptions_changed:
         logger.info("Updated subscription markers without sending notifications")
-    return all_deliveries_succeeded
+    return report
 
 
 def get_confirmed_delivery_signature(

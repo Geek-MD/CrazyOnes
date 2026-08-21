@@ -68,7 +68,7 @@
   "force_hash_not_found": "El hash {hash} no corresponde a ninguna actualización conocida.",
   "force_subscriber_not_found": "No se encontró un suscriptor activo con el nombre {name}.",
   "force_success": "El hash de actualización {hash} se registró para {count} suscriptor(es) activo(s).",
-  "force_updates_success": "Las notificaciones de actualizaciones pendientes se forzaron correctamente.",
-  "force_updates_partial_failure": "Se forzaron las notificaciones pendientes, pero una o más entregas fallaron y siguen pendientes para su reintento automático.",
+  "force_updates_success": "Entrega forzada completada. Notificados: {notified}. Ya actualizados: {up_to_date}. Marcadores recuperados: {recovered}. Omitidos: {skipped}.",
+  "force_updates_partial_failure": "Entrega forzada parcialmente completada. Notificados: {notified}. Ya actualizados: {up_to_date}. Marcadores recuperados: {recovered}. Fallidos: {failed}. Omitidos: {skipped}.",
   "force_updates_no_subscribers": "No hay suscriptores activos a quienes notificar."
 }

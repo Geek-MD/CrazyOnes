@@ -5,6 +5,12 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.5] - 2026-08-20
+
+### Fixed
+- `/force updates` now recovers missing or orphaned confirmed-delivery markers by re-sending a bounded block of the 10 most recent updates instead of silently reporting success with zero deliveries.
+- Forced delivery responses now report notified, already-current, recovered, failed, and skipped subscriber counts.
+
 ## [1.6.4] - 2026-08-20
 
 ### Fixed

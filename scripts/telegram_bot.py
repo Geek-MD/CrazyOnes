@@ -2140,21 +2140,36 @@ async def force_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
         # Import here to avoid the module-level cycle: bot_service reuses the
         # subscription and update helpers defined in this module.
-        from .bot_service import send_new_updates_to_subscribers
+        from .bot_service import force_pending_updates_to_subscribers
 
-        completed = await send_new_updates_to_subscribers(
-            context.application,
-            updated_languages,
-            use_confirmed_delivery_marker=True,
+        report = await force_pending_updates_to_subscribers(
+            context.application, updated_languages
         )
         result_key = (
-            "force_updates_success" if completed else "force_updates_partial_failure"
+            "force_updates_success"
+            if report.completed
+            else "force_updates_partial_failure"
         )
-        await update.message.reply_text(get_translation(lang_code, result_key))
+        await update.message.reply_text(
+            get_translation(
+                lang_code,
+                result_key,
+                notified=report.notified,
+                up_to_date=report.up_to_date,
+                recovered=report.recovered,
+                failed=report.failed,
+                skipped=report.skipped,
+            )
+        )
         logger.info(
-            "Forced pending update delivery for %d language(s); completed=%s",
+            "Forced pending delivery for %d language(s): "
+            "notified=%d up_to_date=%d recovered=%d failed=%d skipped=%d",
             len(updated_languages),
-            completed,
+            report.notified,
+            report.up_to_date,
+            report.recovered,
+            report.failed,
+            report.skipped,
         )
         return
 
