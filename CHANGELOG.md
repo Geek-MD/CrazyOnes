@@ -5,6 +5,12 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.4] - 2026-08-20
+
+### Fixed
+- `/force updates` now calculates pending updates from each subscriber's last Telegram-confirmed delivery instead of an operational baseline that may have advanced without sending.
+- Notification runs are serialized and subscription files are replaced atomically so concurrent automatic and forced deliveries cannot overwrite newer hashes.
+
 ## [1.6.3] - 2026-08-20
 
 ### Fixed

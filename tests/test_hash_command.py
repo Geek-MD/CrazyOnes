@@ -342,6 +342,65 @@ def test_force_updates_delivers_pending_and_preserves_automatic_progress(
     )
 
 
+def test_force_updates_uses_confirmed_delivery_for_every_active_subscriber(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """An advanced operational baseline must not hide an undelivered update."""
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(
+        telegram_bot, "SUBSCRIPTIONS_FILE", str(tmp_path / "subscriptions.json")
+    )
+    monkeypatch.setattr(
+        telegram_bot, "UPDATE_BLOCKS_FILE", str(tmp_path / "update_blocks.json")
+    )
+    monkeypatch.setattr(telegram_bot, "is_admin", lambda _user_id: True)
+    previous = {
+        "name": "iOS 30.1",
+        "target": "iPhone",
+        "date": "2026-08-11",
+    }
+    pending = {
+        "name": "iOS 30.2",
+        "target": "iPhone",
+        "date": "2026-08-12",
+    }
+    updates = [pending, previous]
+    write_updates(tmp_path, updates)
+    current_block_hash = telegram_bot.register_update_block("en-us", updates)
+    previous_signature = telegram_bot.build_update_signature(previous)
+    pending_signature = telegram_bot.build_update_signature(pending)
+    telegram_bot.save_subscriptions(
+        {
+            chat_id: {
+                "active": True,
+                "language_code": "en-us",
+                # Simulate a baseline advanced without a confirmed Telegram send.
+                "last_update_signature": pending_signature,
+                "last_update_block_hash": current_block_hash,
+                "last_notified_update_signature": previous_signature,
+                "last_notified_update_hash": telegram_bot.build_update_hash(previous),
+            }
+            for chat_id in ("123", "456")
+        }
+    )
+    bot = DummyBot()
+    application = SimpleNamespace(bot=bot)
+    update = make_update()
+    context = SimpleNamespace(args=["updates"], application=application, bot=bot)
+
+    asyncio.run(telegram_bot.force_command(update, context))
+
+    assert {message["chat_id"] for message in bot.sent_messages} == {123, 456}
+    subscriptions = telegram_bot.load_subscriptions()
+    for chat_id in ("123", "456"):
+        assert subscriptions[chat_id]["last_notified_update_hash"] == (
+            telegram_bot.build_update_hash(pending)
+        )
+        assert subscriptions[chat_id]["last_notified_update_signature"] == (
+            pending_signature
+        )
+
+
 def test_force_updates_rejects_non_admin(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
