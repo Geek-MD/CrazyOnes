@@ -12,6 +12,7 @@ import hashlib
 import json
 import logging
 import re
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -410,8 +411,22 @@ def save_subscriptions(subscriptions: dict[str, dict[str, Any]]) -> None:
     path = Path(SUBSCRIPTIONS_FILE)
     path.parent.mkdir(parents=True, exist_ok=True)
 
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(subscriptions, f, indent=2, ensure_ascii=False, sort_keys=True)
+    temporary_path: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            "w",
+            encoding="utf-8",
+            dir=path.parent,
+            prefix=f".{path.name}.",
+            suffix=".tmp",
+            delete=False,
+        ) as f:
+            temporary_path = Path(f.name)
+            json.dump(subscriptions, f, indent=2, ensure_ascii=False, sort_keys=True)
+        temporary_path.replace(path)
+    finally:
+        if temporary_path and temporary_path.exists():
+            temporary_path.unlink()
 
 
 def load_bot_version() -> dict[str, str]:
@@ -2128,7 +2143,9 @@ async def force_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         from .bot_service import send_new_updates_to_subscribers
 
         completed = await send_new_updates_to_subscribers(
-            context.application, updated_languages
+            context.application,
+            updated_languages,
+            use_confirmed_delivery_marker=True,
         )
         result_key = (
             "force_updates_success" if completed else "force_updates_partial_failure"

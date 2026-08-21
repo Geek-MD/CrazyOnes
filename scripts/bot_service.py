@@ -24,6 +24,7 @@ try:
     # Try relative import (when used as a module)
     from .generate_language_names import LANGUAGE_NAME_MAP
     from .telegram_bot import (
+        build_update_hash,
         build_update_signature,
         create_application,
         get_translation,
@@ -45,6 +46,7 @@ except ImportError:
         LANGUAGE_NAME_MAP,
     )
     from telegram_bot import (  # type: ignore[import-not-found,no-redef]
+        build_update_hash,
         build_update_signature,
         create_application,
         get_translation,
@@ -75,6 +77,7 @@ SCRAPING_ERROR_TRIGGER_FILE = "data/scraping_errors_trigger.json"
 
 # Shutdown event
 _shutdown_event = asyncio.Event()
+_delivery_lock = asyncio.Lock()
 
 
 async def check_for_scraping_errors(application: AnyApplication) -> None:
@@ -214,7 +217,25 @@ async def check_for_new_updates(application: AnyApplication) -> None:
 
 
 async def send_new_updates_to_subscribers(
-    application: AnyApplication, updated_languages: list[str]
+    application: AnyApplication,
+    updated_languages: list[str],
+    *,
+    use_confirmed_delivery_marker: bool = False,
+) -> bool:
+    """Serialize notification runs so confirmed delivery state cannot be overwritten."""
+    async with _delivery_lock:
+        return await _send_new_updates_to_subscribers(
+            application,
+            updated_languages,
+            use_confirmed_delivery_marker=use_confirmed_delivery_marker,
+        )
+
+
+async def _send_new_updates_to_subscribers(
+    application: AnyApplication,
+    updated_languages: list[str],
+    *,
+    use_confirmed_delivery_marker: bool = False,
 ) -> bool:
     """
     Send new updates to subscribers for the specified languages.
@@ -251,25 +272,8 @@ async def send_new_updates_to_subscribers(
         new_updates: list[dict[str, Any]]
         latest_signature: str | None
         marker_found = True
-        if isinstance(previous_block_hash, str):
-            previous_block = (
-                load_update_blocks().get(language_code, {}).get(previous_block_hash)
-            )
-        else:
-            previous_block = None
-
-        if previous_block:
-            known_signatures = set(previous_block.get("update_signatures", []))
-            new_updates = [
-                item
-                for item in updates
-                if build_update_signature(item) not in known_signatures
-            ]
-            # Source files are newest-first; notifications read oldest-first.
-            new_updates.reverse()
-            latest_signature = build_update_signature(updates[0])
-        else:
-            last_update_signature = get_last_update_signature(
+        if use_confirmed_delivery_marker:
+            last_update_signature = get_confirmed_delivery_signature(
                 subscription_data, updates
             )
             (
@@ -277,6 +281,33 @@ async def send_new_updates_to_subscribers(
                 latest_signature,
                 marker_found,
             ) = get_new_updates_since_signature(updates, last_update_signature)
+        else:
+            if isinstance(previous_block_hash, str):
+                previous_block = (
+                    load_update_blocks().get(language_code, {}).get(previous_block_hash)
+                )
+            else:
+                previous_block = None
+
+            if previous_block:
+                known_signatures = set(previous_block.get("update_signatures", []))
+                new_updates = [
+                    item
+                    for item in updates
+                    if build_update_signature(item) not in known_signatures
+                ]
+                # Source files are newest-first; notifications read oldest-first.
+                new_updates.reverse()
+                latest_signature = build_update_signature(updates[0])
+            else:
+                last_update_signature = get_last_update_signature(
+                    subscription_data, updates
+                )
+                (
+                    new_updates,
+                    latest_signature,
+                    marker_found,
+                ) = get_new_updates_since_signature(updates, last_update_signature)
 
         if latest_signature is None:
             continue
@@ -330,6 +361,24 @@ async def send_new_updates_to_subscribers(
     elif subscriptions_changed:
         logger.info("Updated subscription markers without sending notifications")
     return all_deliveries_succeeded
+
+
+def get_confirmed_delivery_signature(
+    subscription_data: dict[str, Any], updates: list[dict[str, Any]]
+) -> str | None:
+    """Resolve the latest update Telegram confirmed for a subscriber."""
+    signature = subscription_data.get("last_notified_update_signature")
+    if isinstance(signature, str) and signature:
+        return signature
+
+    update_hash = subscription_data.get("last_notified_update_hash")
+    if isinstance(update_hash, str) and update_hash:
+        for update_item in updates:
+            if build_update_hash(update_item) == update_hash:
+                return build_update_signature(update_item)
+
+    # Legacy subscriptions may predate the confirmed-delivery fields.
+    return get_last_update_signature(subscription_data, updates)
 
 
 def get_last_update_signature(
