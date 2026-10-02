@@ -27,6 +27,7 @@ from datetime import datetime, timezone
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
+from scripts.database import initialize_database
 from scripts.generate_language_names import update_language_names
 
 # Import monitor module at module level for efficiency
@@ -1098,6 +1099,7 @@ def run_monitoring_cycle(apple_updates_url: str) -> None:
 
 def main() -> None:
     """Main function to orchestrate the CrazyOnes workflow."""
+    initialize_database()
     # Parse command line arguments
     args = parse_arguments()
 
@@ -1321,20 +1323,13 @@ def main() -> None:
             log_and_print("Execution summary:")
             log_and_print("  ✓ Language URLs scraped and saved")
             log_and_print("  ✓ Security updates processed for all languages")
-            log_and_print("  ✓ All JSON files generated with proper sorting:")
-            log_and_print("    - Language files: alphabetically sorted")
-            log_and_print("    - Update files: sorted by ID (ascending, oldest first)")
+            log_and_print("  ✓ Runtime state stored transactionally in SQLite")
             log_and_print("")
-            log_and_print("Files generated:")
-            log_and_print("  - data/language_urls.json")
-            log_and_print("  - data/language_names.json")
-            log_and_print("  - data/updates_tracking.json")
-            log_and_print("  - data/updates/<lang-code>.json (one per language)")
+            log_and_print("Database: data/crazyones.db")
             log_and_print("")
         else:
             log_and_print("Next steps:")
-            log_and_print("  - Language URLs saved to: data/language_urls.json")
-            log_and_print("  - Language names saved to: data/language_names.json")
+            log_and_print("  - Runtime data saved to: data/crazyones.db")
             log_and_print(
                 "  - You can now run: python -m scripts.monitor_apple_updates"
             )

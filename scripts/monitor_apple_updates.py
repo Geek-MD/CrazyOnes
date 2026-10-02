@@ -37,6 +37,11 @@ import requests
 from bs4 import BeautifulSoup, Tag
 
 try:
+    from . import database
+except ImportError:
+    import database  # type: ignore[import-not-found,no-redef]
+
+try:
     # Try relative import (when used as a module)
     from .utils import (  # type: ignore[import-not-found,no-redef]  # noqa: I001
         create_scraping_error_trigger as create_error_trigger,
@@ -81,6 +86,8 @@ def load_language_urls(file_path: str = "data/language_urls.json") -> dict[str, 
     Raises:
         FileNotFoundError: If the language URLs file doesn't exist
     """
+    if file_path == "data/language_urls.json":
+        return database.load_languages()
     # Resolve path relative to project root
     path = get_project_root() / file_path
     if not path.exists():
@@ -103,6 +110,8 @@ def load_tracking_data(
     Returns:
         Dictionary with language codes as keys and tracking info (url, hash) as values
     """
+    if tracking_file == "data/updates_tracking.json":
+        return database.load_tracking()
     # Resolve path relative to project root
     path = get_project_root() / tracking_file
     if not path.exists():
@@ -126,6 +135,9 @@ def save_tracking_data(
         tracking_data: Dictionary with language codes and tracking info
         tracking_file: Path to the tracking JSON file (relative to project root)
     """
+    if tracking_file == "data/updates_tracking.json":
+        database.save_tracking(tracking_data)
+        return
     # Resolve path relative to project root
     path = get_project_root() / tracking_file
     with open(path, "w", encoding="utf-8") as f:
@@ -309,6 +321,11 @@ def save_updates_to_json(
         language_code: Language code (e.g., 'en-us', 'es-es')
         output_dir: Directory to save the JSON files (relative to project root)
     """
+    if output_dir == "data/updates":
+        database.save_updates(
+            language_code, sorted(updates, key=lambda x: int(x.get("id", 0)))
+        )
+        return
     # Resolve path relative to project root
     output_path = get_project_root() / output_dir
     output_path.mkdir(parents=True, exist_ok=True)
@@ -332,15 +349,10 @@ def create_update_trigger(updated_languages: list[str]) -> None:
     if not updated_languages:
         return
 
-    trigger_file = get_project_root() / "data" / "new_updates_trigger.json"
     trigger_data = {
         "updated_languages": updated_languages,
     }
-
-    temporary_file = trigger_file.with_suffix(f"{trigger_file.suffix}.tmp")
-    with open(temporary_file, "w", encoding="utf-8") as f:
-        json.dump(trigger_data, f, indent=2, ensure_ascii=False)
-    temporary_file.replace(trigger_file)
+    database.enqueue_job("updates", trigger_data)
 
 
 def detect_changes(

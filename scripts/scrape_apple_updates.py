@@ -15,6 +15,11 @@ import requests
 from bs4 import BeautifulSoup
 
 try:
+    from . import database
+except ImportError:
+    import database  # type: ignore[import-not-found,no-redef]
+
+try:
     # Try relative import (when used as a module)
     from .generate_language_names import (  # type: ignore[import-not-found,no-redef]  # noqa: E501,I001
         update_language_names,
@@ -114,6 +119,10 @@ def save_language_urls_to_json(
         language_urls: Dictionary mapping language codes to URLs
         output_file: Path to the output JSON file (relative to project root)
     """
+    if output_file == "data/language_urls.json":
+        database.save_languages(language_urls)
+        print(f"Language URLs saved to SQLite ({len(language_urls)} languages)")
+        return
     # Resolve path relative to project root
     output_path = get_project_root() / output_file
     output_path.parent.mkdir(parents=True, exist_ok=True)

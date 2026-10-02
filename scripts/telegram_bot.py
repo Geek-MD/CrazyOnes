@@ -33,6 +33,11 @@ from telegram.ext import (
 )
 
 try:
+    from . import database
+except ImportError:
+    import database  # type: ignore[import-not-found,no-redef]
+
+try:
     # Try relative import (when used as a module)
     from .generate_language_names import LANGUAGE_NAME_MAP
 except ImportError:
@@ -385,6 +390,8 @@ def load_subscriptions() -> dict[str, dict[str, Any]]:
             last_update_id: ID of the last update sent (None if never sent)
             last_update_signature: Signature of latest delivered update
     """
+    if SUBSCRIPTIONS_FILE == "data/subscriptions.json":
+        return database.load_subscriptions()
     path = Path(SUBSCRIPTIONS_FILE)
     if not path.exists():
         return {}
@@ -408,6 +415,9 @@ def save_subscriptions(subscriptions: dict[str, dict[str, Any]]) -> None:
                 last_update_id: ID of last update sent (optional, None if never sent)
                 last_update_signature: Signature marker for new-update detection
     """
+    if SUBSCRIPTIONS_FILE == "data/subscriptions.json":
+        database.save_subscriptions(subscriptions)
+        return
     path = Path(SUBSCRIPTIONS_FILE)
     path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -429,6 +439,16 @@ def save_subscriptions(subscriptions: dict[str, dict[str, Any]]) -> None:
             temporary_path.unlink()
 
 
+def save_subscription(chat_id: str, subscription: dict[str, Any]) -> None:
+    """Persist one subscription efficiently when SQLite is active."""
+    if SUBSCRIPTIONS_FILE == "data/subscriptions.json":
+        database.save_subscription(chat_id, subscription)
+        return
+    subscriptions = load_subscriptions()
+    subscriptions[chat_id] = subscription
+    save_subscriptions(subscriptions)
+
+
 def load_bot_version() -> dict[str, str]:
     """
     Load bot version tracking data from JSON file.
@@ -438,6 +458,8 @@ def load_bot_version() -> dict[str, str]:
         Contains:
             last_notified_version: Version string of the last announced release
     """
+    if BOT_VERSION_FILE == "data/bot_version.json":
+        return database.get_app_state()
     path = Path(BOT_VERSION_FILE)
     if not path.exists():
         return {}
@@ -454,6 +476,10 @@ def save_bot_version(version_data: dict[str, str]) -> None:
     Args:
         version_data: Dictionary with version tracking fields.
     """
+    if BOT_VERSION_FILE == "data/bot_version.json":
+        for key, value in version_data.items():
+            database.set_app_state(key, value)
+        return
     path = Path(BOT_VERSION_FILE)
     path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -651,13 +677,7 @@ def load_language_urls() -> dict[str, str]:
     Returns:
         Dictionary mapping language codes to URLs
     """
-    path = Path("data/language_urls.json")
-    if not path.exists():
-        return {}
-
-    with open(path, encoding="utf-8") as f:
-        data: dict[str, str] = json.load(f)
-        return data
+    return database.load_languages()
 
 
 def load_updates_for_language(language_code: str) -> list[dict[str, Any]]:
@@ -670,13 +690,12 @@ def load_updates_for_language(language_code: str) -> list[dict[str, Any]]:
     Returns:
         List of update dictionaries
     """
-    path = Path(f"data/updates/{language_code}.json")
-    if not path.exists():
-        return []
-
-    with open(path, encoding="utf-8") as f:
-        data: list[dict[str, Any]] = json.load(f)
-        return data
+    legacy_path = Path(f"data/updates/{language_code}.json")
+    if legacy_path.exists():
+        with legacy_path.open(encoding="utf-8") as file:
+            data: list[dict[str, Any]] = json.load(file)
+            return data
+    return database.load_updates(language_code)
 
 
 def build_update_signature(update_item: dict[str, Any]) -> str:
@@ -795,6 +814,8 @@ def build_updates_block_hash(updates: list[dict[str, Any]]) -> str:
 
 def load_update_blocks() -> dict[str, dict[str, dict[str, Any]]]:
     """Load the content-addressed update-block registry."""
+    if UPDATE_BLOCKS_FILE == "data/update_blocks.json":
+        return database.load_update_blocks()
     path = Path(UPDATE_BLOCKS_FILE)
     if not path.exists():
         return {}
@@ -806,6 +827,13 @@ def load_update_blocks() -> dict[str, dict[str, dict[str, Any]]]:
 def register_update_block(language_code: str, updates: list[dict[str, Any]]) -> str:
     """Persist an update block for a language and return its content hash."""
     block_hash = build_updates_block_hash(updates)
+    if UPDATE_BLOCKS_FILE == "data/update_blocks.json":
+        database.save_update_block(
+            language_code,
+            block_hash,
+            [build_update_signature(item) for item in updates],
+        )
+        return block_hash
     registry = load_update_blocks()
     language_blocks = registry.setdefault(language_code, {})
     language_blocks[block_hash] = {

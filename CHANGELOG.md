@@ -5,6 +5,31 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-10-02
+
+### Added
+- SQLite-backed runtime persistence for languages, localized updates, subscriptions,
+  notification blocks, pending jobs, scraping errors, and application state.
+- Automatic first-run migration from the legacy runtime JSON files through a
+  temporary database with an integrity check before it is published.
+- Durable SQLite notification jobs and indexed, per-subscriber delivery updates.
+
+### Changed
+- Runtime state now lives in `data/crazyones.db`; `config.json` and translation
+  JSON files remain unchanged as configuration and version-controlled resources.
+- Successfully migrated runtime JSON files are removed after the SQLite database
+  is validated and atomically installed.
+- Obsolete updates are retained as inactive history instead of being lost when a
+  newly scraped table replaces the current catalog.
+
+### Breaking
+- The default runtime storage format and integration boundary changed from JSON
+  files to SQLite. External tools that read or write `data/*.json`, per-language
+  update files, or trigger files must migrate to the SQLite database/API.
+- The automatic migration removes legacy runtime JSON files after successful
+  validation, so downgrading to a JSON-only CrazyOnes release requires a backup or
+  an explicit SQLite-to-JSON export.
+
 ## [1.6.5] - 2026-08-20
 
 ### Fixed
