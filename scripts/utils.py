@@ -8,6 +8,11 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 
+try:
+    from . import database
+except ImportError:
+    import database  # type: ignore[import-not-found,no-redef]
+
 
 def create_scraping_error_trigger(
     project_root: Path,
@@ -25,6 +30,9 @@ def create_scraping_error_trigger(
         context: Optional metadata to help diagnose the failure.
         trigger_file: Path to the trigger JSON file, relative to project_root.
     """
+    if trigger_file == "data/scraping_errors_trigger.json":
+        database.add_scraping_error(source, message, context or {})
+        return
     trigger_path = project_root / trigger_file
     trigger_path.parent.mkdir(parents=True, exist_ok=True)
 

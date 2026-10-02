@@ -11,6 +11,11 @@ import json
 import sys
 from pathlib import Path
 
+try:
+    from . import database
+except ImportError:
+    import database  # type: ignore[import-not-found,no-redef]
+
 # Mapping of language-country codes to human-readable names
 # Based on ISO 639-1 (language) and ISO 3166-1 alpha-2 (country) codes
 LANGUAGE_NAME_MAP = {
@@ -251,6 +256,8 @@ def load_language_urls(file_path: str = "data/language_urls.json") -> dict[str, 
         FileNotFoundError: If the language URLs file doesn't exist
     """
     # Resolve path relative to project root
+    if file_path == "data/language_urls.json":
+        return database.load_languages()
     path = get_project_root() / file_path
     if not path.exists():
         raise FileNotFoundError(f"Language URLs file not found: {file_path}")
@@ -323,6 +330,16 @@ def save_language_names(
         output_file: Path to the output JSON file (relative to project root)
     """
     # Resolve path relative to project root
+    if output_file == "data/language_names.json":
+        now = database.utc_now()
+        with database.connection() as db, db:
+            for code, name in language_names.items():
+                db.execute(
+                    "UPDATE languages SET display_name=?, updated_at=? WHERE code=?",
+                    (name, now, code),
+                )
+        print(f"Language names saved to SQLite ({len(language_names)} mappings)")
+        return
     output_path = get_project_root() / output_file
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -355,7 +372,16 @@ def update_language_names(
 
     # Load existing language names if file exists
     language_names_path = get_project_root() / language_names_file
-    if language_names_path.exists():
+    if language_names_file == "data/language_names.json":
+        with database.connection() as db:
+            existing_names = {
+                row["code"]: row["display_name"]
+                for row in db.execute(
+                    "SELECT code, display_name FROM languages "
+                    "WHERE display_name IS NOT NULL"
+                )
+            }
+    elif language_names_path.exists():
         with open(language_names_path, encoding="utf-8") as f:
             existing_names = json.load(f)
     else:

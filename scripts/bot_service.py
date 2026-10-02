@@ -18,6 +18,11 @@ from typing import Any
 
 from telegram.ext import Application
 
+try:
+    from . import database
+except ImportError:
+    import database  # type: ignore[import-not-found,no-redef]
+
 # Type alias for Application with all-Any type args (6 required by python-telegram-bot)
 AnyApplication = Application[Any, Any, Any, Any, Any, Any]
 
@@ -38,7 +43,7 @@ try:
         record_notified_block,
         register_update_block,
         save_bot_version,
-        save_subscriptions,
+        save_subscription,
         send_version_notifications,
     )
 except ImportError:
@@ -60,7 +65,7 @@ except ImportError:
         record_notified_block,
         register_update_block,
         save_bot_version,
-        save_subscriptions,
+        save_subscription,
         send_version_notifications,
     )
 
@@ -98,6 +103,11 @@ class DeliveryReport:
 
 async def check_for_scraping_errors(application: AnyApplication) -> None:
     """Check for scraping error triggers and notify the configured admin user."""
+    if SCRAPING_ERROR_TRIGGER_FILE == "data/scraping_errors_trigger.json":
+        errors = database.claim_scraping_errors()
+        if errors:
+            await send_scraping_error_notification(application, errors)
+        return
     trigger_path = Path(SCRAPING_ERROR_TRIGGER_FILE)
 
     if not trigger_path.exists():
@@ -192,6 +202,26 @@ async def check_for_new_updates(application: AnyApplication) -> None:
     Args:
         application: The Telegram application instance
     """
+    if (
+        TRIGGER_FILE == "data/new_updates_trigger.json"
+        and PROCESSING_TRIGGER_FILE == "data/new_updates_trigger.processing.json"
+    ):
+        job_ids, payloads = database.claim_jobs("updates")
+        if not job_ids:
+            return
+        updated_languages = sorted(
+            {
+                str(language)
+                for payload in payloads
+                for language in payload.get("updated_languages", [])
+            }
+        )
+        completed = bool(updated_languages) and await send_new_updates_to_subscribers(
+            application, updated_languages
+        )
+        database.finish_jobs(job_ids, completed)
+        return
+
     trigger_path = Path(TRIGGER_FILE)
     processing_path = Path(PROCESSING_TRIGGER_FILE)
 
@@ -373,6 +403,7 @@ async def _send_new_updates_to_subscribers(
                 subscriptions[chat_id]["last_update_id"] = latest_id
             subscriptions_changed = True
             report.up_to_date += 1
+            save_subscription(chat_id, subscriptions[chat_id])
             continue
 
         # Send notification
@@ -395,15 +426,12 @@ async def _send_new_updates_to_subscribers(
             # Persist each confirmed delivery immediately. If the service crashes
             # while processing later subscribers, this chat will not be sent the
             # same update again when the retained trigger is retried.
-            save_subscriptions(subscriptions)
+            save_subscription(chat_id, subscriptions[chat_id])
 
         except Exception as e:
             logger.error(f"Error sending notification to {chat_id}: {e}")
             report.failed += 1
 
-    # Save updated subscriptions
-    if subscriptions_changed:
-        save_subscriptions(subscriptions)
     if notification_count > 0:
         logger.info(f"Sent notifications to {notification_count} subscribers")
     elif subscriptions_changed:
@@ -668,6 +696,7 @@ def load_config(config_file: str = "config.json") -> dict[str, str]:
 
 def main() -> None:
     """Main entry point for the bot service."""
+    database.initialize_database()
     # Setup signal handlers
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)

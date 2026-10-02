@@ -26,7 +26,7 @@ The system continuously monitors Apple's security updates page across all availa
   4. Tracks sent updates per user to avoid duplicates
 - 🔐 **Token validation** ensures Telegram bot token is properly configured
 - 🐳 **Docker-ready deployment** with `Dockerfile` and `docker-compose.yml`
-- 💾 **Persistent data** stored locally in JSON files
+- 💾 **Persistent data** stored transactionally in SQLite
 - ⚙️ **Easy setup** with configuration wizard and systemd service support
 - 🥧 **Raspberry Pi compatible** - perfect for running on Raspberry Pi devices
 
@@ -161,13 +161,13 @@ The monitoring and notification system works as follows:
 
 1. **Monitoring service** scrapes language URLs from Apple Updates page
 2. **Monitoring service** detects security updates from each language URL, including rows without detail links
-3. If new updates are found, creates a trigger file (`data/new_updates_trigger.json`)
-4. **Bot service** checks for trigger files every 30 seconds
-5. **Bot service** reads trigger and sends notifications to subscribers
+3. If new updates are found, enqueues a durable notification job in SQLite
+4. **Bot service** checks for pending SQLite jobs every 30 seconds
+5. **Bot service** claims each job and sends notifications to subscribers
 6. Compares per-language SHA-256 update-block hashes and only sends entries absent
    from each subscriber's previous block
-7. Records every successfully notified block in `data/subscriptions.json`; the
-   content-addressed block details live in `data/update_blocks.json`
+7. Records every successfully notified block and its content-addressed details in
+   `data/crazyones.db`
 8. Users can also manually request latest updates using `/updates` command
 
 **Telegram Bot Features:**
@@ -268,6 +268,26 @@ The one-time execution will:
 7. Exit after completing the cycle
 
 **Note**: For production use, especially on Raspberry Pi or servers, it's recommended to use daemon mode or the systemd service instead of running individual scripts.
+
+### SQLite storage and automatic migration
+
+Runtime state is stored in `data/crazyones.db`. On the first execution, if that
+database does not exist, CrazyOnes automatically imports the legacy runtime JSON
+files into a temporary SQLite database, validates it with `PRAGMA integrity_check`,
+publishes it atomically, and only then removes the migrated files. If parsing,
+importing, or validation fails, the JSON sources are retained and no partial
+database is published.
+
+The migration includes language URLs and names, scrape hashes, localized updates,
+subscriptions, notification blocks, pending triggers, scraping errors, and bot
+version state. `config.json` and `scripts/translations/*.json` remain JSON because
+they are configuration and version-controlled translation resources rather than
+runtime state. Set `CRAZYONES_DATABASE` to use a database path other than
+`data/crazyones.db`.
+
+SQLite uses foreign keys, WAL journaling, a busy timeout, and indexed language,
+subscription, update-hash, and pending-job lookups. Keep the `data` directory on
+persistent storage when running in Docker.
 
 ### Configuration
 
