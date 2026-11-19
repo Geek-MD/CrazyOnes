@@ -165,12 +165,8 @@ def test_update_numbers_are_bold_and_italic():
     assert format_update_number(7) == "<b><i>7.</i></b>"
 
     item = {"name": "iOS 27.2", "target": "iPhone", "date": "2026-11-12"}
-    assert format_update_message(item, 7, "es-cl").startswith(
-        "<b><i>7.</i></b> "
-    )
-    assert format_update_message(item, 7, "en-us").startswith(
-        "<b><i>7.</i></b> "
-    )
+    assert format_update_message(item, 7, "es-cl").startswith("<b><i>7.</i></b> ")
+    assert format_update_message(item, 7, "en-us").startswith("<b><i>7.</i></b> ")
     assert "*" not in format_update_message(item, 7, "es-cl")
 
 
@@ -188,7 +184,7 @@ def test_update_html_escapes_dynamic_content_and_preserves_links():
     assert result.startswith("<b><i>1.</i></b> ")
     assert "iOS &lt;Preview&gt; &amp; iPadOS" in result
     assert "iPhone &gt; 11 &amp; later" in result
-    assert 'a=1&amp;label=&quot;beta&quot;' in result
+    assert "a=1&amp;label=&quot;beta&quot;" in result
 
 
 def test_update_header_markdown_is_converted_to_html():
@@ -196,8 +192,7 @@ def test_update_header_markdown_is_converted_to_html():
     header = "*CrazyOnes - Actualizaciones de Apple* - _Spanish/Chile_\n\n"
 
     assert legacy_markdown_to_html(header) == (
-        "<b>CrazyOnes - Actualizaciones de Apple</b> - "
-        "<i>Spanish/Chile</i>\n\n"
+        "<b>CrazyOnes - Actualizaciones de Apple</b> - <i>Spanish/Chile</i>\n\n"
     )
 
 
