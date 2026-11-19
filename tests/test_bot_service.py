@@ -29,14 +29,15 @@ def test_build_update_signature_includes_core_fields() -> None:
     assert signature == "iOS 30.1|iPhone|2026-07-03|https://support.apple.com/12345"
 
 
-def test_get_new_updates_since_signature_returns_new_items_oldest_first() -> None:
-    """Only updates before marker should be returned, ordered oldest->newest."""
+def test_get_new_updates_since_signature_returns_new_items_newest_first() -> None:
+    """Only updates before marker should be returned, ordered newest->oldest."""
     updates = [
+        {"id": 0, "name": "iOS 30.3", "target": "iPhone", "date": "2026-07-04"},
         {"id": 1, "name": "iOS 30.2", "target": "iPhone", "date": "2026-07-03"},
         {"id": 2, "name": "iOS 30.1", "target": "iPhone", "date": "2026-07-01"},
         {"id": 3, "name": "iOS 30.0", "target": "iPhone", "date": "2026-06-29"},
     ]
-    marker = build_update_signature(updates[1])
+    marker = build_update_signature(updates[2])
 
     new_updates, latest_signature, marker_found = get_new_updates_since_signature(
         updates, marker
@@ -44,7 +45,32 @@ def test_get_new_updates_since_signature_returns_new_items_oldest_first() -> Non
 
     assert marker_found is True
     assert latest_signature == build_update_signature(updates[0])
-    assert [u["name"] for u in new_updates] == ["iOS 30.2"]
+    assert [u["name"] for u in new_updates] == ["iOS 30.3", "iOS 30.2"]
+
+
+def test_historical_text_edits_do_not_create_old_notifications() -> None:
+    """A changed target or non-breaking space must not expose the old backlog."""
+    previous_marker = {
+        "name": "macOS Sequoia 15.7.7",
+        "target": "macOS Sequoia",
+        "date": "2026-05-11",
+    }
+    updates = [
+        {"name": "tvOS 27.2.1", "target": "Apple TV", "date": "2026-11-13"},
+        {
+            "name": "macOS\u00a0Sequoia 15.7.7",
+            "target": "macOS Sequoia (updated wording)",
+            "date": "2026-05-11",
+        },
+        {"name": "macOS Sequoia 15.1", "target": "Mac", "date": "2024-10-28"},
+    ]
+
+    new_updates, _, marker_found = get_new_updates_since_signature(
+        updates, build_update_signature(previous_marker)
+    )
+
+    assert marker_found is True
+    assert [item["name"] for item in new_updates] == ["tvOS 27.2.1"]
 
 
 def test_get_new_updates_since_signature_without_marker_sets_baseline() -> None:
