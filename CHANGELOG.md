@@ -10,8 +10,8 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ### Fixed
 - Update numbers now render as nested bold and italic text without exposing Markdown
   control characters in Telegram messages.
-- Update messages use safely escaped Telegram HTML so names, targets, and links keep
-  their intended formatting.
+- Update messages now use `telegramify-markdown` to produce correctly escaped
+  MarkdownV2 for names, targets, dates, and links.
 
 ## [2.0.1] - 2026-11-18
 

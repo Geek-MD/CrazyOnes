@@ -33,9 +33,9 @@ try:
         build_update_hash,
         build_update_signature,
         create_application,
-        format_update_line_html,
+        format_update_line_markdown,
         get_translation,
-        legacy_markdown_to_html,
+        legacy_markdown_to_commonmark,
         load_admin_user_id,
         load_bot_version,
         load_config_version,
@@ -43,6 +43,7 @@ try:
         load_updates_for_language,
         record_notified_block,
         register_update_block,
+        render_telegram_markdown,
         save_bot_version,
         save_subscription,
         send_version_notifications,
@@ -56,9 +57,9 @@ except ImportError:
         build_update_hash,
         build_update_signature,
         create_application,
-        format_update_line_html,
+        format_update_line_markdown,
         get_translation,
-        legacy_markdown_to_html,
+        legacy_markdown_to_commonmark,
         load_admin_user_id,
         load_bot_version,
         load_config_version,
@@ -66,6 +67,7 @@ except ImportError:
         load_updates_for_language,
         record_notified_block,
         register_update_block,
+        render_telegram_markdown,
         save_bot_version,
         save_subscription,
         send_version_notifications,
@@ -547,15 +549,15 @@ async def send_update_notification(
     header += f"\n_{display_name}_\n\n"
 
     # Build message with updates
-    message = legacy_markdown_to_html(header)
+    message = legacy_markdown_to_commonmark(header)
     for idx, update in enumerate(new_updates, 1):
-        message += format_update_line_html(update, idx)
+        message += format_update_line_markdown(update, idx)
 
     # Send message
     await application.bot.send_message(
         chat_id=int(chat_id),
-        text=message,
-        parse_mode="HTML",
+        text=render_telegram_markdown(message),
+        parse_mode="MarkdownV2",
         disable_web_page_preview=True,
     )
 
