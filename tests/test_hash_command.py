@@ -313,7 +313,8 @@ def test_force_updates_delivers_pending_and_preserves_automatic_progress(
 
     subscription = telegram_bot.load_subscriptions()["123"]
     assert len(bot.sent_messages) == 1
-    assert "iOS 30.2" in bot.sent_messages[0]["text"]
+    assert "iOS 30\\.2" in bot.sent_messages[0]["text"]
+    assert bot.sent_messages[0]["parse_mode"] == "MarkdownV2"
     assert subscription["last_notified_update_hash"] == (
         telegram_bot.build_update_hash(pending)
     )
@@ -335,8 +336,9 @@ def test_force_updates_delivers_pending_and_preserves_automatic_progress(
 
     subscription = telegram_bot.load_subscriptions()["123"]
     assert len(bot.sent_messages) == 2
-    assert "iOS 30.3" in bot.sent_messages[1]["text"]
-    assert "iOS 30.2" not in bot.sent_messages[1]["text"]
+    assert "iOS 30\\.3" in bot.sent_messages[1]["text"]
+    assert "iOS 30\\.2" not in bot.sent_messages[1]["text"]
+    assert bot.sent_messages[1]["parse_mode"] == "MarkdownV2"
     assert subscription["last_notified_update_hash"] == (
         telegram_bot.build_update_hash(future)
     )
@@ -449,9 +451,10 @@ def test_force_updates_recovers_orphaned_confirmed_marker(
     asyncio.run(telegram_bot.force_command(update, context))
 
     assert len(bot.sent_messages) == 1
-    assert "iOS 30.12" in bot.sent_messages[0]["text"]
-    assert "iOS 30.3" in bot.sent_messages[0]["text"]
-    assert "iOS 30.2" not in bot.sent_messages[0]["text"]
+    assert "iOS 30\\.12" in bot.sent_messages[0]["text"]
+    assert "iOS 30\\.3" in bot.sent_messages[0]["text"]
+    assert "iOS 30\\.2" not in bot.sent_messages[0]["text"]
+    assert bot.sent_messages[0]["parse_mode"] == "MarkdownV2"
     subscription = telegram_bot.load_subscriptions()["123"]
     assert subscription["last_notified_update_hash"] == (
         telegram_bot.build_update_hash(updates[0])

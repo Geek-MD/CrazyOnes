@@ -9,11 +9,12 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 from telegram_bot import (
-    format_update_line_html,
+    format_update_line_markdown,
     format_update_message,
     format_update_number,
     get_translation,
-    legacy_markdown_to_html,
+    legacy_markdown_to_commonmark,
+    render_telegram_markdown,
 )
 
 
@@ -162,16 +163,20 @@ def test_updates_found_tag_keeps_blank_line_before_results():
 
 def test_update_numbers_are_bold_and_italic():
     """Every numbered update prefix includes its point in bold italics."""
-    assert format_update_number(7) == "<b><i>7.</i></b>"
+    assert format_update_number(7) == "***7.***"
 
     item = {"name": "iOS 27.2", "target": "iPhone", "date": "2026-11-12"}
-    assert format_update_message(item, 7, "es-cl").startswith("<b><i>7.</i></b> ")
-    assert format_update_message(item, 7, "en-us").startswith("<b><i>7.</i></b> ")
-    assert "*" not in format_update_message(item, 7, "es-cl")
+    expected_prefix = "*_7\\._* "
+    assert render_telegram_markdown(
+        format_update_message(item, 7, "es-cl")
+    ).startswith(expected_prefix)
+    assert render_telegram_markdown(
+        format_update_message(item, 7, "en-us")
+    ).startswith(expected_prefix)
 
 
-def test_update_html_escapes_dynamic_content_and_preserves_links():
-    """Apple text and URLs cannot break Telegram's HTML parser."""
+def test_telegramify_markdown_escapes_content_and_preserves_links():
+    """Apple text and URLs are rendered as valid Telegram MarkdownV2."""
     item = {
         "name": "iOS <Preview> & iPadOS",
         "target": "iPhone > 11 & later",
@@ -179,21 +184,25 @@ def test_update_html_escapes_dynamic_content_and_preserves_links():
         "url": 'https://example.test/update?a=1&label="beta"',
     }
 
-    result = format_update_line_html(item, 1)
+    result = render_telegram_markdown(format_update_line_markdown(item, 1))
 
-    assert result.startswith("<b><i>1.</i></b> ")
-    assert "iOS &lt;Preview&gt; &amp; iPadOS" in result
-    assert "iPhone &gt; 11 &amp; later" in result
-    assert "a=1&amp;label=&quot;beta&quot;" in result
+    assert result.startswith("*_1\\._* ")
+    assert "iOS <Preview\\> & iPadOS" in result
+    assert "iPhone \\> 11 & later" in result
+    assert "a=1&label=%22beta%22" in result
 
 
-def test_update_header_markdown_is_converted_to_html():
-    """Existing translated headers retain their bold and italic formatting."""
+def test_update_header_legacy_markdown_is_converted_to_commonmark():
+    """Existing translated headers retain their formatting through telegramify."""
     header = "*CrazyOnes - Actualizaciones de Apple* - _Spanish/Chile_\n\n"
 
-    assert legacy_markdown_to_html(header) == (
-        "<b>CrazyOnes - Actualizaciones de Apple</b> - <i>Spanish/Chile</i>\n\n"
+    commonmark = legacy_markdown_to_commonmark(header)
+    assert commonmark == (
+        "**CrazyOnes - Actualizaciones de Apple** - "
+        "*Spanish/Chile*\n\n"
     )
+    rendered = render_telegram_markdown(commonmark)
+    assert rendered.startswith("*CrazyOnes \\- Actualizaciones de Apple*")
 
 
 if __name__ == "__main__":
