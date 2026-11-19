@@ -96,8 +96,9 @@ def test_start_command_sends_latest_updates_and_records_baseline(
     assert len(update.message.replies) == 1
     assert len(context.bot.messages) == 11
     assert "10" in context.bot.messages[0]["text"]
-    assert "iOS 30.12" in context.bot.messages[1]["text"]
-    assert "iOS 30.3" in context.bot.messages[-1]["text"]
+    assert "iOS 30\\.12" in context.bot.messages[1]["text"]
+    assert "iOS 30\\.3" in context.bot.messages[-1]["text"]
+    assert context.bot.messages[1]["parse_mode"] == "MarkdownV2"
 
 
 def test_start_command_existing_user_does_not_resend_latest_updates(

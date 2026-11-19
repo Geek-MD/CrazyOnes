@@ -16,6 +16,7 @@ import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote
 
 from telegram import (
     Chat,
@@ -31,6 +32,7 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
+from telegramify_markdown import markdownify
 
 try:
     from . import database
@@ -725,8 +727,43 @@ def build_update_hash(update_item: dict[str, Any]) -> str:
 
 
 def format_update_number(number: int) -> str:
-    """Format a numbered-list prefix in bold italics for Telegram Markdown."""
-    return f"_*{number}.*_"
+    """Format a numbered-list prefix as nested CommonMark emphasis."""
+    return f"***{number}.***"
+
+
+def escape_commonmark_text(value: object) -> str:
+    """Keep dynamic Apple text literal before telegramify-markdown parses it."""
+    return re.sub(r"([\\`*_[\]<>~|])", r"\\\1", str(value))
+
+
+def format_update_line_markdown(
+    update_item: dict[str, Any], number: int, *, date_first: bool = False
+) -> str:
+    """Format one update line as standard Markdown for telegramify-markdown."""
+    name = escape_commonmark_text(update_item.get("name", "Unknown"))
+    target = escape_commonmark_text(update_item.get("target", "N/A"))
+    date = escape_commonmark_text(update_item.get("date", "N/A"))
+    url = update_item.get("url")
+    rendered_name = name
+    if url:
+        safe_url = quote(str(url), safe=":/?&=#%+,-._~")
+        rendered_name = f"[{name}]({safe_url})"
+
+    prefix = format_update_number(number)
+    if date_first:
+        return f"{prefix} {date} - {rendered_name} - {target}\n"
+    return f"{prefix} {rendered_name} - {target} - {date}\n"
+
+
+def legacy_markdown_to_commonmark(text: str) -> str:
+    """Convert the bot's legacy Telegram header markup to standard Markdown."""
+    rendered = re.sub(r"\*([^*\n]+)\*", r"**\1**", text)
+    return re.sub(r"_([^_\n]+)_", r"*\1*", rendered)
+
+
+def render_telegram_markdown(markdown: str) -> str:
+    """Render standard Markdown as correctly escaped Telegram MarkdownV2."""
+    return markdownify(markdown, latex_escape=False)
 
 
 def find_update_by_hash(update_hash: str) -> dict[str, Any] | None:
@@ -1287,27 +1324,14 @@ async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         recent_updates = updates[:10]
 
         # Build message with all updates - combining header and updates in one message
-        message = header
+        message = legacy_markdown_to_commonmark(header)
         for idx, update_item in enumerate(recent_updates, 1):
-            date = update_item.get("date", "N/A")
-            name = update_item.get("name", "Unknown")
-            target = update_item.get("target", "N/A")
-            url = update_item.get("url")
-
-            # Format: Name[url] - Target - Date
-            if url:
-                update_line = (
-                    f"{format_update_number(idx)} [{name}]({url}) - {target} - {date}\n"
-                )
-            else:
-                update_line = (
-                    f"{format_update_number(idx)} {name} - {target} - {date}\n"
-                )
-
-            message += update_line
+            message += format_update_line_markdown(update_item, idx)
 
         await update.message.reply_text(
-            message, parse_mode="Markdown", disable_web_page_preview=True
+            render_telegram_markdown(message),
+            parse_mode="MarkdownV2",
+            disable_web_page_preview=True,
         )
     else:
         # Parameter provided - filter by tag
@@ -1340,28 +1364,14 @@ async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             recent_filtered = filtered_updates[:10]
 
             # Build message with header and updates combined
-            message = header
+            message = legacy_markdown_to_commonmark(header)
             for idx, update_item in enumerate(recent_filtered, 1):
-                date = update_item.get("date", "N/A")
-                name = update_item.get("name", "Unknown")
-                target = update_item.get("target", "N/A")
-                url = update_item.get("url")
-
-                # Format: Name[url] - Target - Date
-                if url:
-                    update_line = (
-                        f"{format_update_number(idx)} [{name}]({url})"
-                        f" - {target} - {date}\n"
-                    )
-                else:
-                    update_line = (
-                        f"{format_update_number(idx)} {name} - {target} - {date}\n"
-                    )
-
-                message += update_line
+                message += format_update_line_markdown(update_item, idx)
 
             await update.message.reply_text(
-                message, parse_mode="Markdown", disable_web_page_preview=True
+                render_telegram_markdown(message),
+                parse_mode="MarkdownV2",
+                disable_web_page_preview=True,
             )
         else:
             # No updates found - try to find similar tags (OS names)
@@ -1693,25 +1703,12 @@ async def send_recent_updates_simple(
     # Build message with all updates (format: date - name - target)
     message = ""
     for idx, update_item in enumerate(recent_updates, 1):
-        date = update_item.get("date", "N/A")
-        name = update_item.get("name", "Unknown")
-        target = update_item.get("target", "N/A")
-        url = update_item.get("url")
-
-        if url:
-            # Name as link
-            update_line = (
-                f"{format_update_number(idx)} {date} - [{name}]({url}) - {target}\n"
-            )
-        else:
-            update_line = f"{format_update_number(idx)} {date} - {name} - {target}\n"
-
-        message += update_line
+        message += format_update_line_markdown(update_item, idx, date_first=True)
 
     await context.bot.send_message(
         chat_id=int(chat_id),
-        text=message,
-        parse_mode="Markdown",
+        text=render_telegram_markdown(message),
+        parse_mode="MarkdownV2",
         disable_web_page_preview=True,
     )
 
@@ -1752,39 +1749,30 @@ async def send_recent_updates(
 
     if base_lang == "es":
         # Spanish format: one update per line (date - name - target)
-        message = header
-        for update_item in recent_updates:
-            date = update_item.get("date", "N/A")
-            name = update_item.get("name", "Unknown")
-            target = update_item.get("target", "N/A")
-            url = update_item.get("url")
-
-            if url:
-                # Name as link
-                update_line = f"{date} - [{name}]({url}) - {target}\n"
-            else:
-                update_line = f"{date} - {name} - {target}\n"
-
-            message += update_line
+        message = legacy_markdown_to_commonmark(header)
+        for idx, update_item in enumerate(recent_updates, 1):
+            message += format_update_line_markdown(update_item, idx, date_first=True)
 
         await context.bot.send_message(
             chat_id=int(chat_id),
-            text=message,
-            parse_mode="Markdown",
+            text=render_telegram_markdown(message),
+            parse_mode="MarkdownV2",
             disable_web_page_preview=True,
         )
     else:
         # English format: detailed format with emojis (one message per update)
         await context.bot.send_message(
-            chat_id=int(chat_id), text=header, parse_mode="Markdown"
+            chat_id=int(chat_id),
+            text=render_telegram_markdown(legacy_markdown_to_commonmark(header)),
+            parse_mode="MarkdownV2",
         )
 
         for idx, update_item in enumerate(recent_updates, 1):
             message = format_update_message(update_item, idx, language_code)
             await context.bot.send_message(
                 chat_id=int(chat_id),
-                text=message,
-                parse_mode="Markdown",
+                text=render_telegram_markdown(message),
+                parse_mode="MarkdownV2",
                 disable_web_page_preview=True,
             )
 
@@ -1818,9 +1806,9 @@ def format_update_message(
     Returns:
         Formatted message string
     """
-    name = update_item.get("name", "Unknown")
-    target = update_item.get("target", "N/A")
-    date = update_item.get("date", "N/A")
+    name = escape_commonmark_text(update_item.get("name", "Unknown"))
+    target = escape_commonmark_text(update_item.get("target", "N/A"))
+    date = escape_commonmark_text(update_item.get("date", "N/A"))
     url = update_item.get("url")
 
     # Get base language
@@ -1830,21 +1818,27 @@ def format_update_message(
         # Spanish format: date - name - target (inline)
         prefix = f"{format_update_number(number)} " if number > 0 else ""
         if url:
-            message = f"{prefix}{date} - [{name}]({url}) - {target}"
+            safe_url = quote(str(url), safe=":/?&=#%+,-._~")
+            rendered_name = f"[{name}]({safe_url})"
+            message = f"{prefix}{date} - {rendered_name} - {target}"
         else:
             message = f"{prefix}{date} - {name} - {target}"
     else:
         # English format: detailed with emojis
         if number > 0:
-            message = f"{format_update_number(number)} *{name}*\n"
+            message = f"{format_update_number(number)} **{name}**\n"
         else:
-            message = f"*{name}*\n"
+            message = f"**{name}**\n"
 
         message += get_translation(language_code, "update_format_target", target=target)
         message += get_translation(language_code, "update_format_date", date=date)
 
         if url:
-            message += get_translation(language_code, "update_format_link", url=url)
+            label = escape_commonmark_text(
+                get_translation(language_code, "update_format_link")
+            )
+            safe_url = quote(str(url), safe=":/?&=#%+,-._~")
+            message += f"[{label}]({safe_url})"
 
     return message
 

@@ -8,7 +8,14 @@ import sys
 # Add parent directory to path to import telegram_bot
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
-from telegram_bot import format_update_message, format_update_number, get_translation
+from telegram_bot import (
+    format_update_line_markdown,
+    format_update_message,
+    format_update_number,
+    get_translation,
+    legacy_markdown_to_commonmark,
+    render_telegram_markdown,
+)
 
 
 def test_language_list_header_formatting():
@@ -156,11 +163,45 @@ def test_updates_found_tag_keeps_blank_line_before_results():
 
 def test_update_numbers_are_bold_and_italic():
     """Every numbered update prefix includes its point in bold italics."""
-    assert format_update_number(7) == "_*7.*_"
+    assert format_update_number(7) == "***7.***"
 
     item = {"name": "iOS 27.2", "target": "iPhone", "date": "2026-11-12"}
-    assert format_update_message(item, 7, "es-cl").startswith("_*7.*_ ")
-    assert format_update_message(item, 7, "en-us").startswith("_*7.*_ ")
+    expected_prefix = "*_7\\._* "
+    assert render_telegram_markdown(format_update_message(item, 7, "es-cl")).startswith(
+        expected_prefix
+    )
+    assert render_telegram_markdown(format_update_message(item, 7, "en-us")).startswith(
+        expected_prefix
+    )
+
+
+def test_telegramify_markdown_escapes_content_and_preserves_links():
+    """Apple text and URLs are rendered as valid Telegram MarkdownV2."""
+    item = {
+        "name": "iOS <Preview> & iPadOS",
+        "target": "iPhone > 11 & later",
+        "date": "2026-11-18",
+        "url": 'https://example.test/update?a=1&label="beta"',
+    }
+
+    result = render_telegram_markdown(format_update_line_markdown(item, 1))
+
+    assert result.startswith("*_1\\._* ")
+    assert "iOS <Preview\\> & iPadOS" in result
+    assert "iPhone \\> 11 & later" in result
+    assert "a=1&label=%22beta%22" in result
+
+
+def test_update_header_legacy_markdown_is_converted_to_commonmark():
+    """Existing translated headers retain their formatting through telegramify."""
+    header = "*CrazyOnes - Actualizaciones de Apple* - _Spanish/Chile_\n\n"
+
+    commonmark = legacy_markdown_to_commonmark(header)
+    assert commonmark == (
+        "**CrazyOnes - Actualizaciones de Apple** - *Spanish/Chile*\n\n"
+    )
+    rendered = render_telegram_markdown(commonmark)
+    assert rendered.startswith("*CrazyOnes \\- Actualizaciones de Apple*")
 
 
 if __name__ == "__main__":
