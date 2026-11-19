@@ -167,12 +167,12 @@ def test_update_numbers_are_bold_and_italic():
 
     item = {"name": "iOS 27.2", "target": "iPhone", "date": "2026-11-12"}
     expected_prefix = "*_7\\._* "
-    assert render_telegram_markdown(
-        format_update_message(item, 7, "es-cl")
-    ).startswith(expected_prefix)
-    assert render_telegram_markdown(
-        format_update_message(item, 7, "en-us")
-    ).startswith(expected_prefix)
+    assert render_telegram_markdown(format_update_message(item, 7, "es-cl")).startswith(
+        expected_prefix
+    )
+    assert render_telegram_markdown(format_update_message(item, 7, "en-us")).startswith(
+        expected_prefix
+    )
 
 
 def test_telegramify_markdown_escapes_content_and_preserves_links():
@@ -198,8 +198,7 @@ def test_update_header_legacy_markdown_is_converted_to_commonmark():
 
     commonmark = legacy_markdown_to_commonmark(header)
     assert commonmark == (
-        "**CrazyOnes - Actualizaciones de Apple** - "
-        "*Spanish/Chile*\n\n"
+        "**CrazyOnes - Actualizaciones de Apple** - *Spanish/Chile*\n\n"
     )
     rendered = render_telegram_markdown(commonmark)
     assert rendered.startswith("*CrazyOnes \\- Actualizaciones de Apple*")
