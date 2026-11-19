@@ -334,7 +334,7 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
     elif key == "updates_found_tag":
         # Format: "*CrazyOnes - Apple Updates* - _{display_name}_\n\n..."
         # The display_name is already formatted as italic from earlier processing
-        lines = result.split("\n\n")
+        lines = result.split("\n\n", 2)
         if len(lines) >= 3:
             # Split the first line to separate the prefix from display_name
             first_line = lines[0]
@@ -345,10 +345,13 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
                 # Successfully split and display_name appears to be italicized
                 prefix = parts[0]
                 display_name_part = parts[1]
-                result = f"*{prefix}* - {display_name_part}\n\n{lines[1]}\n\n{lines[2]}"
+                result = (
+                    f"*{prefix}* - {display_name_part}\n\n"
+                    f"{lines[1]}\n\n{lines[2].rstrip()}\n\n"
+                )
             else:
                 # Fallback: bold the entire first line
-                result = f"*{first_line}*\n\n{lines[1]}\n\n{lines[2]}"
+                result = f"*{first_line}*\n\n{lines[1]}\n\n{lines[2].rstrip()}\n\n"
     elif key == "language_list_header":
         # Format: "*CrazyOnes - Available Languages*\n\n"
         result = f"*{result.rstrip()}*\n\n"
@@ -719,6 +722,11 @@ def build_update_hash(update_item: dict[str, Any]) -> str:
     """Return the SHA-256 hash of an update's stable signature."""
     signature = build_update_signature(update_item)
     return hashlib.sha256(signature.encode("utf-8")).hexdigest()
+
+
+def format_update_number(number: int) -> str:
+    """Format a numbered-list prefix in bold italics for Telegram Markdown."""
+    return f"_*{number}.*_"
 
 
 def find_update_by_hash(update_hash: str) -> dict[str, Any] | None:
@@ -1288,9 +1296,13 @@ async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
             # Format: Name[url] - Target - Date
             if url:
-                update_line = f"{idx}. [{name}]({url}) - {target} - {date}\n"
+                update_line = (
+                    f"{format_update_number(idx)} [{name}]({url}) - {target} - {date}\n"
+                )
             else:
-                update_line = f"{idx}. {name} - {target} - {date}\n"
+                update_line = (
+                    f"{format_update_number(idx)} {name} - {target} - {date}\n"
+                )
 
             message += update_line
 
@@ -1337,9 +1349,14 @@ async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
                 # Format: Name[url] - Target - Date
                 if url:
-                    update_line = f"{idx}. [{name}]({url}) - {target} - {date}\n"
+                    update_line = (
+                        f"{format_update_number(idx)} [{name}]({url})"
+                        f" - {target} - {date}\n"
+                    )
                 else:
-                    update_line = f"{idx}. {name} - {target} - {date}\n"
+                    update_line = (
+                        f"{format_update_number(idx)} {name} - {target} - {date}\n"
+                    )
 
                 message += update_line
 
@@ -1683,9 +1700,11 @@ async def send_recent_updates_simple(
 
         if url:
             # Name as link
-            update_line = f"{idx}. {date} - [{name}]({url}) - {target}\n"
+            update_line = (
+                f"{format_update_number(idx)} {date} - [{name}]({url}) - {target}\n"
+            )
         else:
-            update_line = f"{idx}. {date} - {name} - {target}\n"
+            update_line = f"{format_update_number(idx)} {date} - {name} - {target}\n"
 
         message += update_line
 
@@ -1809,14 +1828,15 @@ def format_update_message(
 
     if base_lang == "es":
         # Spanish format: date - name - target (inline)
+        prefix = f"{format_update_number(number)} " if number > 0 else ""
         if url:
-            message = f"{date} - [{name}]({url}) - {target}"
+            message = f"{prefix}{date} - [{name}]({url}) - {target}"
         else:
-            message = f"{date} - {name} - {target}"
+            message = f"{prefix}{date} - {name} - {target}"
     else:
         # English format: detailed with emojis
         if number > 0:
-            message = f"*{number}. {name}*\n"
+            message = f"{format_update_number(number)} *{name}*\n"
         else:
             message = f"*{name}*\n"
 

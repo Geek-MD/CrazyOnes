@@ -5,6 +5,14 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.1] - 2026-11-18
+
+### Fixed
+- New-update notifications are sent from newest to oldest.
+- Historical Apple table edits no longer cause old releases to be announced as new.
+- `/updates [tag]` keeps a blank line between its summary and the first result.
+- Update list numbers and their periods are rendered in bold italics.
+
 ## [2.0.0] - 2026-10-02
 
 ### Added

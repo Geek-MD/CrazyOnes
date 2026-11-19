@@ -33,12 +33,12 @@ try:
         build_update_hash,
         build_update_signature,
         create_application,
+        format_update_number,
         get_translation,
         load_admin_user_id,
         load_bot_version,
         load_config_version,
         load_subscriptions,
-        load_update_blocks,
         load_updates_for_language,
         record_notified_block,
         register_update_block,
@@ -55,12 +55,12 @@ except ImportError:
         build_update_hash,
         build_update_signature,
         create_application,
+        format_update_number,
         get_translation,
         load_admin_user_id,
         load_bot_version,
         load_config_version,
         load_subscriptions,
-        load_update_blocks,
         load_updates_for_language,
         record_notified_block,
         register_update_block,
@@ -330,7 +330,6 @@ async def _send_new_updates_to_subscribers(
             report.skipped += 1
             continue
 
-        previous_block_hash = subscription_data.get("last_update_block_hash")
         new_updates: list[dict[str, Any]]
         latest_signature: str | None
         marker_found = True
@@ -349,7 +348,7 @@ async def _send_new_updates_to_subscribers(
                 # A forced administrative recovery must not silently treat an
                 # unknown confirmed marker as success. Re-send a bounded recent
                 # block so the subscriber reaches a verifiable current baseline.
-                new_updates = list(reversed(updates[:10]))
+                new_updates = updates[:10]
                 report.recovered += 1
                 logger.warning(
                     "Recovering orphaned delivery marker for chat %s (lang: %s)",
@@ -357,32 +356,14 @@ async def _send_new_updates_to_subscribers(
                     language_code,
                 )
         else:
-            if isinstance(previous_block_hash, str):
-                previous_block = (
-                    load_update_blocks().get(language_code, {}).get(previous_block_hash)
-                )
-            else:
-                previous_block = None
-
-            if previous_block:
-                known_signatures = set(previous_block.get("update_signatures", []))
-                new_updates = [
-                    item
-                    for item in updates
-                    if build_update_signature(item) not in known_signatures
-                ]
-                # Source files are newest-first; notifications read oldest-first.
-                new_updates.reverse()
-                latest_signature = build_update_signature(updates[0])
-            else:
-                last_update_signature = get_last_update_signature(
-                    subscription_data, updates
-                )
-                (
-                    new_updates,
-                    latest_signature,
-                    marker_found,
-                ) = get_new_updates_since_signature(updates, last_update_signature)
+            last_update_signature = get_last_update_signature(
+                subscription_data, updates
+            )
+            (
+                new_updates,
+                latest_signature,
+                marker_found,
+            ) = get_new_updates_since_signature(updates, last_update_signature)
 
         if latest_signature is None:
             report.skipped += 1
@@ -495,7 +476,7 @@ def get_new_updates_since_signature(
 
     Returns:
         Tuple with:
-        - unseen updates to notify (oldest first),
+        - unseen updates to notify (newest first),
         - latest update signature for persistence,
         - whether the previous marker was found (or not needed).
     """
@@ -509,9 +490,32 @@ def get_new_updates_since_signature(
     new_updates: list[dict[str, Any]] = []
     for update_item in updates:
         if build_update_signature(update_item) == last_signature:
-            new_updates.reverse()
             return new_updates, latest_signature, True
         new_updates.append(update_item)
+
+    # Apple sometimes edits the target or URL of historical rows. Those edits
+    # change the full signature, but they must not turn years of old releases
+    # into "new" notifications. Recover the boundary using the stable release
+    # identity (normalized name + date), then fall back to the marker date when
+    # the original row was removed from the table.
+    marker_parts = last_signature.split("|", 3)
+    if len(marker_parts) >= 3:
+        marker_name = " ".join(marker_parts[0].split()).casefold()
+        marker_date = marker_parts[2].strip()
+        for position, update_item in enumerate(updates):
+            update_name = " ".join(str(update_item.get("name", "")).split()).casefold()
+            update_date = str(update_item.get("date", "")).strip()
+            if update_name == marker_name and update_date == marker_date:
+                return updates[:position], latest_signature, True
+
+        if marker_date:
+            newer_updates = [
+                update_item
+                for update_item in updates
+                if str(update_item.get("date", "")).strip() > marker_date
+            ]
+            if newer_updates:
+                return newer_updates, latest_signature, False
 
     return [], latest_signature, False
 
@@ -550,9 +554,11 @@ async def send_update_notification(
 
         # Format: Name[url] - Target - Date
         if url:
-            update_line = f"{idx}. [{name}]({url}) - {target} - {date}\n"
+            update_line = (
+                f"{format_update_number(idx)} [{name}]({url}) - {target} - {date}\n"
+            )
         else:
-            update_line = f"{idx}. {name} - {target} - {date}\n"
+            update_line = f"{format_update_number(idx)} {name} - {target} - {date}\n"
 
         message += update_line
 

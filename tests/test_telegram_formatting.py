@@ -8,7 +8,7 @@ import sys
 # Add parent directory to path to import telegram_bot
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
-from telegram_bot import get_translation
+from telegram_bot import format_update_message, format_update_number, get_translation
 
 
 def test_language_list_header_formatting():
@@ -138,6 +138,29 @@ def test_version_changes_key_present():
     assert en_result != es_result, "Spanish version_changes should differ from English"
 
     print("✓ version_changes keys are present for en-us and es-es")
+
+
+def test_updates_found_tag_keeps_blank_line_before_results():
+    """The tag header must remain separated from the first numbered update."""
+    result = get_translation(
+        "es-cl",
+        "updates_found_tag",
+        display_name="Spanish/Chile",
+        count=95,
+        tag="mac",
+        showing=10,
+    )
+
+    assert result.endswith("Mostrando las 10 más recientes:\n\n")
+
+
+def test_update_numbers_are_bold_and_italic():
+    """Every numbered update prefix includes its point in bold italics."""
+    assert format_update_number(7) == "_*7.*_"
+
+    item = {"name": "iOS 27.2", "target": "iPhone", "date": "2026-11-12"}
+    assert format_update_message(item, 7, "es-cl").startswith("_*7.*_ ")
+    assert format_update_message(item, 7, "en-us").startswith("_*7.*_ ")
 
 
 if __name__ == "__main__":
