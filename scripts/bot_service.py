@@ -33,8 +33,9 @@ try:
         build_update_hash,
         build_update_signature,
         create_application,
-        format_update_number,
+        format_update_line_html,
         get_translation,
+        legacy_markdown_to_html,
         load_admin_user_id,
         load_bot_version,
         load_config_version,
@@ -55,8 +56,9 @@ except ImportError:
         build_update_hash,
         build_update_signature,
         create_application,
-        format_update_number,
+        format_update_line_html,
         get_translation,
+        legacy_markdown_to_html,
         load_admin_user_id,
         load_bot_version,
         load_config_version,
@@ -545,28 +547,15 @@ async def send_update_notification(
     header += f"\n_{display_name}_\n\n"
 
     # Build message with updates
-    message = header
+    message = legacy_markdown_to_html(header)
     for idx, update in enumerate(new_updates, 1):
-        date = update.get("date", "N/A")
-        name = update.get("name", "Unknown")
-        target = update.get("target", "N/A")
-        url = update.get("url")
-
-        # Format: Name[url] - Target - Date
-        if url:
-            update_line = (
-                f"{format_update_number(idx)} [{name}]({url}) - {target} - {date}\n"
-            )
-        else:
-            update_line = f"{format_update_number(idx)} {name} - {target} - {date}\n"
-
-        message += update_line
+        message += format_update_line_html(update, idx)
 
     # Send message
     await application.bot.send_message(
         chat_id=int(chat_id),
         text=message,
-        parse_mode="Markdown",
+        parse_mode="HTML",
         disable_web_page_preview=True,
     )
 

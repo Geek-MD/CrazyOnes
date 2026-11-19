@@ -5,6 +5,14 @@ All notable changes to CrazyOnes are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.2] - 2026-11-18
+
+### Fixed
+- Update numbers now render as nested bold and italic text without exposing Markdown
+  control characters in Telegram messages.
+- Update messages use safely escaped Telegram HTML so names, targets, and links keep
+  their intended formatting.
+
 ## [2.0.1] - 2026-11-18
 
 ### Fixed

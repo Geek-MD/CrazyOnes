@@ -8,7 +8,13 @@ import sys
 # Add parent directory to path to import telegram_bot
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
-from telegram_bot import format_update_message, format_update_number, get_translation
+from telegram_bot import (
+    format_update_line_html,
+    format_update_message,
+    format_update_number,
+    get_translation,
+    legacy_markdown_to_html,
+)
 
 
 def test_language_list_header_formatting():
@@ -156,11 +162,43 @@ def test_updates_found_tag_keeps_blank_line_before_results():
 
 def test_update_numbers_are_bold_and_italic():
     """Every numbered update prefix includes its point in bold italics."""
-    assert format_update_number(7) == "_*7.*_"
+    assert format_update_number(7) == "<b><i>7.</i></b>"
 
     item = {"name": "iOS 27.2", "target": "iPhone", "date": "2026-11-12"}
-    assert format_update_message(item, 7, "es-cl").startswith("_*7.*_ ")
-    assert format_update_message(item, 7, "en-us").startswith("_*7.*_ ")
+    assert format_update_message(item, 7, "es-cl").startswith(
+        "<b><i>7.</i></b> "
+    )
+    assert format_update_message(item, 7, "en-us").startswith(
+        "<b><i>7.</i></b> "
+    )
+    assert "*" not in format_update_message(item, 7, "es-cl")
+
+
+def test_update_html_escapes_dynamic_content_and_preserves_links():
+    """Apple text and URLs cannot break Telegram's HTML parser."""
+    item = {
+        "name": "iOS <Preview> & iPadOS",
+        "target": "iPhone > 11 & later",
+        "date": "2026-11-18",
+        "url": 'https://example.test/update?a=1&label="beta"',
+    }
+
+    result = format_update_line_html(item, 1)
+
+    assert result.startswith("<b><i>1.</i></b> ")
+    assert "iOS &lt;Preview&gt; &amp; iPadOS" in result
+    assert "iPhone &gt; 11 &amp; later" in result
+    assert 'a=1&amp;label=&quot;beta&quot;' in result
+
+
+def test_update_header_markdown_is_converted_to_html():
+    """Existing translated headers retain their bold and italic formatting."""
+    header = "*CrazyOnes - Actualizaciones de Apple* - _Spanish/Chile_\n\n"
+
+    assert legacy_markdown_to_html(header) == (
+        "<b>CrazyOnes - Actualizaciones de Apple</b> - "
+        "<i>Spanish/Chile</i>\n\n"
+    )
 
 
 if __name__ == "__main__":
