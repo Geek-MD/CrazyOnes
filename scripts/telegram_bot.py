@@ -351,10 +351,7 @@ def get_translation(lang_code: str, key: str, **kwargs: Any) -> str:
                 )
             else:
                 # Fallback: bold the entire first line
-                result = (
-                    f"*{first_line}*\n\n{lines[1]}\n\n"
-                    f"{lines[2].rstrip()}\n\n"
-                )
+                result = f"*{first_line}*\n\n{lines[1]}\n\n{lines[2].rstrip()}\n\n"
     elif key == "language_list_header":
         # Format: "*CrazyOnes - Available Languages*\n\n"
         result = f"*{result.rstrip()}*\n\n"
@@ -1300,8 +1297,7 @@ async def updates_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             # Format: Name[url] - Target - Date
             if url:
                 update_line = (
-                    f"{format_update_number(idx)} [{name}]({url})"
-                    f" - {target} - {date}\n"
+                    f"{format_update_number(idx)} [{name}]({url}) - {target} - {date}\n"
                 )
             else:
                 update_line = (
@@ -1708,9 +1704,7 @@ async def send_recent_updates_simple(
                 f"{format_update_number(idx)} {date} - [{name}]({url}) - {target}\n"
             )
         else:
-            update_line = (
-                f"{format_update_number(idx)} {date} - {name} - {target}\n"
-            )
+            update_line = f"{format_update_number(idx)} {date} - {name} - {target}\n"
 
         message += update_line
 

@@ -555,13 +555,10 @@ async def send_update_notification(
         # Format: Name[url] - Target - Date
         if url:
             update_line = (
-                f"{format_update_number(idx)} [{name}]({url})"
-                f" - {target} - {date}\n"
+                f"{format_update_number(idx)} [{name}]({url}) - {target} - {date}\n"
             )
         else:
-            update_line = (
-                f"{format_update_number(idx)} {name} - {target} - {date}\n"
-            )
+            update_line = f"{format_update_number(idx)} {name} - {target} - {date}\n"
 
         message += update_line
 
